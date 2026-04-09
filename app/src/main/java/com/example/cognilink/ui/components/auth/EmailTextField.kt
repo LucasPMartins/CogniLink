@@ -1,4 +1,4 @@
-package com.example.cognilink.ui.components
+package com.example.cognilink.ui.components.auth
 
 
 import androidx.compose.foundation.BorderStroke

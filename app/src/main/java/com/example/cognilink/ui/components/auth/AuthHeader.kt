@@ -1,4 +1,4 @@
-package com.example.cognilink.ui.components
+package com.example.cognilink.ui.components.auth
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -22,7 +22,7 @@ import com.example.cognilink.ui.theme.CogniLinkTheme
 import com.example.cognilink.ui.theme.White
 
 @Composable
-fun AuthHeroHeader() {
+fun AuthHeader() {
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -75,8 +75,8 @@ fun AuthHeroHeader() {
 
 @Preview
 @Composable
-private fun AuthHeroHeaderPreview() {
+private fun AuthHeaderPreview() {
     CogniLinkTheme {
-        AuthHeroHeader()
+        AuthHeader()
     }
 }

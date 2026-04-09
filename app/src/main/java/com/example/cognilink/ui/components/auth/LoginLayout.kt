@@ -1,4 +1,4 @@
-package com.example.cognilink.ui.components
+package com.example.cognilink.ui.components.auth
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -33,7 +33,8 @@ import com.example.cognilink.ui.theme.DarkGray
 import com.example.cognilink.ui.theme.DarkNavyBlue
 
 @Composable
-fun LoginComponent(modifier: Modifier = Modifier) {
+fun LoginLayout(modifier: Modifier = Modifier) {
+
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -104,8 +105,8 @@ fun LoginComponent(modifier: Modifier = Modifier) {
                 color =  DarkNavyBlue,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null
                 ) {
                     /* TODO */
                 })
@@ -155,8 +156,8 @@ fun LoginComponent(modifier: Modifier = Modifier) {
 
 @Preview
 @Composable
-private fun LoginComponentPreview() {
+private fun LoginLayoutPreview() {
     CogniLinkTheme{
-        LoginComponent()
+        LoginLayout()
     }
 }

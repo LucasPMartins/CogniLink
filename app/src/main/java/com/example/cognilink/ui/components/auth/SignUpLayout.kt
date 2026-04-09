@@ -1,4 +1,4 @@
-package com.example.cognilink.ui.components
+package com.example.cognilink.ui.components.auth
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -6,11 +6,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -20,42 +23,34 @@ import androidx.compose.ui.unit.dp
 import com.example.cognilink.R
 import com.example.cognilink.ui.theme.CogniLinkTheme
 import com.example.cognilink.ui.theme.DarkGray
-import com.example.cognilink.ui.theme.DarkNavyBlue
 
 @Composable
-fun SignUpComponent(modifier: Modifier = Modifier) {
+fun SignUpLayout(
+    email: String = "",
+    onEmailChange: (String) -> Unit = {},
+    password: String = "",
+    onPasswordChange: (String) -> Unit = {},
+    confirmPassword: String = "",
+    onConfirmPasswordChange: (String) -> Unit = {},
+    name: String = "",
+    onNameChange: (String) -> Unit = {},
+    modifier: Modifier = Modifier
+) {
+
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf("") }
+
+
     Column(modifier = Modifier,verticalArrangement = Arrangement.spacedBy(20.dp))
     {
-        NameTextField(name = "", onNameChange = {})
-        EmailTextField(email = "", onEmailChange = {})
-        Column(
-            modifier = modifier,
-            horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ){
-            Text(
-                text = "SENHA",
-                style = MaterialTheme.typography.titleMedium.copy(
-                        fontWeight = FontWeight.Bold
-                ),
-                color = DarkGray,
-            )
-            PasswordTextField(password = "", onPasswordChange = {})
-        }
-        Column(
-            modifier = modifier,
-            horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ){
-            Text(
-                text = "CONFIRMAR SENHA",
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontWeight = FontWeight.Bold
-                ),
-                color = DarkGray,
-            )
-            PasswordTextField(password = "", onPasswordChange = {})
-        }
+        NameTextField(name = name, onNameChange = { name = it })
+        EmailTextField(email = email, onEmailChange = { email = it })
+
+        PasswordTextField(label = "CRIAR SENHA",password = password, onPasswordChange = { password = it })
+
+        PasswordTextField(label = "CONFIRMAR SENHA",password = confirmPassword, onPasswordChange = { confirmPassword = it })
 
         TermsAndPrivacyCheckbox()
 
@@ -87,8 +82,8 @@ fun SignUpComponent(modifier: Modifier = Modifier) {
 
 @Preview
 @Composable
-private fun SignUpComponentPreview() {
+private fun SignUpLayoutPreview() {
     CogniLinkTheme {
-        SignUpComponent()
+        SignUpLayout()
     }
 }

@@ -5,12 +5,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Surface
@@ -26,11 +27,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
-import com.example.cognilink.ui.components.AuthHeroHeader
-import com.example.cognilink.ui.components.LegalFooterComponent
-import com.example.cognilink.ui.components.LoginComponent
-import com.example.cognilink.ui.components.SignUpComponent
+import com.example.cognilink.ui.components.auth.AuthFooter
+import com.example.cognilink.ui.components.auth.AuthHeader
+import com.example.cognilink.ui.components.auth.LoginLayout
+import com.example.cognilink.ui.components.auth.SignUpLayout
 import com.example.cognilink.ui.theme.CogniLinkTheme
 import com.example.cognilink.ui.theme.DarkGray
 import com.example.cognilink.ui.theme.DarkNavyBlue
@@ -46,23 +46,23 @@ fun AuthContent(
     authOption: Boolean = false,
     onAuthOptionChange: (Boolean) -> Unit = {}
 ) {
-
     var optionState by remember { mutableStateOf(authOption) }
+    // 1. Criar o estado da rolagem
+    val scrollState = rememberScrollState()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(color = OffWhite),
     ) {
+        AuthHeader()
 
-        AuthHeroHeader()
-
+        // Seletor (Entrar / Cadastrar)
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp)
-                .offset(y = (-30).dp)
-                .zIndex(1f),
+                .offset(y = (-30).dp),
             contentAlignment = Alignment.Center
         ) {
             Surface(
@@ -83,11 +83,7 @@ fun AuthContent(
                             containerColor = if (!optionState) Color.White else Color.Transparent
                         )
                     ) {
-                        Text(
-                            "ENTRAR",
-                            fontWeight = FontWeight.Bold,
-                            color = if (!optionState) DarkNavyBlue else DarkGray
-                        )
+                        Text("ENTRAR", fontWeight = FontWeight.Bold, color = if (!optionState) DarkNavyBlue else DarkGray)
                     }
                     Button(
                         onClick = { optionState = true },
@@ -96,36 +92,39 @@ fun AuthContent(
                             containerColor = if (optionState) Color.White else Color.Transparent
                         )
                     ) {
-                        Text(
-                            "CADASTRAR",
-                            fontWeight = FontWeight.Bold,
-                            color = if (optionState) DarkNavyBlue else DarkGray
-                        )
+                        Text("CADASTRAR", fontWeight = FontWeight.Bold, color = if (optionState) DarkNavyBlue else DarkGray)
                     }
                 }
             }
         }
 
+        //Column interna que ocupará o espaço restante e terá scroll
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp)
-                .offset(y = (-15).dp)
+                .weight(1f) // Faz esta coluna ocupar todo o espaço entre Header e Footer
+                .verticalScroll(scrollState) // Habilita a rolagem vertical
         ) {
-            if (optionState) {
-                SignUpComponent()
-            } else
-                LoginComponent()
+
+            // Layouts de Login/Cadastro
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
+            ) {
+                if (optionState) {
+                    SignUpLayout()
+                } else {
+                    LoginLayout()
+                }
+            }
         }
 
-        Spacer(modifier = Modifier.weight(1f)) 
-        LegalFooterComponent()
-
+        //Footer fica fora da área de scroll para estar sempre visível
+        AuthFooter()
     }
-
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun AuthContentPreview() {
     CogniLinkTheme{

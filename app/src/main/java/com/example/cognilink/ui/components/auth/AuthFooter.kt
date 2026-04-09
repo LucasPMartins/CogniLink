@@ -1,4 +1,4 @@
-package com.example.cognilink.ui.components
+package com.example.cognilink.ui.components.auth
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -28,7 +28,7 @@ import com.example.cognilink.ui.theme.DarkGray
 import com.example.cognilink.ui.theme.DarkNavyBlue
 
 @Composable
-fun LegalFooterComponent() {
+fun AuthFooter() {
 
     Surface(modifier = Modifier,
         color = Color(0xFFF3F3F3),
@@ -91,8 +91,8 @@ fun LegalFooterComponent() {
 
 @Preview
 @Composable
-private fun LegalFooterComponentPreview() {
+private fun AuthFooterPreview() {
     CogniLinkTheme {
-        LegalFooterComponent()
+        AuthFooter()
     }
 }

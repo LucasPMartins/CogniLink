@@ -1,9 +1,8 @@
-package com.example.cognilink.ui.components
-
+package com.example.cognilink.ui.components.auth
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -16,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -32,17 +33,30 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cognilink.R
 import com.example.cognilink.ui.theme.CogniLinkTheme
-import com.example.cognilink.ui.theme.White
-
+import com.example.cognilink.ui.theme.DarkGray
 
 @Composable
 fun PasswordTextField(
+    label: String = "",
     password: String,
     onPasswordChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var isPasswordVisible by remember { mutableStateOf(false) }
 
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ){
+        if(label != "")
+            Text(
+                text = label,
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontWeight = FontWeight.Bold
+                ),
+                color = DarkGray
+            )
         Surface(modifier = modifier, shape = RoundedCornerShape(24.dp), color = Color(0xFFFFFFFF), border = BorderStroke(1.dp, Color(0xFFC6C5D4))
         ) {
             Row(
@@ -63,7 +77,7 @@ fun PasswordTextField(
                         focusedContainerColor = Color.Transparent,
                         unfocusedContainerColor = Color.Transparent,
 
-                    )
+                        )
                 )
                 IconButton(
                     onClick = { isPasswordVisible = !isPasswordVisible },
@@ -84,6 +98,10 @@ fun PasswordTextField(
             }
         }
 
+    }
+
+
+
 }
 
 @Preview
@@ -91,5 +109,6 @@ fun PasswordTextField(
 private fun PasswordTextFieldPreview() {
     CogniLinkTheme {
         PasswordTextField(password = "", onPasswordChange = {})
+        //PasswordTextField(label="Confirmar senha",password = "", onPasswordChange = {})
     }
 }
