@@ -1,4 +1,4 @@
-package com.example.cognilink.ui.components.card
+package com.example.cognilink.ui.components.flashcard
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,21 +17,19 @@ import com.example.cognilink.R
 import com.example.cognilink.ui.theme.CogniLinkTheme
 import com.example.cognilink.ui.theme.DarkGray
 
-/*TODO*/
 data class FlashcardOption(
     val id: Int,
     val title: String,
     val description: String,
     val icon: Int
 )
-
 @Composable
-fun FlashcardTypeSelector(
+fun TypeOptionList(
     modifier: Modifier = Modifier,
     selectedOption: FlashcardOption? = null,
     onOptionSelected: (FlashcardOption) -> Unit
 ) {
-    // 2. Lista de opções
+
     val options = remember {
         listOf(
             FlashcardOption(1, "Pergunta e Resposta", "Ideal para fatos diretos", R.drawable.ic_basic_card),
@@ -69,8 +67,8 @@ fun FlashcardTypeSelector(
 
 @Preview
 @Composable
-private fun FlashcardTypeSelectorPreview() {
+private fun TypeOptionListPreview() {
     CogniLinkTheme {
-        FlashcardTypeSelector(selectedOption = null, onOptionSelected = {})
+        TypeOptionList(selectedOption = null, onOptionSelected = {})
     }
 }

@@ -1,5 +1,6 @@
 package com.example.cognilink.ui.components.home
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.cognilink.R
+import com.example.cognilink.ui.components.utils.ProgressBar
 import com.example.cognilink.ui.theme.CogniLinkTheme
 import com.example.cognilink.ui.theme.DarkGray
 import com.example.cognilink.ui.theme.DarkNavyBlue
@@ -74,22 +76,12 @@ fun ProfileSection(
                     )
                 }
 
-                Row(modifier = Modifier.fillMaxWidth()
-                ) {
-                    if(overallMastery > 0f){
-                        Surface(modifier = Modifier.weight(overallMastery).height(6.dp),
-                            color = DarkNavyBlue,shape = RoundedCornerShape(9999.dp)
-                        ){}
-                        Surface(modifier = Modifier.weight(1 - overallMastery).height(6.dp),
-                            color = VeryLightGray,shape = RoundedCornerShape(topEnd = 9999.dp, bottomEnd = 9999.dp)
-                        ){}
-                    }
-                    else{
-                        Surface(modifier = Modifier.weight(1f).height(6.dp),
-                            color = VeryLightGray,shape = RoundedCornerShape(topEnd = 9999.dp, bottomEnd = 9999.dp)
-                        ){}
-                    }
-                }
+                ProgressBar(modifier = Modifier.background(OffWhite),
+                    actual = overallMastery,
+                    total = 1f,
+                    progressColor = DarkNavyBlue,
+                    backgroundColor = OffWhite
+                )
             }
 
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {

@@ -1,4 +1,4 @@
-package com.example.cognilink.ui.components.card
+package com.example.cognilink.ui.components.flashcard
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,11 +17,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cognilink.R
-import com.example.cognilink.ui.feature.dashedBorder
 import com.example.cognilink.ui.theme.CogniLinkTheme
 import com.example.cognilink.ui.theme.Gray
 import com.example.cognilink.ui.theme.OffWhite
 import com.example.cognilink.ui.theme.White
+import com.example.cognilink.ui.theme.dashedBorder
 
 @Composable
 fun FileUploadArea(modifier: Modifier = Modifier,

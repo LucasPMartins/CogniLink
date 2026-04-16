@@ -1,5 +1,6 @@
 package com.example.cognilink.ui.components.home
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,9 +22,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cognilink.data.DifficultyLevel
+import com.example.cognilink.ui.components.utils.ProgressBar
 import com.example.cognilink.ui.theme.CogniLinkTheme
 import com.example.cognilink.ui.theme.DarkGray
 import com.example.cognilink.ui.theme.DarkNavyBlue
+import com.example.cognilink.ui.theme.LightGray
+import com.example.cognilink.ui.theme.OffWhite
 import com.example.cognilink.ui.theme.VeryLightGray
 import com.example.cognilink.ui.theme.White
 import com.example.cognilink.ui.theme.primaryColor
@@ -121,22 +125,11 @@ fun DeckCard(
                         fontWeight = FontWeight.SemiBold
                     )
                 }
-                Row(modifier = Modifier.fillMaxWidth()
-                ) {
-                    if(proficiency > 0f){
-                        Surface(modifier = Modifier.weight(proficiency).height(6.dp),
-                            color = difficulty.secondaryColor,shape = RoundedCornerShape(9999.dp)
-                        ){}
-                        Surface(modifier = Modifier.weight(1 - proficiency).height(6.dp),
-                            color = VeryLightGray,shape = RoundedCornerShape(topEnd = 9999.dp, bottomEnd = 9999.dp)
-                        ){}
-                    }
-                    else{
-                        Surface(modifier = Modifier.weight(1f).height(6.dp),
-                            color = VeryLightGray,shape = RoundedCornerShape(topEnd = 9999.dp, bottomEnd = 9999.dp)
-                        ){}
-                    }
-                }
+                ProgressBar(actual = proficiency,
+                    total = 1f,
+                    progressColor = difficulty.secondaryColor,
+                    backgroundColor = OffWhite,
+                )
             }
         }
 

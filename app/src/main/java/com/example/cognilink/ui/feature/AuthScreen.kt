@@ -32,7 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cognilink.ui.components.auth.Footer
 import com.example.cognilink.ui.components.auth.Header
-import com.example.cognilink.ui.components.auth.LoginContent
+import com.example.cognilink.ui.components.auth.SignInContent
 import com.example.cognilink.ui.components.auth.SignUpContent
 import com.example.cognilink.ui.theme.CogniLinkTheme
 import com.example.cognilink.ui.theme.DarkGray
@@ -119,7 +119,7 @@ fun AuthContent(
                 if (optionState) {
                     SignUpContent()
                 } else {
-                    LoginContent(onSignUpClick = { optionState = true })
+                    SignInContent(onSignUpClick = { optionState = true })
                 }
             }
         }

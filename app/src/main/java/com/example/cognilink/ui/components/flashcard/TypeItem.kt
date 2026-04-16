@@ -1,4 +1,4 @@
-package com.example.cognilink.ui.components.card
+package com.example.cognilink.ui.components.flashcard
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -37,7 +37,6 @@ fun TypeItem(
 ) {
     Surface(
         shape = RoundedCornerShape(16.dp),
-        // Dica: torne o Surface inteiro clicável para melhor UX
         onClick = onSelect,
         modifier = modifier.fillMaxWidth(),
         shadowElevation = 2.dp,

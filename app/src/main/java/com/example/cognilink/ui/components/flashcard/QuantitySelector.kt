@@ -1,4 +1,4 @@
-package com.example.cognilink.ui.components.card
+package com.example.cognilink.ui.components.flashcard
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row

@@ -21,7 +21,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cognilink.R
-import com.example.cognilink.ui.components.TextInput
+import com.example.cognilink.ui.components.input.PasswordTextField
+import com.example.cognilink.ui.components.input.CustomTextField
 import com.example.cognilink.ui.theme.CogniLinkTheme
 
 
@@ -46,21 +47,27 @@ fun SignUpContent(
 
     Column(modifier = Modifier,verticalArrangement = Arrangement.spacedBy(20.dp))
     {
-        TextInput(
+        CustomTextField(
             label = "NOME",
             placeholder = "Seu nome",
             inputValue = name,
             onInputValueChange = { name = it })
 
-        TextInput(
+        CustomTextField(
             label = "E-MAIL",
             placeholder = "seu@email.com",
             inputValue = email,
             onInputValueChange = { email = it })
 
-        PasswordInput(label = "CRIAR SENHA",password = password, onPasswordChange = { password = it })
+        PasswordTextField(
+            label = "CRIAR SENHA",
+            password = password,
+            onPasswordChange = { password = it })
 
-        PasswordInput(label = "CONFIRMAR SENHA",password = confirmPassword, onPasswordChange = { confirmPassword = it })
+        PasswordTextField(
+            label = "CONFIRMAR SENHA",
+            password = confirmPassword,
+            onPasswordChange = { confirmPassword = it })
 
         TermsCheckbox()
 

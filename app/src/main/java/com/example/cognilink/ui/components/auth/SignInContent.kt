@@ -29,22 +29,23 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cognilink.R
-import com.example.cognilink.ui.components.TextInput
+import com.example.cognilink.ui.components.input.PasswordTextField
+import com.example.cognilink.ui.components.input.CustomTextField
 import com.example.cognilink.ui.theme.CogniLinkTheme
 import com.example.cognilink.ui.theme.DarkGray
 import com.example.cognilink.ui.theme.DarkNavyBlue
 import com.example.cognilink.ui.theme.White
 
 @Composable
-fun LoginContent(modifier: Modifier = Modifier,
-                 onSignUpClick: () -> Unit = {}) {
+fun SignInContent(modifier: Modifier = Modifier,
+                  onSignUpClick: () -> Unit = {}) {
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
     Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(20.dp)) {
 
-        TextInput(
+        CustomTextField(
             label = "E-MAIL",
             placeholder = "seu@email.com",
             keyboardType = KeyboardType.Email,
@@ -79,7 +80,7 @@ fun LoginContent(modifier: Modifier = Modifier,
                     }
                 )
             }
-            PasswordInput(password = password, onPasswordChange = { password = it })
+            PasswordTextField(password = password, onPasswordChange = { password = it })
         }
 
         Button(
@@ -167,8 +168,8 @@ fun LoginContent(modifier: Modifier = Modifier,
 
 @Preview
 @Composable
-private fun LoginContentPreview() {
+private fun SignInContentPreview() {
     CogniLinkTheme{
-        LoginContent()
+        SignInContent()
     }
 }

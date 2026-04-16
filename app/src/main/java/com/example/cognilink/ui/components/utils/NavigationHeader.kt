@@ -1,11 +1,10 @@
-package com.example.cognilink.ui.components
+package com.example.cognilink.ui.components.utils
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
@@ -17,7 +16,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,11 +26,11 @@ import com.example.cognilink.ui.theme.CogniLinkTheme
 import com.example.cognilink.ui.theme.VividCyan
 
 @Composable
-fun TopBar(modifier: Modifier = Modifier,
-           title: String = "TOP BAR",
-           onBackClick: () -> Unit = {},
-           MenuEnabled: Boolean = false,
-           onMenuClick: () -> Unit = {},
+fun NavigationHeader(modifier: Modifier = Modifier,
+                     title: String = "TOP BAR",
+                     onBackClick: () -> Unit = {},
+                     menuEnabled: Boolean = false,
+                     onMenuClick: () -> Unit = {},
 ) {
 
     Surface(
@@ -72,7 +70,7 @@ fun TopBar(modifier: Modifier = Modifier,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.weight(1f))
 
-            if(MenuEnabled){
+            if(menuEnabled){
                 IconButton(onClick = onMenuClick) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_menu),
@@ -88,8 +86,8 @@ fun TopBar(modifier: Modifier = Modifier,
 
 @Preview
 @Composable
-private fun TopBarPreview() {
+private fun NavigationHeaderPreview() {
     CogniLinkTheme{
-        TopBar()
+        NavigationHeader()
     }
 }

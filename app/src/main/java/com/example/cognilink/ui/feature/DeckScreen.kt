@@ -28,19 +28,25 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.cognilink.R
-import com.example.cognilink.ui.components.NeonFAB
-import com.example.cognilink.ui.components.TopBar
-import com.example.cognilink.ui.components.TextInput
-import com.example.cognilink.ui.components.neonGlow
+import com.example.cognilink.ui.components.utils.NeonFAB
+import com.example.cognilink.ui.components.utils.NavigationHeader
+import com.example.cognilink.ui.components.input.CustomTextField
 import com.example.cognilink.ui.theme.CogniLinkTheme
 import com.example.cognilink.ui.theme.DarkGray
 import com.example.cognilink.ui.theme.DarkNavyBlue
 import com.example.cognilink.ui.theme.LavenderBlue
 import com.example.cognilink.ui.theme.VividCyan
 import com.example.cognilink.ui.theme.White
+import com.example.cognilink.ui.theme.neonGlow
 
 @Composable
-fun CreateDeckScreen(
+fun DeckScreen(modifier: Modifier = Modifier) {
+    
+}
+
+
+@Composable
+fun DeckContent(
     modifier: Modifier = Modifier,
     deckName: String = "",
     onDeckNameChange: (String) -> Unit = {},
@@ -66,13 +72,13 @@ fun CreateDeckScreen(
                 .verticalScroll(scrollState)
                 .padding(padding),
         ) {
-            TopBar(title = "CRIAR NOVO BARALHO")
+            NavigationHeader(title = "CRIAR NOVO BARALHO")
 
             Column(modifier = Modifier.padding(horizontal = 24.dp, vertical = 30.dp),
                 verticalArrangement = Arrangement.spacedBy(22.dp)
             ) {
                 Text(text = "INFORMAÇÕES BÁSICAS", fontWeight = FontWeight.Bold)
-                TextInput(
+                CustomTextField(
                     modifier = Modifier,
                     inputValue = deckName,
                     onInputValueChange = onDeckNameChange,
@@ -80,7 +86,7 @@ fun CreateDeckScreen(
                     placeholder = "Ex: Matemática Básica",
                     keyboardType = KeyboardType.Text
                 )
-                TextInput(
+                CustomTextField(
                     modifier = Modifier,
                     inputValue = categoryName,
                     onInputValueChange = onCategoryNameChange,
@@ -187,8 +193,8 @@ fun CreateDeckScreen(
 
 @Preview
 @Composable
-private fun CreateDeckScreenPreview() {
+private fun DeckContentPreview() {
     CogniLinkTheme {
-        CreateDeckScreen()
+        DeckContent()
     }
 }

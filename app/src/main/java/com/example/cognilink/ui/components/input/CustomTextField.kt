@@ -1,4 +1,4 @@
-package com.example.cognilink.ui.components
+package com.example.cognilink.ui.components.input
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -26,12 +26,12 @@ import com.example.cognilink.ui.theme.LightGray
 import com.example.cognilink.ui.theme.White
 
 @Composable
-fun TextInput(modifier: Modifier = Modifier,
-              inputValue: String,
-              onInputValueChange: (String) -> Unit,
-              label: String,
-              placeholder: String,
-              keyboardType: KeyboardType = KeyboardType.Text
+fun CustomTextField(modifier: Modifier = Modifier,
+                    inputValue: String,
+                    onInputValueChange: (String) -> Unit,
+                    label: String = "",
+                    placeholder: String,
+                    keyboardType: KeyboardType = KeyboardType.Text
 ) {
 
     Column(
@@ -40,13 +40,16 @@ fun TextInput(modifier: Modifier = Modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     )
     {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.titleMedium.copy(
-                fontWeight = FontWeight.Bold
-            ),
-            color = DarkGray
-        )
+        if (label.isNotEmpty()){
+            Text(
+                text = label,
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontWeight = FontWeight.Bold
+                ),
+                color = DarkGray
+            )
+        }
+
         Surface(modifier = modifier,
             shape = RoundedCornerShape(24.dp),
             border = BorderStroke(1.5.dp, LightGray),
@@ -86,8 +89,8 @@ fun TextInput(modifier: Modifier = Modifier,
 
 @Preview
 @Composable
-private fun TextInputPreview() {
+private fun CustomTextFieldPreview() {
     CogniLinkTheme{
-        TextInput(inputValue = "", onInputValueChange = {}, label = "Nome", placeholder = "Seu nome")
+        CustomTextField(inputValue = "", onInputValueChange = {}, label = "Nome", placeholder = "Seu nome")
     }
 }

@@ -1,4 +1,4 @@
-package com.example.cognilink.ui.components
+package com.example.cognilink.ui.components.input
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Row
@@ -27,10 +27,10 @@ import com.example.cognilink.ui.theme.LightGray
 import com.example.cognilink.ui.theme.White
 
 @Composable
-fun SearchField(modifier: Modifier = Modifier.fillMaxWidth(),
-                hintText: String = "Pesquisar...",
-                searchValue: String = "",
-                onSearchValueChange: (String) -> Unit = {}) {
+fun SearchTextField(modifier: Modifier = Modifier.fillMaxWidth(),
+                    hintText: String = "Pesquisar...",
+                    searchValue: String = "",
+                    onSearchValueChange: (String) -> Unit = {}) {
 
     Surface(modifier = modifier,
         shape = RoundedCornerShape(24.dp),
@@ -75,8 +75,8 @@ fun SearchField(modifier: Modifier = Modifier.fillMaxWidth(),
 
 @Preview
 @Composable
-private fun SearchFieldPreview() {
+private fun SearchTextFieldPreview() {
     CogniLinkTheme {
-        SearchField()
+        SearchTextField()
     }
 }

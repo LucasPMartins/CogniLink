@@ -28,8 +28,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.cognilink.R
 import com.example.cognilink.data.DifficultyLevel
-import com.example.cognilink.ui.components.NeonFAB
-import com.example.cognilink.ui.components.SearchField
+import com.example.cognilink.ui.components.utils.NeonFAB
+import com.example.cognilink.ui.components.input.SearchTextField
 import com.example.cognilink.ui.components.home.DeckCard
 import com.example.cognilink.ui.components.home.ProfileSection
 import com.example.cognilink.ui.theme.CogniLinkTheme
@@ -119,7 +119,7 @@ fun HomeScreen(modifier: Modifier = Modifier,
                     modifier = Modifier.fillMaxWidth().offset(y = (-8).dp)
                 )
 
-                SearchField(modifier = Modifier
+                SearchTextField(modifier = Modifier
                     .padding(vertical = 20.dp)
                     .fillMaxWidth(),
                     searchValue = searchValue,

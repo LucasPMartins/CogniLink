@@ -1,4 +1,4 @@
-package com.example.cognilink.ui.components.auth
+package com.example.cognilink.ui.components.input
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -40,10 +40,10 @@ import com.example.cognilink.ui.theme.LightGray
 import com.example.cognilink.ui.theme.White
 
 @Composable
-fun PasswordInput(modifier: Modifier = Modifier,
-                  label: String = "",
-                  password: String,
-                  onPasswordChange: (String) -> Unit,
+fun PasswordTextField(modifier: Modifier = Modifier,
+                      label: String = "",
+                      password: String,
+                      onPasswordChange: (String) -> Unit,
 ) {
     var isPasswordVisible by remember { mutableStateOf(false) }
 
@@ -118,9 +118,9 @@ fun PasswordInput(modifier: Modifier = Modifier,
 
 @Preview
 @Composable
-private fun PasswordInputPreview() {
+private fun PasswordTextFieldPreview() {
     CogniLinkTheme {
-        PasswordInput(password = "", onPasswordChange = {})
+        PasswordTextField(password = "", onPasswordChange = {})
         //PasswordInput(label="Confirmar senha",password = "", onPasswordChange = {})
     }
 }

@@ -4,8 +4,8 @@ enum class DifficultyLevel {
     EAZY, MEDIUM, HARD;
 
     fun toDisplayName() = when(this) {
-        EAZY -> "Fácil"
-        MEDIUM -> "Médio"
-        HARD -> "Difícil"
+        EAZY -> "FÁCIL"
+        MEDIUM -> "MÉDIO"
+        HARD -> "DIFÍCIL"
     }
 }
