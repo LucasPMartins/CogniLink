@@ -15,15 +15,16 @@ import androidx.compose.ui.unit.dp
 import com.example.cognilink.data.FlashcardType
 import com.example.cognilink.ui.theme.CogniLinkTheme
 
+//TODO: criar classe para resposta
+data class AnswerOption(val text: String, val isCorrect: Boolean)
 
 @Composable
-fun ResponseDisplay(
+fun AnswerOptions(
     modifier: Modifier = Modifier,
-    responses: List<String>, // Esta lista deve vir do seu ViewModel ou Estado Pai
-    onResponsesUpdate: (List<String>) -> Unit, // Callback para atualizar a lista toda
+    responses: List<AnswerOption>, // Esta lista deve vir do seu ViewModel ou Estado Pai
     flashcardType: FlashcardType,
-    onSelectedAnswer: (Int) -> Unit, // Passa o index da selecionada
-    limit: Int = 5
+    selectedAnswer: AnswerOption,
+    onSelectedAnswer: (AnswerOption) -> Unit, // Passa o index da selecionada
 ) {
 
     Column(
@@ -31,14 +32,14 @@ fun ResponseDisplay(
         verticalArrangement = Arrangement.spacedBy(10.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        responses.forEachIndexed { index, responseText ->
-            ResponseItem(
+        responses.forEachIndexed { index, response ->
+            AnswerItem(
                 flashcardType = flashcardType,
                 label = setLabel(flashcardType, index),
-                responseText = responseText,
+                responseText = response.text,
                 onResponseChange = null,
-                checked = false, // Aqui você precisará de um estado para 'selectedIndex'
-                onSelect = { onSelectedAnswer(index) },
+                selected = response.text == selectedAnswer.text,
+                onSelect = { onSelectedAnswer(response) },
                 onClickToRemove = { },
             )
         }
@@ -47,15 +48,18 @@ fun ResponseDisplay(
 
 @Preview
 @Composable
-private fun ResponseDisplayPreview() {
+private fun AnswerOptionsPreview() {
     //var listaTeste by remember { mutableStateOf(emptyList<String>()) }
-    var listaTeste by remember { mutableStateOf(listOf("Resposta 1", "Resposta 2", "Resposta 3")) }
+    var listaTeste by remember { mutableStateOf(listOf(AnswerOption("Resposta 1", true), AnswerOption("Resposta 2", false), AnswerOption("Resposta 3", false))) }
+
+    var selectedAnswer by remember { mutableStateOf(listaTeste[0]) }
+
     CogniLinkTheme {
-        ResponseDisplay(
+        AnswerOptions(
             flashcardType = FlashcardType.MULTIPLE_CHOICE,
             responses = listaTeste,
-            onResponsesUpdate = { listaTeste = it },
-            onSelectedAnswer = {},
+            selectedAnswer = selectedAnswer,
+            onSelectedAnswer = { response -> selectedAnswer = response }
         )
     }
 }

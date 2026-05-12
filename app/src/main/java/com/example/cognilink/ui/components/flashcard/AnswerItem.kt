@@ -7,9 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
@@ -20,37 +18,28 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cognilink.R
 import com.example.cognilink.data.FlashcardType
 import com.example.cognilink.ui.theme.CogniLinkTheme
 import com.example.cognilink.ui.theme.DarkNavyBlue
-import com.example.cognilink.ui.theme.Red
-import com.example.cognilink.ui.theme.White
 
 @Composable
-fun ResponseItem(
+fun AnswerItem(
     modifier: Modifier = Modifier,
     flashcardType: FlashcardType,
     label: String, // Ex: "A", "B", "C"
     responseText: String,
     onResponseChange: ((String) -> Unit)? = null, // Se for null, é modo leitura (Estudo)
-    checked: Boolean,
+    selected: Boolean,
     onSelect: () -> Unit,
     onClickToRemove: () -> Unit = {}
 ) {
@@ -60,7 +49,7 @@ fun ResponseItem(
         modifier = modifier.fillMaxWidth(),
         shadowElevation = 2.dp,
         color = Color.White,
-        border = if (checked) BorderStroke(2.dp, DarkNavyBlue) else null // Destaque visual
+        border = if (selected) BorderStroke(2.dp, DarkNavyBlue) else null
     ) {
         Row(
             modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
@@ -70,7 +59,7 @@ fun ResponseItem(
             when (flashcardType) {
                 FlashcardType.MULTIPLE_CHOICE -> {
                     RadioButton(
-                        selected = checked,
+                        selected = selected,
                         onClick = onSelect,
                         colors = RadioButtonDefaults.colors(selectedColor = DarkNavyBlue),
                         modifier = Modifier.padding(end = 12.dp)
@@ -78,7 +67,7 @@ fun ResponseItem(
                 }
                 FlashcardType.TRUE_OR_FALSE -> {
                     Checkbox(
-                        checked = checked,
+                        checked = selected,
                         onCheckedChange = { onSelect() },
                         colors = CheckboxDefaults.colors(checkedColor = DarkNavyBlue),
                         modifier = Modifier.padding(end = 12.dp)
@@ -90,7 +79,7 @@ fun ResponseItem(
             }
 
             Text(
-                text = "$label",
+                text = label,
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 color = DarkNavyBlue
@@ -128,7 +117,7 @@ fun ResponseItem(
             if (onResponseChange != null) {
                 IconButton(onClick = onClickToRemove) {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_remove), // Use ícones padrão do Material se possível
+                        painter = painterResource(id = R.drawable.ic_remove),
                         contentDescription = "Remover",
                         tint = Color.Red
                     )
@@ -140,14 +129,14 @@ fun ResponseItem(
 
 @Preview
 @Composable
-private fun ResponseItemPreview() {
+private fun AnswerItemPreview() {
     CogniLinkTheme {
-        ResponseItem(
+        AnswerItem(
             flashcardType = FlashcardType.MULTIPLE_CHOICE,
             label = "A.",
             responseText = "Resposta",
             onResponseChange = { },
-            checked = false,
+            selected = false,
             onSelect = {},
             onClickToRemove = {},
         )

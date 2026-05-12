@@ -42,7 +42,7 @@ fun TypeSelector(
     modifier: Modifier = Modifier,
     options: List<FlashcardType>,
     selectedOption: FlashcardType,
-    onOptionSelected: (FlashcardType) -> Unit
+    onOptionSelected: () -> Unit
 ) {
 
     var expanded by remember { mutableStateOf(false) }
@@ -102,7 +102,7 @@ fun TypeSelector(
                             Text(option.getDisplayName())
                         },
                         onClick = {
-                            onOptionSelected(option)
+                            onOptionSelected()
                             expanded = false
                         },
                         leadingIcon = {

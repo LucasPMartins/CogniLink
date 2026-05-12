@@ -10,6 +10,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -79,6 +83,8 @@ fun QuantitySelector(
 @Composable
 private fun QuantitySelectorPreview() {
     CogniLinkTheme {
-        QuantitySelector(quantity = 1, onQuantityChange = {})
+        var quantity by remember { mutableStateOf(1) }
+
+        QuantitySelector(quantity = quantity, onQuantityChange = { quantity = it  })
     }
 }

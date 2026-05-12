@@ -41,7 +41,7 @@ fun ProfileSection(
     learnRetention: Float = 0.8f,
     modifier: Modifier = Modifier) {
     Surface(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth(),
         color = White,
         shape = RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)

@@ -20,6 +20,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.CenterVertically
@@ -30,9 +31,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.cognilink.R
-import com.example.cognilink.ui.components.flashcard.AnswerSelector
+import com.example.cognilink.data.FlashcardType
+import com.example.cognilink.ui.components.flashcard.AnswerOption
 import com.example.cognilink.ui.components.flashcard.Header
-import com.example.cognilink.ui.components.flashcard.HintDisplay
+import com.example.cognilink.ui.components.flashcard.HintReveal
+import com.example.cognilink.ui.components.flashcard.AnswerOptions
 import com.example.cognilink.ui.theme.CogniLinkTheme
 import com.example.cognilink.ui.theme.DarkGray
 import com.example.cognilink.ui.theme.DarkNavyBlue
@@ -76,7 +79,12 @@ fun FlashcardStudyContent(
             .imePadding()
             .statusBarsPadding(),
         topBar = { Header() },
-        containerColor = OffWhite
+        containerColor = OffWhite,
+        bottomBar = {
+            Column(modifier = Modifier.padding(24.dp)) {
+
+            }
+        }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -139,10 +147,18 @@ fun FlashcardStudyContent(
                         .fillMaxWidth()
                     )
             }
+            var listaTeste by remember { mutableStateOf(listOf(AnswerOption("Resposta 1", true), AnswerOption("Resposta 2", false), AnswerOption("Resposta 3", false))) }
 
-            AnswerSelector()
+            var selectedAnswer by remember { mutableStateOf(listaTeste[0]) }
 
-            HintDisplay(hints = listOf("Dica 1", "Dica 2", "Dica 3"))
+            AnswerOptions(
+                flashcardType = FlashcardType.MULTIPLE_CHOICE,
+                responses = listaTeste,
+                selectedAnswer = selectedAnswer,
+                onSelectedAnswer = { response -> selectedAnswer = response }
+            )
+
+            HintReveal(hints = listOf("Dica 1", "Dica 2", "Dica 3"))
 
         }
     }

@@ -1,6 +1,5 @@
 package com.example.cognilink.ui.components.flashcard
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -12,11 +11,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -25,23 +22,32 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.cognilink.R
 import com.example.cognilink.data.FlashcardType
-import com.example.cognilink.ui.components.utils.LabeledText
 import com.example.cognilink.ui.theme.CogniLinkTheme
-import com.example.cognilink.ui.theme.DarkGray
 import com.example.cognilink.ui.theme.DarkNavyBlue
-import com.example.cognilink.ui.theme.LightGray
 import com.example.cognilink.ui.theme.VividCyan
 import com.example.cognilink.ui.theme.White
 
+fun setLabel(flashcardType: FlashcardType, index: Int): String {
+    return when (flashcardType) {
+        FlashcardType.MULTIPLE_CHOICE -> {
+            val letters = listOf("A", "B", "C", "D", "E")
+            letters.getOrNull(index)?.let { "$it." } ?: ""
+        }
+        FlashcardType.OMISSION -> "$${index + 1}$"
+        else -> ""
+    }
+}
 
 @Composable
-fun HintManager(
+fun AnswerOptionsEditor(
     modifier: Modifier = Modifier,
-    hints: List<String> = emptyList(),
-    onHintsUpdate: (List<String>) -> Unit,
+    responses: List<String>,
+    onResponsesUpdate: (List<String>) -> Unit, // Callback para atualizar a lista toda
+    flashcardType: FlashcardType,
+    onSelectedAnswer: (Int) -> Unit, // Passa o index da selecionada
+    limit: Int = 5
 ) {
 
     Column(
@@ -49,30 +55,32 @@ fun HintManager(
         verticalArrangement = Arrangement.spacedBy(10.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        hints.forEachIndexed { index, hint ->
-            val index = index + 1
-            HintItem(
-                label = "DICA $index",
-                hint = hint,
-                onHintChange = { newValue ->
-                    val newList = hints.toMutableList()
-                    newList[index - 1] = newValue
-                    onHintsUpdate(newList)
+        responses.forEachIndexed { index, responseText ->
+            AnswerItem(
+                flashcardType = flashcardType,
+                label = setLabel(flashcardType, index),
+                responseText = responseText,
+                onResponseChange = { newValue ->
+                    val newList = responses.toMutableList()
+                    newList[index] = newValue
+                    onResponsesUpdate(newList)
                 },
+                selected = false,
+                onSelect = { onSelectedAnswer(index) },
                 onClickToRemove = {
-                    val newList = hints.toMutableList()
-                    newList.removeAt(index - 1)
-                    onHintsUpdate(newList)
-                }
+                    val newList = responses.toMutableList()
+                    newList.removeAt(index)
+                    onResponsesUpdate(newList)
+                },
             )
         }
 
-        if (hints.size < 3) {
+        if (responses.size < limit) {
             OutlinedButton(
                 onClick = {
-                    val newList = hints.toMutableList()
+                    val newList = responses.toMutableList()
                     newList.add("")
-                    onHintsUpdate(newList)
+                    onResponsesUpdate(newList)
                 },
                 modifier = Modifier.padding(top = 8.dp),
                 shape = RoundedCornerShape(50),
@@ -87,7 +95,7 @@ fun HintManager(
                     tint = VividCyan
                 )
                 Spacer(Modifier.width(8.dp))
-                Text("Adicionar dica (${hints.size + 1}/3)")
+                Text("Adicionar opção de resposta (${responses.size + 1}/$limit)")
             }
         }
     }
@@ -95,12 +103,15 @@ fun HintManager(
 
 @Preview
 @Composable
-private fun HintManagerPreview() {
+private fun AnswerOptionsEditorPreview() {
     //var listaTeste by remember { mutableStateOf(emptyList<String>()) }
-    var listaTeste by remember { mutableStateOf(listOf("Teste 1", "Teste 2")) }
+    var listaTeste by remember { mutableStateOf(listOf("Resposta 1", "Resposta 2", "Resposta 3")) }
     CogniLinkTheme {
-        HintManager(
-            hints = listaTeste, onHintsUpdate = { listaTeste = it }
+        AnswerOptionsEditor(
+            flashcardType = FlashcardType.OMISSION,
+            responses = listaTeste,
+            onResponsesUpdate = { listaTeste = it },
+            onSelectedAnswer = {},
         )
     }
 }

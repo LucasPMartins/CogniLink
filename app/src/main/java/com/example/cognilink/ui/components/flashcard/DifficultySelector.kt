@@ -104,10 +104,12 @@ fun DifficultySelector(
 @Composable
 private fun DifficultySelectorPreview() {
     CogniLinkTheme {
+        var selectedDifficulty by remember { mutableStateOf(DifficultyLevel.EAZY) }
+
         DifficultySelector(
             difficultyLevels = listOf(DifficultyLevel.EAZY, DifficultyLevel.MEDIUM,DifficultyLevel.HARD),
-            selectedDifficulty = DifficultyLevel.EAZY,
-            onDifficultySelected = {}
+            selectedDifficulty = selectedDifficulty,
+            onDifficultySelected = { selectedDifficulty = it}
         )
     }
 }

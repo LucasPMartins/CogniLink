@@ -1,6 +1,5 @@
 package com.example.cognilink.ui.components.flashcard
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -12,11 +11,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -24,68 +22,80 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.cognilink.R
-import com.example.cognilink.ui.components.utils.LabeledText
 import com.example.cognilink.ui.theme.CogniLinkTheme
-import com.example.cognilink.ui.theme.DarkGray
 import com.example.cognilink.ui.theme.DarkNavyBlue
-import com.example.cognilink.ui.theme.LightGray
+import com.example.cognilink.ui.theme.VividCyan
 import com.example.cognilink.ui.theme.White
 
+
 @Composable
-fun HintDisplay(
+fun HintEditor(
+    modifier: Modifier = Modifier,
     hints: List<String> = emptyList(),
-    modifier: Modifier = Modifier
+    onHintsUpdate: (List<String>) -> Unit,
 ) {
-    var hintsVisibleCount by remember { mutableIntStateOf(0) }
 
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(16.dp),
+        modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(10.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
-        hints.take(hintsVisibleCount).forEachIndexed { index, hint ->
-            val index = index + 1
+        hints.forEachIndexed { index, hint ->
+            val label = "Dica ${index + 1}"
             HintItem(
-                label = "DICA $index ",
-                hint = hint
+                label = label,
+                hint = hint,
+                onHintChange = {
+                    newValue ->
+                    val newList = hints.toMutableList()
+                    newList[index - 1] = newValue
+                    onHintsUpdate(newList)
+                               },
+                onClickToRemove = {
+                    val newList = hints.toMutableList()
+                    newList.removeAt(index - 1)
+                    onHintsUpdate(newList)
+                }
             )
         }
 
-        if (hintsVisibleCount < hints.size) {
+        if (hints.size < 3) {
             OutlinedButton(
-                onClick = { hintsVisibleCount++ },
+                onClick = {
+                    val newList = hints.toMutableList()
+                    newList.add("")
+                    onHintsUpdate(newList)
+                          },
                 modifier = Modifier.padding(top = 8.dp),
-                border = BorderStroke(1.dp, LightGray),
                 shape = RoundedCornerShape(50),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = White, containerColor = DarkNavyBlue)
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = White,
+                    containerColor = DarkNavyBlue
+                )
             ) {
-                Icon(painter = painterResource(id = R.drawable.ic_lightbulb),
+                Icon(painter = painterResource(id = R.drawable.ic_add),
                     contentDescription = null,
-                    modifier = Modifier.size(18.dp)
+                    modifier = Modifier.size(18.dp),
+                    tint = VividCyan
                 )
                 Spacer(Modifier.width(8.dp))
-                Text("VER DICA (${hintsVisibleCount + 1}/${hints.size})")
+                Text("Adicionar dica (${hints.size + 1}/3)")
             }
-        } else if(hintsVisibleCount == hints.size && hints.isNotEmpty()){
-            Text(
-                text = "Todas as dicas reveladas",
-                fontSize = 12.sp,
-                color = DarkGray,
-                modifier = Modifier.padding(top = 8.dp)
-            )
         }
     }
 }
 
 @Preview
 @Composable
-private fun HintDisplayPreview() {
+private fun HintEditorPreview() {
+    //var listaTeste by remember { mutableStateOf(emptyList<String>()) }
+    var listaTeste by remember { mutableStateOf(listOf("Teste 1", "Teste 2")) }
+
     CogniLinkTheme {
-        HintDisplay(hints = listOf("Dica 1", "Dica 2", "Dica 3"))
+        HintEditor(
+            hints = listaTeste,
+            onHintsUpdate = { listaTeste = it }
+        )
     }
 }

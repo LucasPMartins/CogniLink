@@ -33,8 +33,7 @@ import com.example.cognilink.R
 import com.example.cognilink.data.DifficultyLevel
 import com.example.cognilink.ui.components.utils.NavigationHeader
 import com.example.cognilink.ui.components.flashcard.DifficultySelector
-import com.example.cognilink.ui.components.flashcard.FileUploadArea
-import com.example.cognilink.ui.components.flashcard.TypeOptionList
+import com.example.cognilink.ui.components.input.FileUploadArea
 import com.example.cognilink.ui.components.flashcard.QuantitySelector
 import com.example.cognilink.ui.components.input.CustomTextField
 import com.example.cognilink.ui.components.utils.LabeledText
@@ -101,7 +100,7 @@ fun IAGeneratorContent(
             }
 
             // --- SEÇÃO SELETOR ---
-            TypeOptionList(selectedOption = null, onOptionSelected = { })
+            //TypeOptionList(selectedOption = null, onOptionSelected = { })
 
             // --- SEÇÃO CONFIGURAÇÕES (Dificuldade e Quantidade) ---
             Row(
