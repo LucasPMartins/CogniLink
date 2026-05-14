@@ -13,7 +13,9 @@ import androidx.compose.ui.platform.LocalContext
 private val DarkColorScheme = darkColorScheme(
     primary = DarkNavyBlue,
     secondary = MutedBlue,
-    tertiary = VividCyan
+    tertiary = VividCyan,
+    background = OffWhite,
+    surface = White.copy(alpha = 0.8f)
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -21,6 +23,7 @@ private val LightColorScheme = lightColorScheme(
     secondary = MutedBlue,
     tertiary = VividCyan,
     background = OffWhite,
+    surface = White
 
     /* Other default colors to override
     surface = Color(0xFFFFFBFE),

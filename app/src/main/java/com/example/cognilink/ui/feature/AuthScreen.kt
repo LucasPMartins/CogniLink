@@ -20,16 +20,14 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cognilink.ui.components.auth.Footer
 import com.example.cognilink.ui.components.auth.Header
 import com.example.cognilink.ui.components.auth.SignInContent
@@ -41,15 +39,14 @@ import com.example.cognilink.ui.theme.OffWhite
 import com.example.cognilink.ui.theme.VeryLightGray
 
 @Composable
-fun AuthScreen() {
-    
+fun AuthScreen(viewModel: AuthViewModel = viewModel()) {
+    AuthContent(viewModel = viewModel)
 }
 
 @Composable
 fun AuthContent(
-    authOption: Boolean = false
+    viewModel: AuthViewModel
 ) {
-    var optionState by remember { mutableStateOf(authOption) }
 
     // Cria o estado da rolagem
     val scrollState = rememberScrollState()
@@ -82,22 +79,30 @@ fun AuthContent(
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Button(
-                        onClick = { optionState = false },
+                        onClick = { viewModel.onModeChange(false) },
                         modifier = Modifier.weight(1f).fillMaxHeight(),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (!optionState) Color.White else Color.Transparent
+                            containerColor = if (!viewModel.isSignUpMode) Color.White else Color.Transparent
                         )
                     ) {
-                        Text("ENTRAR", fontWeight = FontWeight.Bold, color = if (!optionState) DarkNavyBlue else DarkGray)
+                        Text(
+                            "ENTRAR",
+                            fontWeight = FontWeight.Bold,
+                            color = if (!viewModel.isSignUpMode) DarkNavyBlue else DarkGray
+                        )
                     }
                     Button(
-                        onClick = { optionState = true },
+                        onClick = { viewModel.onModeChange(true) },
                         modifier = Modifier.weight(1f).fillMaxHeight(),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (optionState) Color.White else Color.Transparent
+                            containerColor = if (viewModel.isSignUpMode) Color.White else Color.Transparent
                         )
                     ) {
-                        Text("CADASTRAR", fontWeight = FontWeight.Bold, color = if (optionState) DarkNavyBlue else DarkGray)
+                        Text(
+                            "CADASTRAR",
+                            fontWeight = FontWeight.Bold,
+                            color = if (viewModel.isSignUpMode) DarkNavyBlue else DarkGray
+                        )
                     }
                 }
             }
@@ -116,10 +121,29 @@ fun AuthContent(
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp),
             ) {
-                if (optionState) {
-                    SignUpContent()
+                if (viewModel.isSignUpMode) {
+                    SignUpContent(
+                        name = viewModel.signUpName,
+                        onNameChange = viewModel::onSignUpNameChange,
+                        email = viewModel.signUpEmail,
+                        onEmailChange = viewModel::onSignUpEmailChange,
+                        password = viewModel.signUpPassword,
+                        onPasswordChange = viewModel::onSignUpPasswordChange,
+                        confirmPassword = viewModel.signUpConfirmPassword,
+                        onConfirmPasswordChange = viewModel::onSignUpConfirmPasswordChange,
+                        isTermsAccepted = viewModel.isTermsAccepted,
+                        onTermsAcceptedChange = viewModel::onTermsAcceptedChange,
+                        onSignUpClick = viewModel::onSignUpClick
+                    )
                 } else {
-                    SignInContent(onSignUpClick = { optionState = true })
+                    SignInContent(
+                        email = viewModel.signInEmail,
+                        onEmailChange = viewModel::onSignInEmailChange,
+                        password = viewModel.signInPassword,
+                        onPasswordChange = viewModel::onSignInPasswordChange,
+                        onSignInClick = viewModel::onSignInClick,
+                        onSignUpClick = { viewModel.onModeChange(true) }
+                    )
                 }
             }
         }
@@ -129,10 +153,11 @@ fun AuthContent(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
-private fun AuthContentPreview() {
-    CogniLinkTheme{
-        AuthContent(authOption = false)
+private fun AuthScreenPreview() {
+    CogniLinkTheme {
+        val viewModel = remember { AuthViewModel() }
+        AuthContent(viewModel = viewModel)
     }
 }

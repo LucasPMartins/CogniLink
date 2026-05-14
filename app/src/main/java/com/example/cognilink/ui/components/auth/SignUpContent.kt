@@ -25,82 +25,99 @@ import com.example.cognilink.ui.components.input.PasswordTextField
 import com.example.cognilink.ui.components.input.CustomTextField
 import com.example.cognilink.ui.theme.CogniLinkTheme
 
-
 @Composable
 fun SignUpContent(
     modifier: Modifier = Modifier,
+    name: String = "",
+    onNameChange: (String) -> Unit = {},
     email: String = "",
     onEmailChange: (String) -> Unit = {},
     password: String = "",
     onPasswordChange: (String) -> Unit = {},
     confirmPassword: String = "",
     onConfirmPasswordChange: (String) -> Unit = {},
-    name: String = "",
-    onNameChange: (String) -> Unit = {},
+    isTermsAccepted: Boolean = false,
+    onTermsAcceptedChange: (Boolean) -> Unit = {},
+    onSignUpClick: () -> Unit = {}
 ) {
-
-    var email by remember { mutableStateOf(email) }
-    var password by remember { mutableStateOf(password) }
-    var confirmPassword by remember { mutableStateOf(confirmPassword) }
-    var name by remember { mutableStateOf(name) }
-
-
-    Column(modifier = Modifier,verticalArrangement = Arrangement.spacedBy(20.dp))
-    {
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(20.dp)) {
         CustomTextField(
             label = "NOME",
             placeholder = "Seu nome",
             inputValue = name,
-            onInputValueChange = { name = it })
+            onInputValueChange = onNameChange
+        )
 
         CustomTextField(
             label = "E-MAIL",
             placeholder = "seu@email.com",
             inputValue = email,
-            onInputValueChange = { email = it })
+            onInputValueChange = onEmailChange
+        )
 
         PasswordTextField(
             label = "CRIAR SENHA",
             password = password,
-            onPasswordChange = { password = it })
+            onPasswordChange = onPasswordChange
+        )
 
         PasswordTextField(
             label = "CONFIRMAR SENHA",
             password = confirmPassword,
-            onPasswordChange = { confirmPassword = it })
+            onPasswordChange = onConfirmPasswordChange
+        )
 
-        TermsCheckbox()
+        TermsCheckbox(
+            checkedState = isTermsAccepted,
+            onCheckedChange = onTermsAcceptedChange
+        )
 
         Button(
-            onClick = { /*TODO*/ },
-            modifier = Modifier
-                .fillMaxWidth()
+            onClick = onSignUpClick,
+            modifier = Modifier.fillMaxWidth(),
+            enabled = isTermsAccepted
         ) {
-            Row(modifier = Modifier
-                .fillMaxWidth(),
+            Row(
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically) {
-                Text(text = "CRIAR CONTA",
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "CRIAR CONTA",
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                     modifier = Modifier.padding(end = 10.dp)
                 )
                 Icon(
-                    painter = painterResource(
-                        id = R.drawable.ic_arrow_forward
-                    ),
-                    contentDescription = "Entrar",
-                    tint = MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier,
+                    painter = painterResource(id = R.drawable.ic_arrow_forward),
+                    contentDescription = "Criar Conta",
+                    tint = MaterialTheme.colorScheme.onPrimary
                 )
             }
         }
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun SignUpContentPreview() {
     CogniLinkTheme {
-        SignUpContent()
+        var name by remember { mutableStateOf("") }
+        var email by remember { mutableStateOf("") }
+        var password by remember { mutableStateOf("") }
+        var confirmPassword by remember { mutableStateOf("") }
+        var isTermsAccepted by remember { mutableStateOf(false) }
+
+        SignUpContent(
+            name = name,
+            onNameChange = { name = it },
+            email = email,
+            onEmailChange = { email = it },
+            password = password,
+            onPasswordChange = { password = it },
+            confirmPassword = confirmPassword,
+            onConfirmPasswordChange = { confirmPassword = it },
+            isTermsAccepted = isTermsAccepted,
+            onTermsAcceptedChange = { isTermsAccepted = it }
+        )
     }
 }

@@ -26,8 +26,11 @@ import com.example.cognilink.ui.theme.CogniLinkTheme
 import com.example.cognilink.ui.theme.DarkNavyBlue
 
 @Composable
-fun TermsCheckbox() {
-    var checkedState by remember { mutableStateOf(false) }
+fun TermsCheckbox(
+    checkedState: Boolean = false,
+    onCheckedChange: (Boolean) -> Unit = {}
+) {
+
 
     val annotatedString = buildAnnotatedString {
         append("Concordo com os ")
@@ -59,7 +62,7 @@ fun TermsCheckbox() {
     ) {
         Checkbox(
             checked = checkedState,
-            onCheckedChange = { checkedState = it },
+            onCheckedChange = onCheckedChange,
             colors = CheckboxDefaults.colors(checkedColor = DarkNavyBlue)
         )
 
@@ -77,6 +80,10 @@ fun TermsCheckbox() {
 @Composable
 private fun TermsCheckboxPreview() {
     CogniLinkTheme {
-        TermsCheckbox()
+        var checkedState by remember { mutableStateOf(false) }
+        TermsCheckbox(
+            checkedState = checkedState,
+            onCheckedChange = { checkedState = it }
+        )
     }
 }

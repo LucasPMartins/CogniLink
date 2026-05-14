@@ -37,26 +37,30 @@ import com.example.cognilink.ui.theme.DarkNavyBlue
 import com.example.cognilink.ui.theme.White
 
 @Composable
-fun SignInContent(modifier: Modifier = Modifier,
-                  onSignUpClick: () -> Unit = {}) {
-
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-
-    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(20.dp)) {
+fun SignInContent(
+    modifier: Modifier = Modifier,
+    email: String = "",
+    onEmailChange: (String) -> Unit = {},
+    password: String = "",
+    onPasswordChange: (String) -> Unit = {},
+    onSignInClick: () -> Unit = {},
+    onSignUpClick: () -> Unit = {}
+) {
+    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(20.dp)) {
 
         CustomTextField(
             label = "E-MAIL",
             placeholder = "seu@email.com",
             keyboardType = KeyboardType.Email,
             inputValue = email,
-            onInputValueChange = { email = it })
+            onInputValueChange = onEmailChange
+        )
 
         Column(
-            modifier = modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(8.dp)
-        ){
+        ) {
             Row(modifier = Modifier.fillMaxWidth()) {
                 Text(
                     text = "SENHA",
@@ -80,41 +84,41 @@ fun SignInContent(modifier: Modifier = Modifier,
                     }
                 )
             }
-            PasswordTextField(password = password, onPasswordChange = { password = it })
+            PasswordTextField(password = password, onPasswordChange = onPasswordChange)
         }
 
         Button(
-            onClick = { /*TODO*/ },
+            onClick = onSignInClick,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 20.dp),
         ) {
-            Row(modifier = Modifier
-                .fillMaxWidth(),
+            Row(
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically) {
-                Text(text = "ENTRAR",
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "ENTRAR",
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                     modifier = Modifier.padding(end = 10.dp)
                 )
                 Icon(
-                    painter = painterResource(
-                        id = R.drawable.ic_arrow_forward
-                    ),
+                    painter = painterResource(id = R.drawable.ic_arrow_forward),
                     contentDescription = "Entrar",
                     tint = MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier,
                 )
             }
         }
 
-        Row(modifier = Modifier
-            .fillMaxWidth(),
+        Row(
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically) {
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Text(text = "Ainda não tem uma conta?", modifier = Modifier.padding(end = 10.dp), color = DarkGray)
             Text(text = "Cadastre-se",
-                color =  DarkNavyBlue,
+                color = DarkNavyBlue,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.clickable(
                     interactionSource = remember { MutableInteractionSource() },
@@ -124,39 +128,41 @@ fun SignInContent(modifier: Modifier = Modifier,
                 })
         }
 
-        Row(modifier = Modifier
-            .fillMaxWidth(),
+        Row(
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically) {
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Text(text = "OU CONTINUE COM", color = DarkGray, fontWeight = FontWeight.Bold)
         }
 
-        Row(modifier = Modifier
-            .fillMaxWidth(),
+        Row(
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(15.dp),
-            verticalAlignment = Alignment.CenterVertically)
-        {
-            Button(onClick = {/*TODO*/},
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Button(
+                onClick = {/*TODO*/},
                 shape = RoundedCornerShape(24.dp),
                 modifier = Modifier.weight(1f).height(50.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = White
-                )
+                colors = ButtonDefaults.buttonColors(containerColor = White)
             ) {
-                Icon(painter = painterResource(id = R.drawable.ic_google),
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_google),
                     contentDescription = "Google",
                     tint = Color.Unspecified,
-                    modifier = Modifier.size(30.dp))
+                    modifier = Modifier.size(30.dp)
+                )
             }
 
-            Button(onClick = {/*TODO*/},
+            Button(
+                onClick = {/*TODO*/},
                 shape = RoundedCornerShape(24.dp),
                 modifier = Modifier.weight(1f).height(50.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = White
-                )
+                colors = ButtonDefaults.buttonColors(containerColor = White)
             ) {
-                Icon(painter = painterResource(id = R.drawable.ic_apple_inc),
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_apple_inc),
                     contentDescription = "Apple",
                     tint = Color.Unspecified,
                     modifier = Modifier.size(30.dp)
@@ -166,10 +172,18 @@ fun SignInContent(modifier: Modifier = Modifier,
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun SignInContentPreview() {
-    CogniLinkTheme{
-        SignInContent()
+    CogniLinkTheme {
+        var email by remember { mutableStateOf("") }
+        var password by remember { mutableStateOf("") }
+
+        SignInContent(
+            email = email,
+            onEmailChange = { email = it },
+            password = password,
+            onPasswordChange = { password = it }
+        )
     }
 }
