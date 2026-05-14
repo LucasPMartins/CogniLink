@@ -133,9 +133,7 @@ fun DeckContent(
         )
     }
 
-    Scaffold(
-
-    ) { padding ->
+    Scaffold { padding ->
         Column(
             modifier = Modifier
                 .verticalScroll(scrollState)
@@ -244,7 +242,7 @@ private fun EditDeckContent(
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = CenterVertically
             ) {
                 categories.forEach { category ->
                     Surface(
@@ -253,7 +251,7 @@ private fun EditDeckContent(
                     ) {
                         Row(
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                            verticalAlignment = Alignment.CenterVertically,
+                            verticalAlignment = CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
                             Text(
@@ -483,7 +481,7 @@ private fun DeckCardContent(
     ) {
     Row(Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = CenterVertically
     ) {
         Text(
             text = if (isEditMode) "Conteúdo do Baralho" else "Próximos Tópicos",
@@ -527,7 +525,7 @@ private fun DeckCardItem(
     ) {
         Row(
             modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 16.dp, end = 4.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = CenterVertically
         ) {
             Surface(
                 color = MutedBlue,
@@ -645,7 +643,7 @@ private fun DeckContentPreview() {
         ))
         onDeckMasteryChange(0.65f)
         onDeckCardsToReviewChange(12)
-        toggleEditMode()
+        //toggleEditMode()
     }
 
     CogniLinkTheme {

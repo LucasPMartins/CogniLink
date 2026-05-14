@@ -60,11 +60,11 @@ fun PasswordTextField(modifier: Modifier = Modifier,
                 ),
                 color = DarkGray
             )
-        Surface(modifier = modifier,
-            shape = RoundedCornerShape(24.dp),
-            color = White,
-            border = BorderStroke(1.5.dp,LightGray),
-            shadowElevation = 2.dp
+        Surface(
+            shape = RoundedCornerShape(16.dp),
+            modifier = modifier.fillMaxWidth(),
+            shadowElevation = 2.dp,
+            color = White
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -85,7 +85,8 @@ fun PasswordTextField(modifier: Modifier = Modifier,
                         errorBorderColor = Color.Transparent,
                         focusedContainerColor = Color.Transparent,
                         unfocusedContainerColor = Color.Transparent,
-                        )
+                        ),
+                    maxLines = 1
                 )
                 IconButton(
                     onClick = { isPasswordVisible = !isPasswordVisible },

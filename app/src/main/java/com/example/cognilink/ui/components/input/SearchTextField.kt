@@ -32,11 +32,11 @@ fun SearchTextField(modifier: Modifier = Modifier.fillMaxWidth(),
                     searchValue: String = "",
                     onSearchValueChange: (String) -> Unit = {}) {
 
-    Surface(modifier = modifier,
-        shape = RoundedCornerShape(24.dp),
-        color = White,
-        border = BorderStroke(1.5.dp,LightGray),
+    Surface(
+        shape = RoundedCornerShape(16.dp),
+        modifier = modifier.fillMaxWidth(),
         shadowElevation = 2.dp,
+        color = White
     ){
         Row(modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically) {

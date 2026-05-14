@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.cognilink.R
 import com.example.cognilink.ui.theme.DarkNavyBlue
@@ -23,6 +24,7 @@ import com.example.cognilink.ui.theme.neonGlow
 @Composable
 fun NeonFAB(
     modifier: Modifier = Modifier,
+    size: Dp = 56.dp,
     neonColor: Color = VividCyan,
     backgroundColor: Color = DarkNavyBlue,
     buttonDescription: String = "Adicionar",
@@ -30,12 +32,14 @@ fun NeonFAB(
     icon: Int = R.drawable.ic_add,
     onClick: () -> Unit,
 ) {
+    val iconSize = size / 2
+
     Box(
         modifier = Modifier
             .padding(16.dp)
             .neonGlow(
                 color = neonColor,
-                borderRadius = 28.dp,
+                borderRadius = size / 2,
                 glowRadius = 5.dp
             ),
         contentAlignment = Alignment.Center
@@ -49,14 +53,14 @@ fun NeonFAB(
             modifier = modifier
         ) {
             Box(
-                modifier = Modifier.size(56.dp),
+                modifier = Modifier.size(size),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     painter = painterResource(id = icon),
                     contentDescription = buttonDescription,
                     tint = iconColor,
-                    modifier = Modifier.size(28.dp)
+                    modifier = Modifier.size(iconSize)
                 )
             }
         }

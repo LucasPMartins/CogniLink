@@ -51,10 +51,12 @@ fun CustomTextField(modifier: Modifier = Modifier,
             )
         }
 
-        Surface(modifier = modifier,
+        Surface(
             shape = RoundedCornerShape(16.dp),
-            border = BorderStroke(1.5.dp, LightGray),
-            shadowElevation = 2.dp)
+            modifier = modifier.fillMaxWidth(),
+            shadowElevation = 2.dp,
+            color = White
+        )
         {
             Row(modifier = Modifier.fillMaxWidth(),verticalAlignment = Alignment.CenterVertically)
             {

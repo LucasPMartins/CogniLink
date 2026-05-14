@@ -37,8 +37,10 @@ import com.example.cognilink.ui.theme.DarkGray
 import com.example.cognilink.ui.theme.DarkNavyBlue
 import com.example.cognilink.ui.theme.Gray
 import com.example.cognilink.ui.theme.LavenderBlue
+import com.example.cognilink.ui.theme.MutedBlue
 import com.example.cognilink.ui.theme.OffWhite
 import com.example.cognilink.ui.theme.VividCyan
+import com.example.cognilink.ui.theme.White
 
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier,
@@ -54,10 +56,11 @@ fun HomeScreen(modifier: Modifier = Modifier,
 
     Scaffold(
         floatingActionButton = {
-            NeonFAB(neonColor = VividCyan,
+            NeonFAB(neonColor = White,
+                size = 70.dp,
                 backgroundColor = DarkNavyBlue,
                 buttonDescription = "Criar baralho de flashcards",
-                iconColor = VividCyan,
+                iconColor = White,
                 icon = R.drawable.ic_add,
                 onClick = { /* TODO */ }
             )
@@ -82,7 +85,7 @@ fun HomeScreen(modifier: Modifier = Modifier,
                     Icon(
                         painter = painterResource(id = R.drawable.ic_settings),
                         contentDescription = "Configurações",
-                        tint = Gray
+                        tint = White
                     )
                 }
 
@@ -91,10 +94,10 @@ fun HomeScreen(modifier: Modifier = Modifier,
                 .offset(y = (-35).dp)
                 .size(70.dp)
             ) {
-                NeonFAB(neonColor = LavenderBlue,
-                    backgroundColor = OffWhite,
+                NeonFAB(neonColor = White,
+                    backgroundColor = DarkNavyBlue,
                     buttonDescription = "Abrir perfil de usuário",
-                    iconColor = DarkGray,
+                    iconColor = White,
                     icon = R.drawable.ic_keyboard_arrow_down,
                     onClick = { /* TODO */ },
                 )

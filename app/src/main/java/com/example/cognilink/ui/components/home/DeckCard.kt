@@ -45,9 +45,11 @@ fun DeckCard(
     proficiency: Float = 0.85f
 ) {
 
-    Surface(modifier = Modifier.fillMaxWidth(),
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        color = White
+        color = White,
+        shadowElevation = 2.dp
     ) {
         Column(
             modifier = Modifier.padding(20.dp),

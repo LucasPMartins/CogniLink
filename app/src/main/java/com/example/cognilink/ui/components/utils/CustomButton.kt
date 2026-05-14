@@ -51,6 +51,7 @@ fun CustomButton(modifier: Modifier = Modifier,
             ),
         color = Color.Transparent,
         shape = RoundedCornerShape(26.dp),
+        shadowElevation = 2.dp,
     ) {
         Row(
             modifier = Modifier
