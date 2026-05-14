@@ -24,13 +24,10 @@ import com.example.cognilink.ui.theme.White
 @Composable
 fun ProgressBar(
     modifier: Modifier = Modifier,
-    actual: Float = 12f,
-    total: Float = 50f,
+    progress: Float = 0.50f,
     progressColor: Color = VividCyan,
     backgroundColor: Color = Color.White.copy(alpha = 0.3f)
 ) {
-    val progress = if (total > 0) (actual / total).coerceIn(0f, 1f) else 0f
-
     Row(
         modifier = modifier
             .fillMaxWidth()

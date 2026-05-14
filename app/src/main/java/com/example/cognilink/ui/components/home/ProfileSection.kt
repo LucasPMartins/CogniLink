@@ -68,17 +68,15 @@ fun ProfileSection(
                         color = DarkGray,
                         fontWeight = FontWeight.SemiBold
                     )
-                    val overallPercentage = overallMastery * 100
                     Text(
-                        text = "$overallPercentage%",
+                        text = "${(overallMastery * 100).toInt()}%",
                         color = DarkNavyBlue,
                         fontWeight = FontWeight.SemiBold
                     )
                 }
 
                 ProgressBar(modifier = Modifier.background(OffWhite),
-                    actual = overallMastery,
-                    total = 1f,
+                    progress = overallMastery,
                     progressColor = DarkNavyBlue,
                     backgroundColor = OffWhite
                 )

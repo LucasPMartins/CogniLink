@@ -109,8 +109,7 @@ fun Header(modifier: Modifier = Modifier,
                 )
 
                 ProgressBar(
-                    actual = actualCard.toFloat(),
-                    total = totalCards.toFloat(),
+                    progress = actualCard/totalCards.toFloat(),
                     progressColor = VividCyan,
                     backgroundColor = White
                 )

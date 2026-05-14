@@ -30,6 +30,7 @@ fun CustomTextField(modifier: Modifier = Modifier,
                     inputValue: String,
                     onInputValueChange: (String) -> Unit,
                     label: String = "",
+                    labelColor: Color = DarkGray,
                     placeholder: String,
                     keyboardType: KeyboardType = KeyboardType.Text
 ) {
@@ -46,12 +47,12 @@ fun CustomTextField(modifier: Modifier = Modifier,
                 style = MaterialTheme.typography.titleMedium.copy(
                     fontWeight = FontWeight.Bold
                 ),
-                color = DarkGray
+                color = labelColor
             )
         }
 
         Surface(modifier = modifier,
-            shape = RoundedCornerShape(24.dp),
+            shape = RoundedCornerShape(16.dp),
             border = BorderStroke(1.5.dp, LightGray),
             shadowElevation = 2.dp)
         {

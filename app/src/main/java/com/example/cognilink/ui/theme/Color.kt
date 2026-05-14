@@ -17,6 +17,8 @@ val VividCyan = Color(0xFF22D3EE)
 
 val DarkGray = Color(0xFF454652)
 
+val VeryDarkGray = Color(0xFF1A1C1C)
+
 val Gray = Color(0xFF767683)
 
 val LightGray = Color(0xFFC6C5D4)

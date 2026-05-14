@@ -119,14 +119,14 @@ fun DeckCard(
                         color = DarkGray.copy(alpha = 0.8f),
                         fontWeight = FontWeight.SemiBold
                     )
-                    val proficiencyPercentage = proficiency * 100
-                    Text(text = "$proficiencyPercentage%",
+
+                    Text(text = "${(proficiency * 100).toInt()}%",
                         color = DarkGray.copy(alpha = 0.8f),
                         fontWeight = FontWeight.SemiBold
                     )
                 }
-                ProgressBar(actual = proficiency,
-                    total = 1f,
+                ProgressBar(
+                    progress = proficiency,
                     progressColor = difficulty.secondaryColor,
                     backgroundColor = OffWhite,
                 )

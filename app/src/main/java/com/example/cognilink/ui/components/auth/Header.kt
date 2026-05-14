@@ -23,24 +23,24 @@ import com.example.cognilink.ui.theme.White
 
 @Composable
 fun Header() {
-    Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(
-                brush = Brush.linearGradient(
-                    colors = listOf(
-                        Color(0xFF000666), // Cor inicial
-                        Color(0xFF1A237E)  // Cor final
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        brush = Brush.linearGradient(
+                            colors = listOf(
+                                Color(0xFF000666), // Cor inicial
+                                Color(0xFF1222B0)  // Cor final
+                            ),
+                            // Opcional: define a direção (padrão é da esquerda-topo para direita-baixo)
+                            start = Offset(0f, 0f),
+                            end = Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
+                        ),
+                        shape = RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
                     ),
-                    // Opcional: define a direção (padrão é da esquerda-topo para direita-baixo)
-                    start = Offset(0f, 0f),
-                    end = Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
-                ),
-                shape = RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
-            ),
-        color = Color.Transparent,
-        shape = RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp),
-    )
+                color = Color.Transparent,
+                shape = RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp),
+            )
     {
         Column(
             modifier = Modifier
