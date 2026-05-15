@@ -46,16 +46,19 @@ fun HintEditor(
             HintItem(
                 label = label,
                 hint = hint,
-                onHintChange = {
-                    newValue ->
-                    val newList = hints.toMutableList()
-                    newList[index - 1] = newValue
-                    onHintsUpdate(newList)
-                               },
+                onHintChange = { newValue ->
+                    if (index >= 0 && index < hints.size) {
+                        val newList = hints.toMutableList()
+                        newList[index] = newValue
+                        onHintsUpdate(newList)
+                    }
+                },
                 onClickToRemove = {
-                    val newList = hints.toMutableList()
-                    newList.removeAt(index - 1)
-                    onHintsUpdate(newList)
+                    if (index >= 0 && index < hints.size) {
+                        val newList = hints.toMutableList()
+                        newList.removeAt(index)
+                        onHintsUpdate(newList)
+                    }
                 }
             )
         }

@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cognilink.R
 import com.example.cognilink.data.DifficultyLevel
+import com.example.cognilink.data.FlashCard
 import com.example.cognilink.data.FlashcardType
 import com.example.cognilink.ui.components.input.CustomTextField
 import com.example.cognilink.ui.components.utils.CustomButton
@@ -273,7 +274,8 @@ private fun EditDeckContent(
                     }
                 }
 
-                IconButton(
+                if (categories.size < 3){
+                    IconButton(
                     onClick = { onCategoryClickAdd("Nova") },
                     modifier = Modifier.size(32.dp)
                 ) {
@@ -282,7 +284,8 @@ private fun EditDeckContent(
                         contentDescription = "Adicionar Categoria",
                         tint = DarkNavyBlue
                     )
-                }
+                }}
+
             }
         }
     }
@@ -503,13 +506,6 @@ private fun DeckCardContent(
     }
 }
 
-data class FlashCard(
-    val statement: String = "Questão exemplo",
-    val cardType: FlashcardType = FlashcardType.BASIC,
-    val difficulty: DifficultyLevel = DifficultyLevel.MEDIUM,
-    val nextReview: Int = 2
-)
-
 @Composable
 private fun DeckCardItem(
     modifier: Modifier = Modifier,
@@ -544,7 +540,7 @@ private fun DeckCardItem(
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = flashCard.statement,
+                    text = flashCard.question,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 16.sp,
                     color = VeryDarkGray,

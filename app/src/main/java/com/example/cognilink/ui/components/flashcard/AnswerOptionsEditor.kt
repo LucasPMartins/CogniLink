@@ -23,6 +23,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cognilink.R
+import com.example.cognilink.data.Answer
 import com.example.cognilink.data.FlashcardType
 import com.example.cognilink.ui.theme.CogniLinkTheme
 import com.example.cognilink.ui.theme.DarkNavyBlue
@@ -43,8 +44,8 @@ fun setLabel(flashcardType: FlashcardType, index: Int): String {
 @Composable
 fun AnswerOptionsEditor(
     modifier: Modifier = Modifier,
-    responses: List<String>,
-    onResponsesUpdate: (List<String>) -> Unit, // Callback para atualizar a lista toda
+    responses: List<Answer>,
+    onResponsesUpdate: (List<Answer>) -> Unit, // Callback para atualizar a lista toda
     flashcardType: FlashcardType,
     onSelectedAnswer: (Int) -> Unit, // Passa o index da selecionada
     limit: Int = 5
@@ -55,17 +56,17 @@ fun AnswerOptionsEditor(
         verticalArrangement = Arrangement.spacedBy(10.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        responses.forEachIndexed { index, responseText ->
+        responses.forEachIndexed { index, answer ->
             AnswerItem(
                 flashcardType = flashcardType,
                 label = setLabel(flashcardType, index),
-                responseText = responseText,
+                responseText = answer.answer,
                 onResponseChange = { newValue ->
                     val newList = responses.toMutableList()
-                    newList[index] = newValue
+                    newList[index] = answer.copy(answer = newValue)
                     onResponsesUpdate(newList)
                 },
-                selected = false,
+                selected = answer.isCorrect,
                 onSelect = { onSelectedAnswer(index) },
                 onClickToRemove = {
                     val newList = responses.toMutableList()
@@ -79,7 +80,7 @@ fun AnswerOptionsEditor(
             OutlinedButton(
                 onClick = {
                     val newList = responses.toMutableList()
-                    newList.add("")
+                    newList.add(Answer("", false))
                     onResponsesUpdate(newList)
                 },
                 modifier = Modifier.padding(top = 8.dp),
@@ -105,7 +106,7 @@ fun AnswerOptionsEditor(
 @Composable
 private fun AnswerOptionsEditorPreview() {
     //var listaTeste by remember { mutableStateOf(emptyList<String>()) }
-    var listaTeste by remember { mutableStateOf(listOf("Resposta 1", "Resposta 2", "Resposta 3")) }
+    var listaTeste by remember { mutableStateOf(listOf(Answer("Resposta 1", true), Answer("Resposta 2", true), Answer("Resposta 3", true))) }
     CogniLinkTheme {
         AnswerOptionsEditor(
             flashcardType = FlashcardType.OMISSION,

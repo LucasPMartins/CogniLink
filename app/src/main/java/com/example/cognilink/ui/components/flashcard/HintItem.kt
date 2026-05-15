@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -29,6 +30,7 @@ import com.example.cognilink.R
 import com.example.cognilink.ui.theme.DarkGray
 import com.example.cognilink.ui.theme.DarkNavyBlue
 import com.example.cognilink.ui.theme.LightGray
+import com.example.cognilink.ui.theme.Red
 import com.example.cognilink.ui.theme.White
 
 @Composable
@@ -85,11 +87,13 @@ fun HintItem(
             }
             if (onHintChange != null) {
                 IconButton(onClick = onClickToRemove) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_remove), // Use ícones padrão do Material se possível
-                        contentDescription = "Remover",
-                        tint = Color.Red
-                    )
+                    Surface(color = Color.Transparent, border = BorderStroke(2.dp, Red), shape = CircleShape) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_remove), // Use ícones padrão do Material se possível
+                            contentDescription = "Remover",
+                            tint = Color.Red
+                        )
+                    }
                 }
             }
         }

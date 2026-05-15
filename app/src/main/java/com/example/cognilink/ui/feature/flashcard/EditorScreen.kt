@@ -1,34 +1,25 @@
 package com.example.cognilink.ui.feature.flashcard
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cognilink.R
+import com.example.cognilink.data.Answer
 import com.example.cognilink.data.DifficultyLevel
 import com.example.cognilink.data.FlashcardType
 import com.example.cognilink.ui.components.flashcard.AnswerOptionsEditor
@@ -36,25 +27,26 @@ import com.example.cognilink.ui.components.flashcard.DifficultySelector
 import com.example.cognilink.ui.components.flashcard.HintEditor
 import com.example.cognilink.ui.components.flashcard.TypeSelector
 import com.example.cognilink.ui.components.input.CustomTextField
+import com.example.cognilink.ui.components.utils.CustomButton
 import com.example.cognilink.ui.components.utils.NavigationHeader
 import com.example.cognilink.ui.components.utils.SectionLabel
 import com.example.cognilink.ui.theme.CogniLinkTheme
 import com.example.cognilink.ui.theme.OffWhite
-import com.example.cognilink.ui.theme.VividCyan
-import com.example.cognilink.ui.theme.White
-import kotlin.collections.emptyList
 
 @Composable
-fun EditorContent(modifier: Modifier = Modifier,
-                  title: String = "CRIAR NOVO FLASHCARD",
-                  flashcardQuestion : String = "",
-                  onFlashcardQuestionChange : (String) -> Unit = {},
-                  selectedOption : FlashcardType = FlashcardType.BASIC,
-                  onOptionSelected : (FlashcardType) -> Unit = {},
-                  selectedDifficulty : DifficultyLevel = DifficultyLevel.EAZY,
-                  onDifficultySelected : (DifficultyLevel) -> Unit = {},
-                  flashcardAnswer : String = "",
-                  onFlashcardAnswerChange : (String) -> Unit = {},
+fun EditorScreen(
+    viewModel: FlashcardViewModel = viewModel()
+) {
+    EditorContent(
+        flashcardViewModel = viewModel,
+    )
+}
+
+@Composable
+fun EditorContent(
+    flashcardViewModel: FlashcardViewModel,
+    isEditMode: Boolean = false,
+    modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
 
@@ -63,31 +55,21 @@ fun EditorContent(modifier: Modifier = Modifier,
             .fillMaxSize()
             .imePadding()
             .statusBarsPadding(),
-        topBar = { NavigationHeader(title = title) },
+        topBar = {
+            NavigationHeader(
+                title = if (isEditMode) "EDITAR FLASHCARD"
+                else "CRIAR FLASHCARD"
+            )
+                 },
         containerColor = OffWhite,
         bottomBar = {
             Column(modifier = Modifier.padding(24.dp)) {
-                Button(
-                    onClick = { /* TODO */ },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp),
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(vertical = 12.dp)) {
-                        Icon(painter = painterResource(id = R.drawable.ic_check_circle),
-                            contentDescription = null,
-                            tint = VividCyan,
-                            modifier = Modifier.padding(end = 12.dp)
-                        )
-                        Text("SALVAR FLASHCARD",
-                            fontWeight = FontWeight.Bold,
-                            color = White
-                        )
-                    }
-                }
+                CustomButton(
+                    text = if (isEditMode) "SALVAR FLASHCARD" else "CRIAR FLASHCARD",
+                    icon = if (isEditMode) R.drawable.ic_check_circle else R.drawable.ic_add,
+                    onClickButton = flashcardViewModel::saveFlashcard
+                )
             }
-
-
         }
     ) { innerPadding ->
 
@@ -99,8 +81,8 @@ fun EditorContent(modifier: Modifier = Modifier,
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             CustomTextField(
-                inputValue = flashcardQuestion,
-                onInputValueChange = onFlashcardQuestionChange,
+                inputValue = flashcardViewModel.question,
+                onInputValueChange = flashcardViewModel::onQuestionChange,
                 label = "Enunciado do Flashcard",
                 placeholder = "Ex: Calcule o valor de x na equação: 2x + 5 = 15",
                 keyboardType = KeyboardType.Text
@@ -109,9 +91,9 @@ fun EditorContent(modifier: Modifier = Modifier,
             Column {
                 SectionLabel("Dificuldade")
                 DifficultySelector(
-                    difficultyLevels = listOf(DifficultyLevel.EAZY, DifficultyLevel.MEDIUM, DifficultyLevel.HARD),
-                    selectedDifficulty = selectedDifficulty,
-                    onDifficultySelected = onDifficultySelected,
+                    difficultyLevels = DifficultyLevel.entries,
+                    selectedDifficulty = flashcardViewModel.difficulty,
+                    onDifficultySelected = flashcardViewModel::onDifficultyChange,
                     modifier = Modifier.width(150.dp)
                 )
             }
@@ -119,87 +101,94 @@ fun EditorContent(modifier: Modifier = Modifier,
             Column {
                 SectionLabel("Tipo de Flashcard")
                 TypeSelector(
-                    options = listOf(FlashcardType.BASIC, FlashcardType.MULTIPLE_CHOICE, FlashcardType.OMISSION, FlashcardType.TRUE_OR_FALSE, FlashcardType.CHAT_FEYNMAN),
-                    selectedOption = selectedOption,
-                    onOptionSelected = {}
+                    options = FlashcardType.entries,
+                    selectedOption = flashcardViewModel.cardType,
+                    onOptionSelected = flashcardViewModel::onTypeChange
                 )
             }
 
-            var listaTeste by remember { mutableStateOf(listOf("Resposta 1")) }
-
             Column {
-                when (selectedOption) {
+                when (flashcardViewModel.cardType) {
                     FlashcardType.BASIC -> {
-                        SectionLabel("Resposta")
-                        AnswerOptionsEditor(
-                            flashcardType = selectedOption,
-                            responses = listaTeste,
-                            onResponsesUpdate = { listaTeste = it },
-                            onSelectedAnswer = {},
-                            limit = 1
+                        CustomTextField(
+                            inputValue = flashcardViewModel.answers.firstOrNull()?.answer ?: "",
+                            onInputValueChange = flashcardViewModel::onBasicAnswerChange,
+                            label = "Resposta",
+                            placeholder = "Digite a resposta correta"
                         )
                     }
                     FlashcardType.CHAT_FEYNMAN -> {
                         SectionLabel("Resposta")
                         AnswerOptionsEditor(
-                            flashcardType = selectedOption,
-                            responses = listaTeste,
-                            onResponsesUpdate = { listaTeste = it },
-                            onSelectedAnswer = {},
+                            flashcardType = flashcardViewModel.cardType,
+                            responses = flashcardViewModel.answers,
+                            onResponsesUpdate = flashcardViewModel::updateAnswers,
+                            onSelectedAnswer = flashcardViewModel::onSelectedAnswer,
                             limit = 1
                         )
                     }
-                    FlashcardType.TRUE_OR_FALSE ->{
-                        SectionLabel("Resposta")
+                    FlashcardType.TRUE_OR_FALSE -> {
+                        SectionLabel("Respostas")
                         AnswerOptionsEditor(
-                            flashcardType = selectedOption,
-                            responses = listaTeste,
-                            onResponsesUpdate = { listaTeste = it },
-                            onSelectedAnswer = {},
+                            flashcardType = flashcardViewModel.cardType,
+                            responses = flashcardViewModel.answers,
+                            onResponsesUpdate = flashcardViewModel::updateAnswers,
+                            onSelectedAnswer = flashcardViewModel::onSelectedAnswer,
                             limit = 10
                         )
                     }
                     FlashcardType.MULTIPLE_CHOICE -> {
                         SectionLabel("Respostas")
                         AnswerOptionsEditor(
-                            flashcardType = selectedOption,
-                            responses = listaTeste,
-                            onResponsesUpdate = { listaTeste = it },
-                            onSelectedAnswer = {},
+                            flashcardType = flashcardViewModel.cardType,
+                            responses = flashcardViewModel.answers,
+                            onResponsesUpdate = flashcardViewModel::updateAnswers,
+                            onSelectedAnswer = flashcardViewModel::onSelectedAnswer,
                             limit = 5
                         )
                     }
                     FlashcardType.OMISSION -> {
                         SectionLabel("Resposta")
                         AnswerOptionsEditor(
-                            flashcardType = selectedOption,
-                            responses = listaTeste,
-                            onResponsesUpdate = { listaTeste = it },
-                            onSelectedAnswer = {},
-                            limit = 1 // TODO: obter quantos serão necessários pelo enunciado
+                            flashcardType = flashcardViewModel.cardType,
+                            responses = flashcardViewModel.answers,
+                            onResponsesUpdate = flashcardViewModel::updateAnswers,
+                            onSelectedAnswer = flashcardViewModel::onSelectedAnswer,
+                            limit = 1
                         )
                     }
                 }
             }
 
-            var listaDicas by remember { mutableStateOf(emptyList<String>()) }
-
             Column {
                 SectionLabel("DICAS")
-//                HintEditor(
-//                    hints = listaDicas,
-//                    onHintsUpdate = { listaDicas = it }
-//                )
+                HintEditor(
+                    hints = flashcardViewModel.hints,
+                    onHintsUpdate = flashcardViewModel::updateHints
+                )
             }
-
         }
     }
 }
 
-@Preview
+@SuppressLint("ViewModelConstructorInComposable")
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun EditorContentPreview() {
     CogniLinkTheme {
-        EditorContent(selectedOption = FlashcardType.CHAT_FEYNMAN)
+        val previewViewModel = remember {
+            FlashcardViewModel()
+                .apply {
+                onQuestionChange("Qual é a capital da França?")
+                onDifficultyChange(DifficultyLevel.MEDIUM)
+                onTypeChange(FlashcardType.BASIC)
+                updateAnswers(listOf(Answer("Paris", true)))
+                updateHints(listOf("Dica 1", "Dica 2"))
+            }
+        }
+        EditorContent(
+            flashcardViewModel = previewViewModel,
+            isEditMode = true
+        )
     }
 }

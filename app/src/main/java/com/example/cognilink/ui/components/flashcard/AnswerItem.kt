@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
@@ -31,6 +32,7 @@ import com.example.cognilink.R
 import com.example.cognilink.data.FlashcardType
 import com.example.cognilink.ui.theme.CogniLinkTheme
 import com.example.cognilink.ui.theme.DarkNavyBlue
+import com.example.cognilink.ui.theme.Red
 
 @Composable
 fun AnswerItem(
@@ -116,11 +118,13 @@ fun AnswerItem(
 
             if (onResponseChange != null) {
                 IconButton(onClick = onClickToRemove) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_remove),
-                        contentDescription = "Remover",
-                        tint = Color.Red
-                    )
+                    Surface(color = Color.Transparent, border = BorderStroke(2.dp, Red), shape = CircleShape) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_remove), // Use ícones padrão do Material se possível
+                            contentDescription = "Remover",
+                            tint = Color.Red
+                        )
+                    }
                 }
             }
         }

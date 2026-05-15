@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.cognilink.data.DifficultyLevel
+import com.example.cognilink.data.FlashCard
 
 class DeckViewModel : ViewModel() {
     var isEditMode by mutableStateOf(false)
