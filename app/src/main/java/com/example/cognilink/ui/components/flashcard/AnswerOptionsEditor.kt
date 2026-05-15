@@ -73,6 +73,7 @@ fun AnswerOptionsEditor(
                     newList.removeAt(index)
                     onResponsesUpdate(newList)
                 },
+                enabled = true,
             )
         }
 

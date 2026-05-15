@@ -79,8 +79,6 @@ fun FlashcardStudyContent(
     onToggleAnswer: (Answer) -> Unit = {},
     flashcardHints: List<String> = listOf(),
     flashcardType: FlashcardType,
-    isQuestionVerified: Boolean = false,
-    isQuestionAnswered: Boolean = false,
     onClickToVerifyQuestion: () -> Unit = {},
     onClickToNextFlashcard: () -> Unit = {}
     ) {
@@ -89,6 +87,10 @@ fun FlashcardStudyContent(
 
     var sequenceHits by remember { mutableIntStateOf(0) }
 
+    var isQuestionVerified by remember { mutableStateOf(false) }
+
+    var isQuestionAnswered by remember { mutableStateOf(false) }
+
     // LaunchedEffect inicia quando o componente entra na tela
     // O 'Unit' garante que ele rode apenas uma vez e não reinicie sozinho
     LaunchedEffect(Unit) {
@@ -96,6 +98,15 @@ fun FlashcardStudyContent(
             delay(1000L) // Espera 1 segundo
             secondsElapsed++
         }
+    }
+
+    // Update isQuestionAnswered based on the current input/selection
+    isQuestionAnswered = when (flashcardType) {
+        FlashcardType.BASIC -> inputTextAnswer.isNotBlank()
+        FlashcardType.MULTIPLE_CHOICE -> selectedAnswer != null
+        FlashcardType.TRUE_OR_FALSE -> selectedAnswers.isNotEmpty()
+        FlashcardType.OMISSION -> false // To be implemented
+        FlashcardType.CHAT_FEYNMAN -> false // To be implemented
     }
 
     val formattedTime = formatSeconds(secondsElapsed)
@@ -112,12 +123,18 @@ fun FlashcardStudyContent(
         bottomBar = {
             Column(modifier = Modifier.padding(24.dp)) {
                 SimpleGradientButton(
-                    text = if (isQuestionVerified) "PROXÍMO FlASHCARD" else "VERIFICAR RESPOSTA",
+                    text = if (isQuestionVerified) "PROXÍMO FLASHCARD" else "VERIFICAR RESPOSTA",
                     icon = if (isQuestionVerified) R.drawable.ic_arrow_forward else R.drawable.ic_check,
                     iconRightSide = true,
                     isEnabled = isQuestionAnswered,
                     onClickButton = {
-                        if (isQuestionVerified) onClickToNextFlashcard() else onClickToVerifyQuestion()
+                        if (isQuestionVerified) {
+                            isQuestionVerified = false
+                            onClickToNextFlashcard()
+                        } else {
+                            isQuestionVerified = true
+                            onClickToVerifyQuestion()
+                        }
                     }
                 )
             }
@@ -203,7 +220,8 @@ fun FlashcardStudyContent(
                         inputValue = inputTextAnswer,
                         onInputValueChange = onInputTextAnswerChange,
                         placeholder = "Sua resposta",
-                        minLines = 3
+                        minLines = 3,
+                        enabled = !isQuestionVerified
                     )
                 }
                 FlashcardType.MULTIPLE_CHOICE -> {
@@ -211,7 +229,8 @@ fun FlashcardStudyContent(
                         flashcardType = flashcardType,
                         answerOptions = flashcardAnswersOptions,
                         selectedAnswer = selectedAnswer,
-                        onSelectedAnswer = onSelectAnswer
+                        onSelectedAnswer = onSelectAnswer,
+                        enabled = !isQuestionVerified
                     )
                 }
                 FlashcardType.TRUE_OR_FALSE -> {
@@ -219,7 +238,8 @@ fun FlashcardStudyContent(
                         flashcardType = flashcardType,
                         answerOptions = flashcardAnswersOptions,
                         selectedAnswers = selectedAnswers,
-                        onToggleAnswer = onToggleAnswer
+                        onToggleAnswer = onToggleAnswer,
+                        enabled = !isQuestionVerified
                     )
                 }
                     FlashcardType.OMISSION -> {
@@ -257,7 +277,7 @@ private fun FlashcardStudyContentPreview() {
             onSelectAnswer = { selectedAnswer = it },
             flashcardHints = listOf("Dica 1", "Dica 2", "Dica 3"),
             selectedAnswers = selectedAnswers,
-            flashcardType = FlashcardType.BASIC,
+            flashcardType = FlashcardType.MULTIPLE_CHOICE,
             onToggleAnswer = { answer ->
                 selectedAnswers = if (selectedAnswers.contains(answer)) {
                     selectedAnswers - answer

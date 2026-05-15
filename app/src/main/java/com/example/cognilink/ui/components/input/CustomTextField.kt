@@ -32,6 +32,7 @@ fun CustomTextField(modifier: Modifier = Modifier,
                     labelColor: Color = DarkGray,
                     placeholder: String,
                     minLines: Int = 1,
+                    enabled: Boolean = true,
                     keyboardType: KeyboardType = KeyboardType.Text
 ) {
 
@@ -62,6 +63,7 @@ fun CustomTextField(modifier: Modifier = Modifier,
                 OutlinedTextField(
                     value = inputValue,
                     onValueChange = onInputValueChange,
+                    enabled = enabled,
                     modifier = modifier
                         .weight(1f),
                     textStyle = MaterialTheme.typography.titleMedium,

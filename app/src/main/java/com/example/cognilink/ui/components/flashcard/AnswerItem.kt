@@ -43,11 +43,14 @@ fun AnswerItem(
     onAnswerTextChange: ((String) -> Unit)? = null, // Se for null, é modo leitura (Estudo)
     selected: Boolean,
     onSelect: () -> Unit,
-    onClickToRemove: () -> Unit = {}
+    onClickToRemove: () -> Unit = {},
+    enabled: Boolean = true
 ) {
+
     Surface(
         shape = RoundedCornerShape(16.dp),
         onClick = onSelect,
+        enabled = enabled,
         modifier = modifier.fillMaxWidth(),
         shadowElevation = 2.dp,
         color = Color.White,
@@ -63,6 +66,7 @@ fun AnswerItem(
                     RadioButton(
                         selected = selected,
                         onClick = onSelect,
+                        enabled = enabled,
                         colors = RadioButtonDefaults.colors(selectedColor = DarkNavyBlue),
                         modifier = Modifier.padding(end = 12.dp)
                     )
@@ -71,6 +75,7 @@ fun AnswerItem(
                     Checkbox(
                         checked = selected,
                         onCheckedChange = { onSelect() },
+                        enabled = enabled,
                         colors = CheckboxDefaults.colors(checkedColor = DarkNavyBlue),
                         modifier = Modifier.padding(end = 12.dp)
                     )
@@ -96,6 +101,7 @@ fun AnswerItem(
                     OutlinedTextField(
                         value = answerText,
                         onValueChange = onAnswerTextChange,
+                        enabled = enabled,
                         textStyle = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
@@ -117,7 +123,10 @@ fun AnswerItem(
             }
 
             if (onAnswerTextChange != null) {
-                IconButton(onClick = onClickToRemove) {
+                IconButton(
+                    onClick = onClickToRemove,
+                    enabled = enabled
+                ) {
                     Surface(color = Color.Transparent, border = BorderStroke(2.dp, Red), shape = CircleShape) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_remove), // Use ícones padrão do Material se possível
@@ -142,7 +151,7 @@ private fun AnswerItemPreview() {
             onAnswerTextChange = { },
             selected = false,
             onSelect = {},
-            onClickToRemove = {},
+            enabled = true,
         )
 //        AnswerItem(answerType = "Verdadeiro ou Falso",
 //            answer = "A. Verdadeiro",

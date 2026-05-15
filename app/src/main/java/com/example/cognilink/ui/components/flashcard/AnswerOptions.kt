@@ -25,6 +25,7 @@ fun AnswerOptions(
     onSelectedAnswer: (Answer?) -> Unit = {},
     selectedAnswers: List<Answer> = emptyList(), // Para seleção múltipla (TRUE_OR_FALSE)
     onToggleAnswer: (Answer) -> Unit = {},
+    enabled: Boolean = true
 ) {
 
     Column(
@@ -43,7 +44,6 @@ fun AnswerOptions(
                 flashcardType = flashcardType,
                 label = setLabel(flashcardType, index),
                 answerText = response.answer,
-                onAnswerTextChange = null,
                 selected = isSelected,
                 onSelect = {
                     if (flashcardType == FlashcardType.TRUE_OR_FALSE) {
@@ -54,6 +54,7 @@ fun AnswerOptions(
                     }
                 },
                 onClickToRemove = { },
+                enabled = enabled,
             )
         }
     }
