@@ -45,7 +45,7 @@ fun Header() {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 20.dp, bottom = 50.dp),
+                .padding(top = 40.dp, bottom = 50.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {

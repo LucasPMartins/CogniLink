@@ -37,9 +37,10 @@ import com.example.cognilink.ui.theme.White
 @Composable
 fun DifficultySelector(
     difficultyLevels: List<DifficultyLevel>,
-    selectedDifficulty: DifficultyLevel,
-    onDifficultySelected: (DifficultyLevel) -> Unit,
-    modifier: Modifier = Modifier
+    selectedDifficulty: DifficultyLevel?,
+    onDifficultySelected: (DifficultyLevel?) -> Unit,
+    modifier: Modifier = Modifier,
+    includeAllOption: Boolean = false
 ) {
 
     var expanded by remember { mutableStateOf(false) }
@@ -54,7 +55,7 @@ fun DifficultySelector(
             }
                 .padding(16.dp)
         ) {
-            Text(text = selectedDifficulty.toDisplayName(),
+            Text(text = selectedDifficulty?.toDisplayName() ?: "TODOS",
                 fontWeight = FontWeight.Medium,
                 fontSize = 14.sp,
                 modifier = Modifier.weight(1f)
@@ -74,6 +75,23 @@ fun DifficultySelector(
                 containerColor = White,
                 shape = RoundedCornerShape(12.dp)
             ) {
+                if (includeAllOption) {
+                    DropdownMenuItem(
+                        text = {
+                            Text("TODOS")
+                        },
+                        onClick = {
+                            onDifficultySelected(null)
+                            expanded = false
+                        },
+                        leadingIcon = {
+                            val icon = if (selectedDifficulty == null) R.drawable.ic_check_circle else R.drawable.ic_circle
+                            Icon(painter = painterResource(id = icon), contentDescription = null, tint = DarkNavyBlue)
+                        }
+                    )
+                    HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp, color = LightGray)
+                }
+
                 difficultyLevels.forEachIndexed { index, difficulty ->
                     DropdownMenuItem(
                         text = {
@@ -104,12 +122,13 @@ fun DifficultySelector(
 @Composable
 private fun DifficultySelectorPreview() {
     CogniLinkTheme {
-        var selectedDifficulty by remember { mutableStateOf(DifficultyLevel.EAZY) }
+        var selectedDifficulty by remember { mutableStateOf<DifficultyLevel?>(DifficultyLevel.EAZY) }
 
         DifficultySelector(
             difficultyLevels = listOf(DifficultyLevel.EAZY, DifficultyLevel.MEDIUM,DifficultyLevel.HARD),
             selectedDifficulty = selectedDifficulty,
-            onDifficultySelected = { selectedDifficulty = it}
+            onDifficultySelected = { selectedDifficulty = it},
+            includeAllOption = true
         )
     }
 }

@@ -1,6 +1,5 @@
 package com.example.cognilink.ui.components.input
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,11 +31,11 @@ fun CustomTextField(modifier: Modifier = Modifier,
                     label: String = "",
                     labelColor: Color = DarkGray,
                     placeholder: String,
+                    minLines: Int = 1,
                     keyboardType: KeyboardType = KeyboardType.Text
 ) {
 
     Column(
-        modifier = modifier,
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     )
@@ -63,7 +62,7 @@ fun CustomTextField(modifier: Modifier = Modifier,
                 OutlinedTextField(
                     value = inputValue,
                     onValueChange = onInputValueChange,
-                    modifier = Modifier
+                    modifier = modifier
                         .weight(1f),
                     textStyle = MaterialTheme.typography.titleMedium,
                     keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
@@ -74,6 +73,7 @@ fun CustomTextField(modifier: Modifier = Modifier,
                         focusedContainerColor = White,
                         unfocusedContainerColor = White,
                     ),
+                    minLines = minLines,
                     placeholder = {
                         Text(
                             text = placeholder,

@@ -42,11 +42,10 @@ fun HintItem(
     onClickToRemove: () -> Unit = {}
 ) {
     Surface(
+        shape = RoundedCornerShape(16.dp),
         modifier = Modifier.fillMaxWidth(),
-        color = White,
-        shape = RoundedCornerShape(8.dp),
-        border = BorderStroke(1.dp, LightGray),
-        shadowElevation = 2.dp
+        shadowElevation = 2.dp,
+        color = White
     ) {
         Row(
             modifier = modifier,

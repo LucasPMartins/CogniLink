@@ -57,7 +57,6 @@ fun HintReveal(
         if (hintsVisibleCount < hints.size) {
             OutlinedButton(
                 onClick = { hintsVisibleCount++ },
-                modifier = Modifier.padding(top = 8.dp),
                 border = BorderStroke(1.dp, LightGray),
                 shape = RoundedCornerShape(50),
                 colors = ButtonDefaults.outlinedButtonColors(contentColor = White, containerColor = DarkNavyBlue)

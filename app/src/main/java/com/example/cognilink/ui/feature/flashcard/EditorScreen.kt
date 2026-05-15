@@ -27,7 +27,7 @@ import com.example.cognilink.ui.components.flashcard.DifficultySelector
 import com.example.cognilink.ui.components.flashcard.HintEditor
 import com.example.cognilink.ui.components.flashcard.TypeSelector
 import com.example.cognilink.ui.components.input.CustomTextField
-import com.example.cognilink.ui.components.utils.CustomButton
+import com.example.cognilink.ui.components.utils.NeonActionButton
 import com.example.cognilink.ui.components.utils.NavigationHeader
 import com.example.cognilink.ui.components.utils.SectionLabel
 import com.example.cognilink.ui.theme.CogniLinkTheme
@@ -64,7 +64,7 @@ fun EditorContent(
         containerColor = OffWhite,
         bottomBar = {
             Column(modifier = Modifier.padding(24.dp)) {
-                CustomButton(
+                NeonActionButton(
                     text = if (isEditMode) "SALVAR FLASHCARD" else "CRIAR FLASHCARD",
                     icon = if (isEditMode) R.drawable.ic_check_circle else R.drawable.ic_add,
                     onClickButton = flashcardViewModel::saveFlashcard
@@ -93,7 +93,7 @@ fun EditorContent(
                 DifficultySelector(
                     difficultyLevels = DifficultyLevel.entries,
                     selectedDifficulty = flashcardViewModel.difficulty,
-                    onDifficultySelected = flashcardViewModel::onDifficultyChange,
+                    onDifficultySelected = { it?.let { flashcardViewModel.onDifficultyChange(it) } },
                     modifier = Modifier.width(150.dp)
                 )
             }

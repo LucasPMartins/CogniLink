@@ -39,8 +39,8 @@ fun AnswerItem(
     modifier: Modifier = Modifier,
     flashcardType: FlashcardType,
     label: String, // Ex: "A", "B", "C"
-    responseText: String,
-    onResponseChange: ((String) -> Unit)? = null, // Se for null, é modo leitura (Estudo)
+    answerText: String,
+    onAnswerTextChange: ((String) -> Unit)? = null, // Se for null, é modo leitura (Estudo)
     selected: Boolean,
     onSelect: () -> Unit,
     onClickToRemove: () -> Unit = {}
@@ -91,11 +91,11 @@ fun AnswerItem(
 
             // Área de Texto: Decide se é editável ou apenas leitura
             Box(modifier = Modifier.weight(1f)) {
-                if (onResponseChange != null) {
+                if (onAnswerTextChange != null) {
                     // MODO EDITOR
                     OutlinedTextField(
-                        value = responseText,
-                        onValueChange = onResponseChange,
+                        value = answerText,
+                        onValueChange = onAnswerTextChange,
                         textStyle = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
@@ -109,14 +109,14 @@ fun AnswerItem(
                 } else {
                     // MODO ESTUDO
                     Text(
-                        text = responseText,
+                        text = answerText,
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier.padding(vertical = 16.dp)
                     )
                 }
             }
 
-            if (onResponseChange != null) {
+            if (onAnswerTextChange != null) {
                 IconButton(onClick = onClickToRemove) {
                     Surface(color = Color.Transparent, border = BorderStroke(2.dp, Red), shape = CircleShape) {
                         Icon(
@@ -138,8 +138,8 @@ private fun AnswerItemPreview() {
         AnswerItem(
             flashcardType = FlashcardType.MULTIPLE_CHOICE,
             label = "A.",
-            responseText = "Resposta",
-            onResponseChange = { },
+            answerText = "Resposta",
+            onAnswerTextChange = { },
             selected = false,
             onSelect = {},
             onClickToRemove = {},

@@ -60,8 +60,8 @@ fun AnswerOptionsEditor(
             AnswerItem(
                 flashcardType = flashcardType,
                 label = setLabel(flashcardType, index),
-                responseText = answer.answer,
-                onResponseChange = { newValue ->
+                answerText = answer.answer,
+                onAnswerTextChange = { newValue ->
                     val newList = responses.toMutableList()
                     newList[index] = answer.copy(answer = newValue)
                     onResponsesUpdate(newList)

@@ -46,7 +46,7 @@ fun Header(modifier: Modifier = Modifier,
                 brush = Brush.linearGradient(
                     colors = listOf(
                         Color(0xFF000666), // Cor inicial
-                        Color(0xFF1A237E)  // Cor final
+                        Color(0xFF1222B0)  // Cor final
                     ),
                     // Opcional: define a direção (padrão é da esquerda-topo para direita-baixo)
                     start = Offset(0f, 0f),

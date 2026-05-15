@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import com.example.cognilink.R
 import com.example.cognilink.ui.components.input.PasswordTextField
 import com.example.cognilink.ui.components.input.CustomTextField
+import com.example.cognilink.ui.components.utils.SimpleGradientButton
 import com.example.cognilink.ui.theme.CogniLinkTheme
 import com.example.cognilink.ui.theme.DarkGray
 import com.example.cognilink.ui.theme.DarkNavyBlue
@@ -87,29 +88,13 @@ fun SignInContent(
             PasswordTextField(password = password, onPasswordChange = onPasswordChange)
         }
 
-        Button(
-            onClick = onSignInClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 20.dp),
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "ENTRAR",
-                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                    modifier = Modifier.padding(end = 10.dp)
-                )
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_arrow_forward),
-                    contentDescription = "Entrar",
-                    tint = MaterialTheme.colorScheme.onPrimary,
-                )
-            }
-        }
+        SimpleGradientButton(
+            text = "ENTRAR",
+            height = 40.dp,
+            icon = R.drawable.ic_arrow_forward,
+            iconRightSide = true,
+            onClickButton = onSignInClick
+        )
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -145,7 +130,8 @@ fun SignInContent(
                 onClick = {/*TODO*/},
                 shape = RoundedCornerShape(24.dp),
                 modifier = Modifier.weight(1f).height(50.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = White)
+                colors = ButtonDefaults.buttonColors(containerColor = White),
+                elevation = ButtonDefaults.buttonElevation()
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_google),

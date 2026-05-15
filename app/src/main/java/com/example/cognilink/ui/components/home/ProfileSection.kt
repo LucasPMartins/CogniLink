@@ -133,19 +133,19 @@ fun ProfileSection(
                             )
                             Text(
                                 text = "SEQUÊNCIA DE $dayStreak DIAS", 
-                                color = Color(0xFFF57C00), // Laranja Premium para Sequência
+                                color = DarkNavyBlue,
                                 fontWeight = FontWeight.ExtraBold, 
                                 fontSize = 18.sp
                             )
                         }
                         Surface(
-                            color = Color(0xFFFFF3E0), 
+                            color = MutedBlue,
                             shape = RoundedCornerShape(12.dp)
                         ){
                             Icon(
                                 painter = painterResource(id= R.drawable.ic_calendar),
                                 contentDescription = null,
-                                tint = Color(0xFFF57C00),
+                                tint = DarkNavyBlue,
                                 modifier = Modifier.padding(8.dp).size(24.dp)
                             )
                         }
@@ -165,14 +165,14 @@ fun ProfileSection(
                             verticalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
                             Surface(
-                                color = Color(0xFFE8F5E9),
+                                color = MutedBlue,
                                 shape = RoundedCornerShape(8.dp),
                                 modifier = Modifier.size(32.dp)
                             ) {
                                 Box(contentAlignment = Alignment.Center) {
                                     Icon(painter = painterResource(id = R.drawable.ic_cards_done),
                                         contentDescription = null,
-                                        tint = Color(0xFF2E7D32),
+                                        tint = DarkNavyBlue,
                                         modifier = Modifier.size(18.dp)
                                     )
                                 }
@@ -197,14 +197,14 @@ fun ProfileSection(
                             verticalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
                             Surface(
-                                color = Color(0xFFE3F2FD),
+                                color = MutedBlue,
                                 shape = RoundedCornerShape(8.dp),
                                 modifier = Modifier.size(32.dp)
                             ) {
                                 Box(contentAlignment = Alignment.Center) {
                                     Icon(painter = painterResource(id = R.drawable.ic_cognition),
                                         contentDescription = null,
-                                        tint = Color(0xFF1976D2),
+                                        tint = DarkNavyBlue,
                                         modifier = Modifier.size(18.dp)
                                     )
                                 }

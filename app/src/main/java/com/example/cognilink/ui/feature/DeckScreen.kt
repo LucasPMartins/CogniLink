@@ -51,9 +51,10 @@ import com.example.cognilink.data.DifficultyLevel
 import com.example.cognilink.data.FlashCard
 import com.example.cognilink.data.FlashcardType
 import com.example.cognilink.ui.components.input.CustomTextField
-import com.example.cognilink.ui.components.utils.CustomButton
+import com.example.cognilink.ui.components.utils.NeonActionButton
 import com.example.cognilink.ui.components.utils.NavigationHeader
 import com.example.cognilink.ui.components.utils.ProgressBar
+import com.example.cognilink.ui.components.utils.SimpleGradientButton
 import com.example.cognilink.ui.theme.CogniLinkTheme
 import com.example.cognilink.ui.theme.DarkGray
 import com.example.cognilink.ui.theme.DarkNavyBlue
@@ -134,7 +135,21 @@ fun DeckContent(
         )
     }
 
-    Scaffold { padding ->
+    Scaffold(
+        bottomBar = {
+            if(viewModel.deckFlashcards.isNotEmpty() && !viewModel.isEditMode){
+                Column(modifier = Modifier.padding(24.dp)) {
+                    SimpleGradientButton(
+                        text = "ESTUDAR AGORA",
+                        height = 40.dp,
+                        icon = R.drawable.ic_arrow_forward,
+                        iconRightSide = true,
+                        onClickButton = {}
+                    )
+                }
+            }
+        }
+    ) { padding ->
         Column(
             modifier = Modifier
                 .verticalScroll(scrollState)
@@ -187,7 +202,7 @@ fun DeckContent(
                     )
                 }
 
-                CustomButton(
+                NeonActionButton(
                     text = "ADICIONAR FLASHCARD",
                     icon = R.drawable.ic_add,
                     onClickButton = onAddFlashcardClick

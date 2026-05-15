@@ -18,10 +18,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -29,14 +26,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cognilink.R
 import com.example.cognilink.data.DifficultyLevel
-import com.example.cognilink.ui.components.utils.NavigationHeader
 import com.example.cognilink.ui.components.flashcard.DifficultySelector
-import com.example.cognilink.ui.components.input.FileUploadArea
+import com.example.cognilink.ui.components.flashcard.FlashcardOption
 import com.example.cognilink.ui.components.flashcard.QuantitySelector
+import com.example.cognilink.ui.components.flashcard.TypeOptionList
 import com.example.cognilink.ui.components.input.CustomTextField
+import com.example.cognilink.ui.components.input.FileUploadArea
 import com.example.cognilink.ui.components.utils.LabeledText
+import com.example.cognilink.ui.components.utils.NavigationHeader
 import com.example.cognilink.ui.components.utils.SectionLabel
 import com.example.cognilink.ui.theme.CogniLinkTheme
 import com.example.cognilink.ui.theme.DarkGray
@@ -44,10 +44,25 @@ import com.example.cognilink.ui.theme.OffWhite
 import com.example.cognilink.ui.theme.VividCyan
 import com.example.cognilink.ui.theme.White
 
-
 @Composable
-fun IAGeneratorScreen(modifier: Modifier = Modifier) {
-
+fun IAGeneratorScreen(
+    modifier: Modifier = Modifier,
+    viewModel: IAGeneratorViewModel = viewModel()
+) {
+    IAGeneratorContent(
+        modifier = modifier,
+        flashcardTheme = viewModel.flashcardTheme,
+        onFlashcardThemeChange = viewModel::onThemeChange,
+        quantity = viewModel.quantity,
+        onQuantityChange = viewModel::onQuantityChange,
+        selectedDifficulty = viewModel.selectedDifficulty,
+        onDifficultyChange = viewModel::onDifficultyChange,
+        typeOptions = viewModel.typeOptions,
+        selectedType = viewModel.selectedType,
+        onTypeChange = viewModel::onTypeChange,
+        onGenerateClick = viewModel::generateFlashcards,
+        isLoading = viewModel.isLoading
+    )
 }
 
 @Composable
@@ -55,9 +70,17 @@ fun IAGeneratorContent(
     modifier: Modifier = Modifier,
     flashcardTheme: String = "",
     onFlashcardThemeChange: (String) -> Unit = {},
+    quantity: Int = 1,
+    onQuantityChange: (Int) -> Unit = {},
+    selectedDifficulty: DifficultyLevel? = null,
+    onDifficultyChange: (DifficultyLevel?) -> Unit = {},
+    typeOptions: List<FlashcardOption> = emptyList(),
+    selectedType: FlashcardOption,
+    onTypeChange: (FlashcardOption) -> Unit = {},
+    onGenerateClick: () -> Unit = {},
+    isLoading: Boolean = false
 ) {
     val scrollState = rememberScrollState()
-    var quantity by remember { mutableIntStateOf(1) }
 
     Scaffold(
         modifier = modifier
@@ -85,7 +108,10 @@ fun IAGeneratorContent(
                     placeholder = "Ex: Mitocôndrias e Ciclo de Krebs",
                     keyboardType = KeyboardType.Text
                 )
-                LabeledText(label = "OBS: ",text = "Se nulo, a IA criará com base no arquivo anexo. O tema será preenchido após a criação.")
+                LabeledText(
+                    label = "OBS: ",
+                    text = "Se nulo, a IA criará com base no arquivo anexo. O tema será preenchido após a criação."
+                )
             }
 
             // --- SEÇÃO ANEXO ---
@@ -96,11 +122,20 @@ fun IAGeneratorContent(
 
                 FileUploadArea(onUploadClick = { /* TODO */ })
 
-                LabeledText(label = "OBS: ",text = "Se nulo, a IA criará com base no tema. Pelo menos o TEMA ou um ARQUIVO deve ser fornecido.")
+                LabeledText(
+                    label = "OBS: ",
+                    text = "Se nulo, a IA criará com base no tema. Pelo menos o TEMA ou um ARQUIVO deve ser fornecido."
+                )
             }
 
             // --- SEÇÃO SELETOR ---
-            //TypeOptionList(selectedOption = null, onOptionSelected = { })
+
+            TypeOptionList(
+                options = typeOptions,
+                selectedOption = selectedType,
+                onOptionSelected = onTypeChange
+            )
+
 
             // --- SEÇÃO CONFIGURAÇÕES (Dificuldade e Quantidade) ---
             Row(
@@ -110,49 +145,70 @@ fun IAGeneratorContent(
                 Column(modifier = Modifier.weight(1f)) {
                     SectionLabel("Dificuldade")
                     DifficultySelector(
-                        difficultyLevels = listOf(DifficultyLevel.EAZY, DifficultyLevel.MEDIUM, DifficultyLevel.HARD),
-                        selectedDifficulty = DifficultyLevel.EAZY,
-                        onDifficultySelected = { }
+                        difficultyLevels = DifficultyLevel.entries,
+                        selectedDifficulty = selectedDifficulty,
+                        onDifficultySelected = onDifficultyChange,
+                        includeAllOption = true,
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
                 Column(modifier = Modifier.weight(1f)) {
                     SectionLabel("Quantidade")
                     QuantitySelector(
                         quantity = quantity,
-                        onQuantityChange = { quantity = it },
+                        onQuantityChange = onQuantityChange,
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
             }
 
             Button(
-                onClick = { /* TODO */ },
+                onClick = onGenerateClick,
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
+                enabled = !isLoading
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(vertical = 12.dp)) {
-                    Icon(painter = painterResource(id = R.drawable.ic_stars),
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(vertical = 12.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_stars),
                         contentDescription = null,
                         tint = VividCyan,
                         modifier = Modifier.padding(end = 12.dp)
                     )
-                    Text("GERAR FLASHCARDS COM IA",
+                    Text(
+                        if (isLoading) "GERANDO..." else "GERAR FLASHCARDS COM IA",
                         fontWeight = FontWeight.Bold,
                         color = White
                     )
                 }
-
             }
         }
     }
 }
 
-
 @Preview
 @Composable
 private fun IAGeneratorContentPreview() {
     CogniLinkTheme {
-        IAGeneratorContent()
+        val viewModel = remember{
+            IAGeneratorViewModel()
+        }
+
+        IAGeneratorContent(
+            flashcardTheme = viewModel.flashcardTheme,
+            onFlashcardThemeChange = viewModel::onThemeChange,
+            quantity = viewModel.quantity,
+            onQuantityChange = viewModel::onQuantityChange,
+            selectedDifficulty = viewModel.selectedDifficulty,
+            onDifficultyChange = viewModel::onDifficultyChange,
+            typeOptions = viewModel.typeOptions,
+            selectedType = viewModel.selectedType,
+            onTypeChange = viewModel::onTypeChange,
+            onGenerateClick = viewModel::generateFlashcards,
+            isLoading = viewModel.isLoading
+        )
     }
 }
