@@ -1,4 +1,4 @@
-package com.example.cognilink.ui.feature
+package com.example.cognilink.ui.feature.auth
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -37,6 +37,7 @@ import com.example.cognilink.ui.theme.DarkGray
 import com.example.cognilink.ui.theme.DarkNavyBlue
 import com.example.cognilink.ui.theme.OffWhite
 import com.example.cognilink.ui.theme.VeryLightGray
+import com.example.cognilink.viewModel.AuthViewModel
 
 @Composable
 fun AuthScreen(viewModel: AuthViewModel = viewModel()) {

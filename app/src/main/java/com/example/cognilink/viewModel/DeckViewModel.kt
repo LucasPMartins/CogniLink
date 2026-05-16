@@ -1,4 +1,4 @@
-package com.example.cognilink.ui.feature
+package com.example.cognilink.viewModel
 
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -25,7 +25,8 @@ class DeckViewModel : ViewModel() {
 
     val deckDifficulty by derivedStateOf {
         if (deckFlashcards.isEmpty()) null
-        else DifficultyLevel.fromAverage(deckFlashcards.map { it.difficulty.weight }.average().toFloat())
+        else DifficultyLevel.Companion.fromAverage(deckFlashcards.map { it.difficulty.weight }
+            .average().toFloat())
     }
 
     var deckMastery by mutableStateOf(null as Float?)
@@ -36,6 +37,42 @@ class DeckViewModel : ViewModel() {
     var deckCardsToReview by mutableStateOf(0)
         private set
 
+    var showCategoryDialog by mutableStateOf(false)
+        private set
+
+    var categoryBeingEdited by mutableStateOf<String?>(null)
+        private set
+
+    var categoryText by mutableStateOf("")
+        private set
+
+    fun onCategoryTextChange(newText: String) {
+        categoryText = newText
+    }
+
+    fun openCategoryDialog(category: String? = null) {
+        categoryBeingEdited = category
+        categoryText = category ?: ""
+        showCategoryDialog = true
+    }
+
+    fun closeCategoryDialog() {
+        showCategoryDialog = false
+        categoryText = ""
+        categoryBeingEdited = null
+    }
+
+    fun handleCategoryConfirmation() {
+        if (categoryText.isNotBlank()) {
+            val oldName = categoryBeingEdited
+            if (oldName == null) {
+                addCategory(categoryText)
+            } else {
+                updateCategory(oldName, categoryText)
+            }
+            closeCategoryDialog()
+        }
+    }
     fun toggleEditMode() {
         isEditMode = !isEditMode
     }

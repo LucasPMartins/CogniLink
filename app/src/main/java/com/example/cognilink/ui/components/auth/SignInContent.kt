@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.dp
 import com.example.cognilink.R
 import com.example.cognilink.ui.components.input.PasswordTextField
 import com.example.cognilink.ui.components.input.CustomTextField
-import com.example.cognilink.ui.components.utils.SimpleGradientButton
+import com.example.cognilink.ui.components.utils.buttons.SimpleGradientButton
 import com.example.cognilink.ui.theme.CogniLinkTheme
 import com.example.cognilink.ui.theme.DarkGray
 import com.example.cognilink.ui.theme.DarkNavyBlue

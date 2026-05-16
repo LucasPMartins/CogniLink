@@ -1,7 +1,6 @@
 package com.example.cognilink.ui.feature.flashcard
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,12 +12,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -27,35 +22,30 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.cognilink.R
 import com.example.cognilink.data.Answer
+import com.example.cognilink.data.DifficultyLevel
 import com.example.cognilink.data.FlashcardType
 import com.example.cognilink.ui.components.flashcard.Header
 import com.example.cognilink.ui.components.flashcard.HintReveal
-import com.example.cognilink.ui.components.flashcard.AnswerOptions
-import com.example.cognilink.ui.components.input.CustomTextField
-import com.example.cognilink.ui.components.utils.SimpleGradientButton
+import com.example.cognilink.ui.components.utils.buttons.SimpleGradientButton
 import com.example.cognilink.ui.theme.CogniLinkTheme
 import com.example.cognilink.ui.theme.DarkGray
 import com.example.cognilink.ui.theme.DarkNavyBlue
 import com.example.cognilink.ui.theme.OffWhite
 import com.example.cognilink.ui.theme.VeryLightGray
 import com.example.cognilink.ui.theme.White
+import com.example.cognilink.viewModel.FlashcardViewModel
 import kotlinx.coroutines.delay
-import kotlin.collections.plus
 
 @SuppressLint("DefaultLocale")
 fun formatSeconds(seconds: Long): String {
@@ -69,16 +59,11 @@ fun formatSeconds(seconds: Long): String {
 @Composable
 fun FlashcardStudyContent(
     modifier: Modifier = Modifier,
-    flascardQuestion: String = "Qual organela é conhecida como a 'central elétrica' da célula?",
-    flashcardAnswersOptions: List<Answer> = listOf(),
-    inputTextAnswer: String,
-    onInputTextAnswerChange: (String) -> Unit,
-    selectedAnswer: Answer? = null,
-    onSelectAnswer: (Answer?) -> Unit = {},
-    selectedAnswers: List<Answer> = listOf(),
-    onToggleAnswer: (Answer) -> Unit = {},
+    flashcardQuestion: String = "Qual organela é conhecida como a 'central elétrica' da célula?",
+    answerControl: @Composable () -> Unit = {},
+    isQuestionAnswered: Boolean = false,
+    isQuestionVerified: Boolean = false,
     flashcardHints: List<String> = listOf(),
-    flashcardType: FlashcardType,
     onClickToVerifyQuestion: () -> Unit = {},
     onClickToNextFlashcard: () -> Unit = {}
     ) {
@@ -87,10 +72,6 @@ fun FlashcardStudyContent(
 
     var sequenceHits by remember { mutableIntStateOf(0) }
 
-    var isQuestionVerified by remember { mutableStateOf(false) }
-
-    var isQuestionAnswered by remember { mutableStateOf(false) }
-
     // LaunchedEffect inicia quando o componente entra na tela
     // O 'Unit' garante que ele rode apenas uma vez e não reinicie sozinho
     LaunchedEffect(Unit) {
@@ -98,15 +79,6 @@ fun FlashcardStudyContent(
             delay(1000L) // Espera 1 segundo
             secondsElapsed++
         }
-    }
-
-    // Update isQuestionAnswered based on the current input/selection
-    isQuestionAnswered = when (flashcardType) {
-        FlashcardType.BASIC -> inputTextAnswer.isNotBlank()
-        FlashcardType.MULTIPLE_CHOICE -> selectedAnswer != null
-        FlashcardType.TRUE_OR_FALSE -> selectedAnswers.isNotEmpty()
-        FlashcardType.OMISSION -> false // To be implemented
-        FlashcardType.CHAT_FEYNMAN -> false // To be implemented
     }
 
     val formattedTime = formatSeconds(secondsElapsed)
@@ -129,10 +101,8 @@ fun FlashcardStudyContent(
                     isEnabled = isQuestionAnswered,
                     onClickButton = {
                         if (isQuestionVerified) {
-                            isQuestionVerified = false
                             onClickToNextFlashcard()
                         } else {
-                            isQuestionVerified = true
                             onClickToVerifyQuestion()
                         }
                     }
@@ -149,7 +119,7 @@ fun FlashcardStudyContent(
         ){
             Row(verticalAlignment = CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Surface(
                     shape = RoundedCornerShape(32.dp),
@@ -157,7 +127,7 @@ fun FlashcardStudyContent(
                 ) {
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
+                        verticalAlignment = CenterVertically,
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
                     ) {
                         Icon(
@@ -180,7 +150,7 @@ fun FlashcardStudyContent(
                 ) {
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
+                        verticalAlignment = CenterVertically,
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
                     ) {
                         Icon(
@@ -204,7 +174,7 @@ fun FlashcardStudyContent(
                 shadowElevation = 2.dp,
                 color = White
             ) {
-                Text(text = flascardQuestion,
+                Text(text = flashcardQuestion,
                     fontWeight = FontWeight.ExtraBold,
                     color = DarkNavyBlue,
                     fontSize = 24.sp,
@@ -214,42 +184,7 @@ fun FlashcardStudyContent(
                     )
             }
 
-            when (flashcardType){
-                FlashcardType.BASIC -> {
-                    CustomTextField(
-                        inputValue = inputTextAnswer,
-                        onInputValueChange = onInputTextAnswerChange,
-                        placeholder = "Sua resposta",
-                        minLines = 3,
-                        enabled = !isQuestionVerified
-                    )
-                }
-                FlashcardType.MULTIPLE_CHOICE -> {
-                    AnswerOptions(
-                        flashcardType = flashcardType,
-                        answerOptions = flashcardAnswersOptions,
-                        selectedAnswer = selectedAnswer,
-                        onSelectedAnswer = onSelectAnswer,
-                        enabled = !isQuestionVerified
-                    )
-                }
-                FlashcardType.TRUE_OR_FALSE -> {
-                    AnswerOptions(
-                        flashcardType = flashcardType,
-                        answerOptions = flashcardAnswersOptions,
-                        selectedAnswers = selectedAnswers,
-                        onToggleAnswer = onToggleAnswer,
-                        enabled = !isQuestionVerified
-                    )
-                }
-                    FlashcardType.OMISSION -> {
-                    TODO()
-                }
-
-                FlashcardType.CHAT_FEYNMAN -> {
-                    TODO()
-                }
-            }
+            answerControl()
 
             HintReveal(hints = flashcardHints)
 
@@ -258,33 +193,30 @@ fun FlashcardStudyContent(
 
 }
 
+@SuppressLint("ViewModelConstructorInComposable")
 @Preview
 @Composable
 private fun FlashcardStudyContentPreview() {
     CogniLinkTheme {
-        var listaTeste by remember { mutableStateOf(listOf(Answer("Resposta 1", true), Answer("Resposta 2", false), Answer("Resposta 3", false))) }
-
-        var selectedAnswer by remember { mutableStateOf<Answer?>(null) }
-        var selectedAnswers by remember { mutableStateOf(listOf<Answer>()) }
-
-        var inputTextAnswer by remember { mutableStateOf("") }
+        val previewViewModel = remember {
+            FlashcardViewModel()
+                .apply {
+                    onQuestionTextChange("Qual é a capital da França?")
+                    onDifficultyChange(DifficultyLevel.MEDIUM)
+                    onTypeChange(FlashcardType.MULTIPLE_CHOICE)
+                    updateAnswers(listOf(Answer("Paris", true), Answer("Londres", false), Answer("Roma", false)))
+                    updateHints(listOf("Dica 1", "Dica 2"))
+                }
+        }
 
         FlashcardStudyContent(
-            flashcardAnswersOptions = listaTeste,
-            inputTextAnswer = inputTextAnswer,
-            onInputTextAnswerChange = {inputTextAnswer = it},
-            selectedAnswer = selectedAnswer,
-            onSelectAnswer = { selectedAnswer = it },
-            flashcardHints = listOf("Dica 1", "Dica 2", "Dica 3"),
-            selectedAnswers = selectedAnswers,
-            flashcardType = FlashcardType.MULTIPLE_CHOICE,
-            onToggleAnswer = { answer ->
-                selectedAnswers = if (selectedAnswers.contains(answer)) {
-                    selectedAnswers - answer
-                } else {
-                    selectedAnswers + answer
-                }
-            }
+            flashcardQuestion = "Qual é a capital da França?",
+            answerControl = previewViewModel.viewAnswerControl(),
+            isQuestionAnswered = previewViewModel.isQuestionAnswered,
+            isQuestionVerified = previewViewModel.isQuestionVerified,
+            flashcardHints = listOf("Dica 1", "Dica 2"),
+            onClickToVerifyQuestion = { previewViewModel.verifyQuestion() },
+            onClickToNextFlashcard = {},
         )
     }
 }

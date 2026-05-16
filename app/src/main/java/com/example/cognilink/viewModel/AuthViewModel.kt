@@ -1,4 +1,4 @@
-package com.example.cognilink.ui.feature
+package com.example.cognilink.viewModel
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

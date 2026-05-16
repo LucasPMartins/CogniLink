@@ -1,4 +1,4 @@
-package com.example.cognilink.ui.components.utils
+package com.example.cognilink.ui.components.utils.labels
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text

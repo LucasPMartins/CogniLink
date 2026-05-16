@@ -1,17 +1,16 @@
 package com.example.cognilink.ui.components.flashcard
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,9 +22,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cognilink.R
+import com.example.cognilink.ui.components.utils.GradientSurface
 import com.example.cognilink.ui.theme.CogniLinkTheme
-import com.example.cognilink.ui.theme.DarkNavyBlue
-import com.example.cognilink.ui.theme.VividCyan
+import com.example.cognilink.ui.theme.LightGray
 import com.example.cognilink.ui.theme.White
 
 
@@ -53,6 +52,7 @@ fun HintEditor(
                         onHintsUpdate(newList)
                     }
                 },
+                readOnly = false,
                 onClickToRemove = {
                     if (index >= 0 && index < hints.size) {
                         val newList = hints.toMutableList()
@@ -64,26 +64,25 @@ fun HintEditor(
         }
 
         if (hints.size < 3) {
-            OutlinedButton(
-                onClick = {
-                    val newList = hints.toMutableList()
-                    newList.add("")
-                    onHintsUpdate(newList)
-                          },
-                modifier = Modifier.padding(top = 8.dp),
-                shape = RoundedCornerShape(50),
-                colors = ButtonDefaults.outlinedButtonColors(
-                    contentColor = White,
-                    containerColor = DarkNavyBlue
-                )
-            ) {
-                Icon(painter = painterResource(id = R.drawable.ic_add),
-                    contentDescription = null,
-                    modifier = Modifier.size(18.dp),
-                    tint = VividCyan
-                )
-                Spacer(Modifier.width(8.dp))
-                Text("Adicionar dica (${hints.size + 1}/3)")
+            GradientSurface(
+                border = BorderStroke(1.dp, LightGray),
+                shape = RoundedCornerShape(50)
+            ){
+                TextButton(
+                    onClick = {
+                        val newList = hints.toMutableList()
+                        newList.add("")
+                        onHintsUpdate(newList)
+                              },
+                ) {
+                    Icon(painter = painterResource(id = R.drawable.ic_add),
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp),
+                        tint = White
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text("Adicionar dica (${hints.size + 1}/3)", color = White)
+                }
             }
         }
     }

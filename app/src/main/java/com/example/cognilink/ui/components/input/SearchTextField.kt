@@ -1,6 +1,5 @@
 package com.example.cognilink.ui.components.input
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -23,11 +22,10 @@ import androidx.compose.ui.unit.dp
 import com.example.cognilink.R
 import com.example.cognilink.ui.theme.CogniLinkTheme
 import com.example.cognilink.ui.theme.DarkGray
-import com.example.cognilink.ui.theme.LightGray
 import com.example.cognilink.ui.theme.White
 
 @Composable
-fun SearchTextField(modifier: Modifier = Modifier.fillMaxWidth(),
+fun SearchTextField(modifier: Modifier = Modifier,
                     hintText: String = "Pesquisar...",
                     searchValue: String = "",
                     onSearchValueChange: (String) -> Unit = {}) {

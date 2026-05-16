@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import com.example.cognilink.R
 import com.example.cognilink.ui.components.input.PasswordTextField
 import com.example.cognilink.ui.components.input.CustomTextField
-import com.example.cognilink.ui.components.utils.SimpleGradientButton
+import com.example.cognilink.ui.components.utils.buttons.SimpleGradientButton
 import com.example.cognilink.ui.theme.CogniLinkTheme
 
 @Composable
@@ -63,15 +63,14 @@ fun SignUpContent(
             onCheckedChange = onTermsAcceptedChange
         )
 
-
-            SimpleGradientButton(
-                text = "ESTUDAR AGORA",
-                height = 40.dp,
-                icon = R.drawable.ic_arrow_forward,
-                iconRightSide = true,
-                isEnabled = isTermsAccepted,
-                onClickButton = {}
-            )
+        SimpleGradientButton(
+            text = "CRIAR CONTA",
+            height = 40.dp,
+            icon = R.drawable.ic_arrow_forward,
+            iconRightSide = true,
+            isEnabled = isTermsAccepted,
+            onClickButton = onSignUpClick
+        )
 
     }
 }

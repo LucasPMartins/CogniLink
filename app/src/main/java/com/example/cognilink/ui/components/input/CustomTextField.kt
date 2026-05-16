@@ -52,7 +52,7 @@ fun CustomTextField(modifier: Modifier = Modifier,
         }
 
         Surface(
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(12.dp),
             modifier = Modifier.fillMaxWidth(),
             shadowElevation = 2.dp,
             color = White

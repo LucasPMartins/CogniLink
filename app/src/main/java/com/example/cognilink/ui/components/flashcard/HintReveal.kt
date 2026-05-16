@@ -9,10 +9,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -25,23 +24,22 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.cognilink.R
+import com.example.cognilink.ui.components.utils.GradientSurface
 import com.example.cognilink.ui.theme.CogniLinkTheme
 import com.example.cognilink.ui.theme.DarkGray
-import com.example.cognilink.ui.theme.DarkNavyBlue
 import com.example.cognilink.ui.theme.LightGray
 import com.example.cognilink.ui.theme.White
 
 @Composable
 fun HintReveal(
+    modifier: Modifier = Modifier,
     hints: List<String> = emptyList(),
-    modifier: Modifier = Modifier
 ) {
     var hintsVisibleCount by remember { mutableIntStateOf(0) }
 
     Column(
         modifier = modifier
-            .fillMaxWidth()
-            .padding(16.dp),
+            .fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(10.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -50,24 +48,28 @@ fun HintReveal(
             val index = index + 1
             HintItem(
                 label = "DICA $index ",
-                hint = hint
+                hint = hint,
             )
         }
 
         if (hintsVisibleCount < hints.size) {
-            OutlinedButton(
-                onClick = { hintsVisibleCount++ },
+            GradientSurface(
                 border = BorderStroke(1.dp, LightGray),
-                shape = RoundedCornerShape(50),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = White, containerColor = DarkNavyBlue)
+                shape = RoundedCornerShape(50)
             ) {
-                Icon(painter = painterResource(id = R.drawable.ic_lightbulb),
-                    contentDescription = null,
-                    modifier = Modifier.size(18.dp)
-                )
-                Spacer(Modifier.width(8.dp))
-                Text("VER DICA (${hintsVisibleCount + 1}/${hints.size})")
+                TextButton(
+                    onClick = { hintsVisibleCount++ },
+                ) {
+                    Icon(painter = painterResource(id = R.drawable.ic_lightbulb),
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp),
+                        tint = White
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text("VER DICA (${hintsVisibleCount + 1}/${hints.size})", color = White)
+                }
             }
+
         } else if(hintsVisibleCount == hints.size && hints.isNotEmpty()){
             Text(
                 text = "Todas as dicas reveladas",

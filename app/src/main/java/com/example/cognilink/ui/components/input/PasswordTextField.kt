@@ -1,6 +1,5 @@
 package com.example.cognilink.ui.components.input
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -61,7 +60,7 @@ fun PasswordTextField(modifier: Modifier = Modifier,
                 color = DarkGray
             )
         Surface(
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(12.dp),
             modifier = modifier.fillMaxWidth(),
             shadowElevation = 2.dp,
             color = White

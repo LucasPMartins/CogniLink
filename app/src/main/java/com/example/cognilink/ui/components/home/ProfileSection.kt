@@ -1,6 +1,5 @@
 package com.example.cognilink.ui.components.home
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,24 +15,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.cognilink.R
+import com.example.cognilink.ui.components.utils.GradientSurface
 import com.example.cognilink.ui.components.utils.ProgressBar
 import com.example.cognilink.ui.theme.CogniLinkTheme
 import com.example.cognilink.ui.theme.DarkGray
 import com.example.cognilink.ui.theme.DarkNavyBlue
-import com.example.cognilink.ui.theme.Green
 import com.example.cognilink.ui.theme.MutedBlue
-import com.example.cognilink.ui.theme.OffWhite
-import com.example.cognilink.ui.theme.VeryLightGray
-import com.example.cognilink.ui.theme.VividCyan
 import com.example.cognilink.ui.theme.White
 
 
@@ -44,25 +37,12 @@ fun ProfileSection(
     dayStreak: Int = 10,
     cardsDone: Int = 1200,
     learnRetention: Float = 0.8f,
-    modifier: Modifier = Modifier) {
-    Surface(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(
-                brush = Brush.linearGradient(
-                    colors = listOf(
-                        Color(0xFF000666), // Cor inicial
-                        Color(0xFF1222B0)  // Cor final
-                    ),
-                    // Opcional: define a direção (padrão é da esquerda-topo para direita-baixo)
-                    start = Offset(0f, 0f),
-                    end = Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
-                ),
-                shape = RoundedCornerShape(bottomEnd = 26.dp, bottomStart = 26.dp)
-            ),
-        color = Color.Transparent,
-        shape = RoundedCornerShape(bottomEnd = 26.dp, bottomStart = 26.dp),
     ) {
+
+    GradientSurface(
+        shape = RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp),
+    )
+    {
         Column(
             verticalArrangement = Arrangement.spacedBy(24.dp),
             modifier = Modifier.padding(20.dp)

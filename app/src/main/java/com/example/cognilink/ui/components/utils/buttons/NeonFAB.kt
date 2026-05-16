@@ -1,12 +1,11 @@
-package com.example.cognilink.ui.components.utils
+package com.example.cognilink.ui.components.utils.buttons
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,6 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.cognilink.R
+import com.example.cognilink.ui.components.utils.GradientSurface
 import com.example.cognilink.ui.theme.DarkNavyBlue
 import com.example.cognilink.ui.theme.VividCyan
 import com.example.cognilink.ui.theme.neonGlow
@@ -26,7 +26,8 @@ fun NeonFAB(
     modifier: Modifier = Modifier,
     size: Dp = 56.dp,
     neonColor: Color = VividCyan,
-    backgroundColor: Color = DarkNavyBlue,
+    initialBackgroundColor: Color = DarkNavyBlue,
+    finalBackgroundColor: Color = Color(0xFF1222B0),
     buttonDescription: String = "Adicionar",
     iconColor: Color = VividCyan,
     icon: Int = R.drawable.ic_add,
@@ -36,7 +37,6 @@ fun NeonFAB(
 
     Box(
         modifier = Modifier
-            .padding(16.dp)
             .neonGlow(
                 color = neonColor,
                 borderRadius = size / 2,
@@ -44,16 +44,15 @@ fun NeonFAB(
             ),
         contentAlignment = Alignment.Center
     ) {
-        Surface(
-            onClick = onClick,
+        GradientSurface(
             shape = CircleShape,
-            color = backgroundColor,
             border = BorderStroke(2.dp, neonColor),
-            shadowElevation = 0.dp,
-            modifier = modifier
-        ) {
+            initialColor = initialBackgroundColor,
+            finalColor = finalBackgroundColor
+        )
+        {
             Box(
-                modifier = Modifier.size(size),
+                modifier = modifier.size(size).clickable(onClick = onClick),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(

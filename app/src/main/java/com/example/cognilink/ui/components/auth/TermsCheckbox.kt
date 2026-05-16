@@ -69,7 +69,7 @@ fun TermsCheckbox(
         Text(
             text = annotatedString,
             style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray),
-            modifier = Modifier.clickable() {
+            modifier = Modifier.clickable{
                 /* TODO */
             }
         )

@@ -1,4 +1,4 @@
-package com.example.cognilink.ui.feature.flashcard
+package com.example.cognilink.viewModel
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -21,12 +21,42 @@ class IAGeneratorViewModel : ViewModel() {
         private set
 
     val typeOptions = listOf(
-        FlashcardOption(1, "Pergunta e Resposta", "Ideal para fatos diretos", R.drawable.ic_basic_card),
-        FlashcardOption(2, "Múltipla Escolha", "Ótimo para exames", R.drawable.ic_multiple_choice_card),
-        FlashcardOption(3, "Omissão de Palavras", "Cloze deletion para memorização de contexto", R.drawable.ic_cloze_card),
-        FlashcardOption(4, "Verdadeiro ou Falso", "Decisões rápidas e validação de conceitos", R.drawable.ic_true_or_false_card),
-        FlashcardOption(5, "Chat de Feynman", "Explique conceitos complexos de forma simples", R.drawable.ic_chat_feynman),
-        FlashcardOption(6, "Aleatório", "Misture todos os estilos para máximo desafio", R.drawable.ic_die)
+        FlashcardOption(
+            1,
+            "Pergunta e Resposta",
+            "Ideal para fatos diretos",
+            R.drawable.ic_basic_card
+        ),
+        FlashcardOption(
+            2,
+            "Múltipla Escolha",
+            "Ótimo para exames",
+            R.drawable.ic_multiple_choice_card
+        ),
+        FlashcardOption(
+            3,
+            "Omissão de Palavras",
+            "Cloze deletion para memorização de contexto",
+            R.drawable.ic_cloze_card
+        ),
+        FlashcardOption(
+            4,
+            "Verdadeiro ou Falso",
+            "Decisões rápidas e validação de conceitos",
+            R.drawable.ic_true_or_false_card
+        ),
+        FlashcardOption(
+            5,
+            "Chat de Feynman",
+            "Explique conceitos complexos de forma simples",
+            R.drawable.ic_chat_feynman
+        ),
+        FlashcardOption(
+            6,
+            "Aleatório",
+            "Misture todos os estilos para máximo desafio",
+            R.drawable.ic_die
+        )
     )
 
     var selectedType by mutableStateOf(typeOptions.last())

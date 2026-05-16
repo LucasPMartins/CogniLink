@@ -35,14 +35,15 @@ import com.example.cognilink.ui.components.flashcard.QuantitySelector
 import com.example.cognilink.ui.components.flashcard.TypeOptionList
 import com.example.cognilink.ui.components.input.CustomTextField
 import com.example.cognilink.ui.components.input.FileUploadArea
-import com.example.cognilink.ui.components.utils.LabeledText
+import com.example.cognilink.ui.components.utils.labels.LabeledText
 import com.example.cognilink.ui.components.utils.NavigationHeader
-import com.example.cognilink.ui.components.utils.SectionLabel
+import com.example.cognilink.ui.components.utils.labels.SectionLabel
 import com.example.cognilink.ui.theme.CogniLinkTheme
 import com.example.cognilink.ui.theme.DarkGray
 import com.example.cognilink.ui.theme.OffWhite
 import com.example.cognilink.ui.theme.VividCyan
 import com.example.cognilink.ui.theme.White
+import com.example.cognilink.viewModel.IAGeneratorViewModel
 
 @Composable
 fun IAGeneratorScreen(

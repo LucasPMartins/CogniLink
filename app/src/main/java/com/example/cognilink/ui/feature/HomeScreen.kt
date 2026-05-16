@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -21,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,18 +28,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.cognilink.R
 import com.example.cognilink.data.DifficultyLevel
-import com.example.cognilink.ui.components.utils.NeonFAB
+import com.example.cognilink.ui.components.utils.buttons.NeonFAB
 import com.example.cognilink.ui.components.input.SearchTextField
 import com.example.cognilink.ui.components.home.DeckCard
 import com.example.cognilink.ui.components.home.ProfileSection
 import com.example.cognilink.ui.theme.CogniLinkTheme
 import com.example.cognilink.ui.theme.DarkGray
 import com.example.cognilink.ui.theme.DarkNavyBlue
-import com.example.cognilink.ui.theme.Gray
-import com.example.cognilink.ui.theme.LavenderBlue
-import com.example.cognilink.ui.theme.MutedBlue
-import com.example.cognilink.ui.theme.OffWhite
-import com.example.cognilink.ui.theme.VividCyan
 import com.example.cognilink.ui.theme.White
 
 @Composable
@@ -58,7 +53,8 @@ fun HomeScreen(modifier: Modifier = Modifier,
         floatingActionButton = {
             NeonFAB(neonColor = White,
                 size = 70.dp,
-                backgroundColor = DarkNavyBlue,
+                initialBackgroundColor = DarkNavyBlue,
+                finalBackgroundColor = Color(0xFF1222B0) ,
                 buttonDescription = "Criar baralho de flashcards",
                 iconColor = White,
                 icon = R.drawable.ic_add,
@@ -91,12 +87,13 @@ fun HomeScreen(modifier: Modifier = Modifier,
 
             }
             Box(modifier = Modifier
-                .offset(y = (-35).dp)
-                .size(70.dp)
+                .offset(y = (-18).dp)
             ) {
                 NeonFAB(neonColor = White,
-                    backgroundColor = DarkNavyBlue,
+                    initialBackgroundColor = DarkNavyBlue,
+                    finalBackgroundColor = Color(0xFF1222B0),
                     buttonDescription = "Abrir perfil de usuário",
+                    size = 32.dp,
                     iconColor = White,
                     icon = R.drawable.ic_keyboard_arrow_down,
                     onClick = { /* TODO */ },
@@ -104,7 +101,8 @@ fun HomeScreen(modifier: Modifier = Modifier,
             }
             Column(modifier = Modifier
                 .padding(horizontal = 16.dp)
-                .fillMaxWidth()
+                .fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Text(text = "Bem-vindo de volta, $userName!",
                     color = DarkNavyBlue,
@@ -112,18 +110,16 @@ fun HomeScreen(modifier: Modifier = Modifier,
                     fontSize = 24.sp,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .offset(y = (-25).dp)
                 )
 
                 Text(text = welcomePhrase,
                     color =  DarkGray,
                     fontWeight = FontWeight.Normal,
                     fontSize = 14.sp,
-                    modifier = Modifier.fillMaxWidth().offset(y = (-8).dp)
+                    modifier = Modifier.fillMaxWidth()
                 )
 
                 SearchTextField(modifier = Modifier
-                    .padding(vertical = 20.dp)
                     .fillMaxWidth(),
                     searchValue = searchValue,
                     onSearchValueChange = { searchValue = it }
@@ -135,7 +131,6 @@ fun HomeScreen(modifier: Modifier = Modifier,
                     fontSize = 12.sp,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 16.dp)
                 )
 
                 Column(verticalArrangement = Arrangement.spacedBy(16.dp)
