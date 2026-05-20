@@ -9,12 +9,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -23,11 +22,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -41,6 +37,7 @@ import com.example.cognilink.ui.theme.DarkNavyBlue
 import com.example.cognilink.ui.theme.LavenderBlue
 import com.example.cognilink.ui.theme.MutedBlue
 import com.example.cognilink.ui.theme.OffWhite
+import com.example.cognilink.ui.theme.VeryLightRed
 import com.example.cognilink.ui.theme.White
 
 @Composable
@@ -49,8 +46,8 @@ fun ProfileContent(
     userName: String = "João Silva",
     userRank: String = "Iniciante",
     userStats: UserStats,
-
-    ) {
+    cognitiveEfficiencyText: String = "Seu cérebro está absorvendo mais conteúdo em menos tempo.",
+) {
     val scrollState = rememberScrollState()
     Scaffold(
         modifier = modifier
@@ -71,146 +68,38 @@ fun ProfileContent(
                 Modifier.padding(24.dp),
                 verticalArrangement = Arrangement.spacedBy(32.dp)
             ) {
-//                Column(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding(16.dp),
-//                    horizontalAlignment = Alignment.CenterHorizontally
-//                ) {
-//                    Text(
-//                        text = userName,
-//                        color = DarkNavyBlue,
-//                        fontSize = 36.sp,
-//                        fontWeight = FontWeight.Bold
-//                    )
-//                    Row(verticalAlignment = Alignment.CenterVertically) {
-//                        Icon(
-//                            painter = painterResource(id = R.drawable.ic_star),
-//                            tint = Yellow,
-//                            contentDescription = "",
-//                            modifier = Modifier.padding(end = 4.dp)
-//                        )
-//                        Text(
-//                            text = userRank,
-//                            color = DarkGray,
-//                            fontSize = 16.sp,
-//                            fontWeight = FontWeight.Bold
-//                        )
-//                    }
-//                }
-//                Surface(
-//                    color = White,
-//                    shape = RoundedCornerShape(24.dp)
-//                ) {
-//                    Column(
-//                        modifier = Modifier.padding(24.dp),
-//                        verticalArrangement = Arrangement.spacedBy(16.dp)
-//                    ) {
-//                        Row(
-//                            Modifier.fillMaxWidth(),
-//                            horizontalArrangement = Arrangement.spacedBy(12.dp)
-//                        ) {
-//                            Surface(
-//                                color = VeryLightRed,
-//                                shape = CircleShape
-//                            ) {
-//                                Icon(
-//                                    painter = painterResource(id = R.drawable.ic_fire),
-//                                    contentDescription = null,
-//                                    modifier = Modifier.padding(8.dp)
-//                                )
-//                            }
-//                            Column() {
-//                                Text(
-//                                    text = "$dayStreak dias", color = DarkGray,
-//                                    fontSize = 18.sp,
-//                                    fontWeight = FontWeight.Bold
-//                                )
-//                                Text(
-//                                    text = "Ofenciva", color = DarkGray.copy(alpha = 0.7f),
-//                                    fontSize = 14.sp,
-//                                    fontWeight = FontWeight.Normal
-//                                )
-//                            }
-//                        }
-//                        Row(
-//                            Modifier.fillMaxWidth(),
-//                            horizontalArrangement = Arrangement.spacedBy(12.dp)
-//                        ) {
-//                            Surface(
-//                                color = MutedBlue,
-//                                shape = CircleShape
-//                            ) {
-//                                Icon(
-//                                    painter = painterResource(id = R.drawable.ic_trophy),
-//                                    contentDescription = null,
-//                                    modifier = Modifier.padding(8.dp)
-//                                )
-//                            }
-//                            Column() {
-//                                Text(
-//                                    text = "$longestStreak dias", color = DarkGray,
-//                                    fontSize = 18.sp,
-//                                    fontWeight = FontWeight.Bold
-//                                )
-//                                Text(
-//                                    text = "Maior Ofenciva", color = DarkGray.copy(alpha = 0.7f),
-//                                    fontSize = 14.sp,
-//                                    fontWeight = FontWeight.Normal
-//                                )
-//                            }
-//                        }
-//                        Row(
-//                            Modifier.fillMaxWidth(),
-//                            horizontalArrangement = Arrangement.spacedBy(12.dp)
-//                        ) {
-//                            Surface(
-//                                color = OffWhite,
-//                                shape = CircleShape
-//                            ) {
-//                                Icon(
-//                                    painter = painterResource(id = R.drawable.ic_calendar),
-//                                    contentDescription = null,
-//                                    modifier = Modifier.padding(8.dp)
-//                                )
-//                            }
-//                            Column() {
-//                                Text(
-//                                    text = "$lastActiveDate", color = DarkGray,
-//                                    fontSize = 18.sp,
-//                                    fontWeight = FontWeight.Bold
-//                                )
-//                                Text(
-//                                    text = "Último acesso", color = DarkGray.copy(alpha = 0.7f),
-//                                    fontSize = 14.sp,
-//                                    fontWeight = FontWeight.Normal
-//                                )
-//                            }
-//                        }
-//                    }
-//                }
-//                Text(
-//                    text = "Minhas Estatísticas", color = DarkNavyBlue,
-//                    fontSize = 24.sp,
-//                    fontWeight = FontWeight.Bold
-//                )
-//                Surface(
-//                    color = White,
-//                    shape = RoundedCornerShape(24.dp)
-//                ) {
-//                    Column(
-//                        modifier = Modifier.padding(32.dp),
-//                        verticalArrangement = Arrangement.spacedBy(32.dp)
-//                    ) {
-//                        Column(
-//                            Modifier.fillMaxWidth(),
-//                            horizontalAlignment = Alignment.CenterHorizontally
-//                        ) {
-
-//                        }
-//
-//                    }
-//                }
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = userName,
+                        color = DarkNavyBlue,
+                        fontSize = 36.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Surface(color = MutedBlue, shape = RoundedCornerShape(32.dp)) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(vertical = 6.dp, horizontal = 10.dp)
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_star),
+                                tint = DarkNavyBlue,
+                                contentDescription = "",
+                                modifier = Modifier.padding(end = 4.dp)
+                            )
+                            Text(
+                                text = userRank,
+                                color = DarkGray,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+                }
                 Surface(
                     color = White,
                     shape = RoundedCornerShape(24.dp)
@@ -261,9 +150,9 @@ fun ProfileContent(
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
-                                text = "Seu cérebro está absorvendo mais\n" +
-                                        "conteúdo em menos tempo.",
-                                textAlign = TextAlign.Center
+                                modifier = Modifier.width(250.dp),
+                                text = cognitiveEfficiencyText,
+                                textAlign = TextAlign.Center,
                             )
                         }
                     }
@@ -273,50 +162,137 @@ fun ProfileContent(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Column(
-                        verticalArrangement = Arrangement.spacedBy(24.dp),
-                        modifier = Modifier.padding(24.dp)
+                        verticalArrangement = Arrangement.spacedBy(18.dp),
+                        modifier = Modifier.padding(18.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_stack),
-                                contentDescription = null,
-                                tint = White
-                            )
-                            val annotatedString = buildAnnotatedString {
-                                append("$ Flashcards ")
-                                withStyle(
-                                    style = SpanStyle(
-                                        color = LavenderBlue,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                ) {
-                                    append("a Revisar")
-                                }
-                            }
-
-                            Text(
-                                text = annotatedString,
-                                color = White,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 30.sp
-                            )
-
-
-                        }
-                        Button(
-                            onClick = { /*TODO*/ },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = White,
-                                contentColor = DarkNavyBlue
-                            ),
-                            modifier = Modifier.fillMaxWidth()
+                        Surface(
+                            shape = CircleShape,
+                            color = DarkNavyBlue.copy(alpha = 0.4f)
                         ) {
-                            Text(
-                                text = "Revisar Agora",
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 16.sp,
-                                modifier = Modifier.padding(vertical = 10.dp)
+                            Icon(
+                                modifier = Modifier.padding(14.dp),
+                                painter = painterResource(id = R.drawable.ic_ray),
+                                contentDescription = null,
+                                tint = LavenderBlue
                             )
+                        }
+                        Text(
+                            text = "VELOCIDADE MÉDIA DE RESPOSTA",
+                            color = LavenderBlue,
+                            fontWeight = FontWeight.W700,
+                            fontSize = 14.sp
+                        )
+                        Text(
+                            // TODO: Função que apresente o tempo formatado:
+                            text = "${userStats.globalAverageLatencyMs}s",
+                            fontSize = 48.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = LavenderBlue,
+                        )
+                    }
+
+                }
+                Text(
+                    text = "Saúde da Memória", color = DarkNavyBlue,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Row(){
+                    Column(){
+
+                    }
+                }
+
+                Surface(
+                    color = White,
+                    shape = RoundedCornerShape(24.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(24.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        Row(
+                            Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Surface(
+                                color = VeryLightRed,
+                                shape = CircleShape
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_fire),
+                                    contentDescription = null,
+                                    modifier = Modifier.padding(8.dp)
+                                )
+                            }
+                            Column() {
+                                Text(
+                                    text = " dias", color = DarkGray,
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Text(
+                                    text = "Ofenciva", color = DarkGray.copy(alpha = 0.7f),
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Normal
+                                )
+                            }
+                        }
+                        Row(
+                            Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Surface(
+                                color = MutedBlue,
+                                shape = CircleShape
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_trophy),
+                                    contentDescription = null,
+                                    modifier = Modifier.padding(8.dp)
+                                )
+                            }
+                            Column() {
+                                Text(
+                                    text = "dias", color = DarkGray,
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Text(
+                                    text = "Maior Ofenciva", color = DarkGray.copy(alpha = 0.7f),
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Normal
+                                )
+                            }
+                        }
+                        Row(
+                            Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Surface(
+                                color = OffWhite,
+                                shape = CircleShape
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_calendar),
+                                    contentDescription = null,
+                                    modifier = Modifier.padding(8.dp)
+                                )
+                            }
+                            Column() {
+                                Text(
+                                    text = "", color = DarkGray,
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Text(
+                                    text = "Último acesso", color = DarkGray.copy(alpha = 0.7f),
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Normal
+                                )
+                            }
                         }
                     }
                 }
