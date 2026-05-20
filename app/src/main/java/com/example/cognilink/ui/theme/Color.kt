@@ -9,7 +9,7 @@ var DarkBlue = Color(0xFF141F38)
 
 val MutedBlue = Color(0xFFD2D4FF)
 
-val LavenderBlue = Color(0xFF8690EE)
+val LavenderBlue = Color(0xFFBDC2FF)
 
 val LightNavyBlue = Color(0xFFE0E0FF)
 
