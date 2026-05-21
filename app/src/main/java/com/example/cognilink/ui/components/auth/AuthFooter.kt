@@ -29,7 +29,7 @@ import com.example.cognilink.ui.theme.LightNavyBlue
 import com.example.cognilink.ui.theme.VeryLightGray
 
 @Composable
-fun Footer() {
+fun AuthFooter() {
 
     Surface(modifier = Modifier,
         color = VeryLightGray,
@@ -92,8 +92,8 @@ fun Footer() {
 
 @Preview
 @Composable
-private fun FooterPreview() {
+private fun AuthFooterPreview() {
     CogniLinkTheme {
-        Footer()
+        AuthFooter()
     }
 }

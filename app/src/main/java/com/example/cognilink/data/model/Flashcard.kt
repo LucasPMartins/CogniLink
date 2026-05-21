@@ -1,4 +1,7 @@
-package com.example.cognilink.domain
+package com.example.cognilink.data.model
+
+import com.example.cognilink.domain.model.FlashcardType
+import com.example.cognilink.domain.model.DifficultyLevel
 
 data class Flashcard(
     val id: Long,

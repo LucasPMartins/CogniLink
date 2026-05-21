@@ -1,4 +1,4 @@
-package com.example.cognilink.ui.feature
+package com.example.cognilink.ui.feature.home
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
@@ -19,6 +19,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -38,9 +39,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cognilink.R
-import com.example.cognilink.domain.UserStats
-import com.example.cognilink.domain.fakeUser
+import com.example.cognilink.data.model.UserStats
+import com.example.cognilink.data.model.fakeUser
 import com.example.cognilink.ui.components.utils.GradientSurface
 import com.example.cognilink.ui.components.utils.NavigationHeader
 import com.example.cognilink.ui.components.utils.ProgressBar
@@ -55,21 +57,38 @@ import com.example.cognilink.ui.theme.OffWhite
 import com.example.cognilink.ui.theme.Red
 import com.example.cognilink.ui.theme.VeryLightRed
 import com.example.cognilink.ui.theme.White
+import com.example.cognilink.viewmodel.ProfileUiState
 import com.example.cognilink.viewmodel.ProfileViewModel
 
 @Composable
 fun ProfileScreen(
-    viewModel: ProfileViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+    viewModel: ProfileViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    uiState.userStats?.let { stats ->
-        ProfileContent(
-            userName = uiState.userName,
-            userRank = uiState.userRank,
-            userStats = stats,
-            cognitiveEfficiencyText = uiState.cognitiveEfficiencyText
-        )
+    when (val state = uiState) {
+        is ProfileUiState.Loading -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+        }
+        is ProfileUiState.Success -> {
+            ProfileContent(
+                userName = state.userName,
+                userRank = state.ranking.currentRank.displayName,
+                userStats = state.stats,
+                cognitiveEfficiencyInsight = state.ranking.efficiencyInsight,
+                globalAverageLatencyMsText = viewModel.formatLatency(state.stats.globalAverageLatencyMs),
+                retentionRateInsight = state.ranking.retentionInsight,
+                formattedStudyTime = viewModel.formatTime(state.stats.totalStudyTime),
+                formattedLastReview = viewModel.formatLastReview(state.stats.lastReview)
+            )
+        }
+        is ProfileUiState.Error -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(text = state.message, color = Red)
+            }
+        }
     }
 }
 
@@ -79,7 +98,11 @@ fun ProfileContent(
     userName: String = "João Silva",
     userRank: String = "Iniciante",
     userStats: UserStats,
-    cognitiveEfficiencyText: String = "Seu cérebro está absorvendo mais conteúdo em menos tempo.",
+    cognitiveEfficiencyInsight: String,
+    globalAverageLatencyMsText: String,
+    retentionRateInsight: String,
+    formattedStudyTime: String,
+    formattedLastReview: String,
 ) {
     val scrollState = rememberScrollState()
     Scaffold(
@@ -150,7 +173,7 @@ fun ProfileContent(
                                 shape = CircleShape,
                                 modifier = Modifier
                                     .padding(12.dp)
-                                    .size(110.dp) // Ou .aspectRatio(1f) para ser dinâmico
+                                    .size(110.dp)
                             ) {
                                 Box(contentAlignment = Alignment.Center) {
                                     Column(horizontalAlignment = CenterHorizontally) {
@@ -184,7 +207,7 @@ fun ProfileContent(
                             )
                             Text(
                                 modifier = Modifier.width(250.dp),
-                                text = cognitiveEfficiencyText,
+                                text = cognitiveEfficiencyInsight,
                                 textAlign = TextAlign.Center,
                             )
                         }
@@ -211,14 +234,13 @@ fun ProfileContent(
                             )
                         }
                         Text(
-                            text = "VELOCIDADE MÉDIA DE RESPOSTA",
+                            text = "TEMPO MÉDIA DE RESPOSTA",
                             color = LavenderBlue,
                             fontWeight = FontWeight.W700,
                             fontSize = 14.sp
                         )
                         Text(
-                            // TODO: Função que apresente o tempo formatado:
-                            text = "${userStats.globalAverageLatencyMs}s",
+                            text = globalAverageLatencyMsText,
                             fontSize = 48.sp,
                             fontWeight = FontWeight.Bold,
                             color = LavenderBlue,
@@ -308,9 +330,8 @@ fun ProfileContent(
                                     fontWeight = FontWeight.Bold,
                                     color = DarkNavyBlue,
                                 )
-                                //TODO: Texto persolizado
                                 Text(
-                                    text = "Acima da média", color = DarkGray,
+                                    text = retentionRateInsight, color = DarkGray,
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Bold
                                 )
@@ -441,7 +462,9 @@ fun ProfileContent(
                             NeonActionButton(
                                 text = "Rever Sanguessugas",
                                 height = 60.dp,
-                                onClickButton = {}
+                                onClickButton = {
+                                    //TODO
+                                }
                             )
                         }
                     }
@@ -563,9 +586,8 @@ fun ProfileContent(
                                 fontWeight = FontWeight.W700
                             )
                         }
-                        //TODO: formatar tempo
                         Text(
-                            text = "${userStats.totalStudyTime} horas",
+                            text = formattedStudyTime,
                             fontSize = 30.sp,
                             fontWeight = FontWeight.ExtraBold,
                             color = DarkGray
@@ -579,8 +601,7 @@ fun ProfileContent(
                                     tint = DarkNavyBlue
                                 )
                                 Text(
-                                    //TODO: formatar data e texto
-                                    text = "${userStats.lastReview} atrás Última Revisão",
+                                    text = formattedLastReview,
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.W700,
                                     color = DarkNavyBlue
@@ -598,6 +619,12 @@ fun ProfileContent(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun ProfileContentPreview() {
-    ProfileContent(userStats = fakeUser.stats)
+    ProfileContent(
+        userStats = fakeUser.stats,
+        globalAverageLatencyMsText = "450ms",
+        cognitiveEfficiencyInsight = "Seu cérebro está absorvendo mais conteúdo em menos tempo.",
+        retentionRateInsight = "Considere revisar os cartões com maior frequência.",
+        formattedStudyTime = "12h 30min",
+        formattedLastReview = "2h atrás Última Revisão"
+    )
 }
-

@@ -15,8 +15,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.cognilink.ui.components.auth.Footer
-import com.example.cognilink.ui.components.auth.Header
+import com.example.cognilink.ui.components.auth.AuthFooter
+import com.example.cognilink.ui.components.auth.AuthHeader
 import com.example.cognilink.ui.components.auth.SignInContent
 import com.example.cognilink.ui.components.auth.SignUpContent
 import com.example.cognilink.ui.theme.*
@@ -63,7 +63,7 @@ fun AuthContent(
             .fillMaxSize()
             .background(color = OffWhite),
     ) {
-        Header()
+        AuthHeader()
 
         Box(
             modifier = Modifier
@@ -150,7 +150,7 @@ fun AuthContent(
                 }
             }
         }
-        Footer()
+        AuthFooter()
     }
 }
 

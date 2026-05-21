@@ -1,4 +1,4 @@
-package com.example.cognilink.ui.feature
+package com.example.cognilink.ui.feature.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,7 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.cognilink.R
-import com.example.cognilink.domain.DifficultyLevel
+import com.example.cognilink.domain.model.DifficultyLevel
 import com.example.cognilink.ui.components.utils.buttons.NeonFAB
 import com.example.cognilink.ui.components.input.SearchTextField
 import com.example.cognilink.ui.components.home.DeckCard

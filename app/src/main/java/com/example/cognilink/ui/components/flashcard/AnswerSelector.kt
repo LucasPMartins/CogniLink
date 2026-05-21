@@ -1,6 +1,5 @@
 package com.example.cognilink.ui.components.flashcard
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,21 +16,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.cognilink.domain.Answer
+import com.example.cognilink.data.model.Answer
+import com.example.cognilink.ui.model.AnswerVisualState
+import com.example.cognilink.ui.model.border
+import com.example.cognilink.ui.model.labelBackgroundColor
+import com.example.cognilink.ui.model.labelTextColor
 import com.example.cognilink.ui.theme.CogniLinkTheme
 import com.example.cognilink.ui.theme.DarkNavyBlue
-import com.example.cognilink.ui.theme.Green
-import com.example.cognilink.ui.theme.MutedBlue
-import com.example.cognilink.ui.theme.OffWhite
-import com.example.cognilink.ui.theme.Red
 
-
-sealed interface AnswerVisualState {
-    object Default : AnswerVisualState
-    object Selected : AnswerVisualState
-    object Correct : AnswerVisualState
-    object Incorrect : AnswerVisualState
-}
 
 @Composable
 fun AnswerSelector(
@@ -50,32 +42,12 @@ fun AnswerSelector(
 
             val visualState = getVisualState(answer)
 
-            val cardBorder = when (visualState) {
-                AnswerVisualState.Selected -> BorderStroke(2.dp, DarkNavyBlue)
-                AnswerVisualState.Correct -> BorderStroke(2.dp, Green)
-                AnswerVisualState.Incorrect -> BorderStroke(2.dp, Red)
-                AnswerVisualState.Default -> null
-            }
-
-            val labelBackgroundColor = when (visualState) {
-                AnswerVisualState.Selected -> MutedBlue
-                AnswerVisualState.Correct -> Green.copy(alpha = 0.2f)
-                AnswerVisualState.Incorrect -> Red.copy(alpha = 0.2f)
-                AnswerVisualState.Default -> OffWhite
-            }
-
-            val labelTextColor = when (visualState) {
-                AnswerVisualState.Correct -> Green
-                AnswerVisualState.Incorrect -> Red
-                else -> DarkNavyBlue
-            }
-
             AnswerItem(
                 label = generatedLabel,
                 answerText = answer.answer,
-                border = cardBorder,
-                labelBackgroundColor = labelBackgroundColor,
-                labelTextColor = labelTextColor,
+                border = visualState.border,
+                labelBackgroundColor = visualState.labelBackgroundColor,
+                labelTextColor = visualState.labelTextColor,
                 readOnly = true,
                 selectionControl = if (selectionControl != null) {
                     { selectionControl(answer,index) }
@@ -166,4 +138,3 @@ private fun AnswerSelectorPreview() {
         }
     }
 }
-

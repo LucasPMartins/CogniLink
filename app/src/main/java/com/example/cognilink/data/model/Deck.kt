@@ -1,4 +1,6 @@
-package com.example.cognilink.domain
+package com.example.cognilink.data.model
+
+import com.example.cognilink.domain.model.DifficultyLevel
 
 data class Deck(
     val id: Long,
@@ -46,5 +48,5 @@ val deck3 = Deck(
     mastery = 0.5f,
     totalCards = 1,
     cardsToReview = 1,
-    flashcards = listOf(flashcard1,flashcard2,flashcard3,flashcard4)
+    flashcards = listOf(flashcard1, flashcard2, flashcard3, flashcard4)
 )

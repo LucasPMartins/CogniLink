@@ -20,8 +20,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cognilink.R
-import com.example.cognilink.domain.DifficultyLevel
-import com.example.cognilink.domain.FlashcardType
+import com.example.cognilink.domain.model.DifficultyLevel
+import com.example.cognilink.domain.model.FlashcardType
 import com.example.cognilink.ui.components.flashcard.DifficultySelector
 import com.example.cognilink.ui.components.flashcard.QuantitySelector
 import com.example.cognilink.ui.components.flashcard.TypeOptionList

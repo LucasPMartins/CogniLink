@@ -25,9 +25,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cognilink.R
-import com.example.cognilink.domain.Answer
+import com.example.cognilink.data.model.Answer
 import com.example.cognilink.ui.components.utils.GradientSurface
 import com.example.cognilink.ui.components.utils.buttons.DeleteButton
+import com.example.cognilink.ui.model.AnswerVisualState
+import com.example.cognilink.ui.model.border
+import com.example.cognilink.ui.model.labelBackgroundColor
+import com.example.cognilink.ui.model.labelTextColor
 import com.example.cognilink.ui.theme.CogniLinkTheme
 import com.example.cognilink.ui.theme.DarkNavyBlue
 import com.example.cognilink.ui.theme.Green
@@ -56,26 +60,6 @@ fun AnswerEditor(
 
             val visualState = getVisualState(answer)
 
-            val cardBorder = when (visualState) {
-                AnswerVisualState.Selected -> BorderStroke(2.dp, DarkNavyBlue)
-                AnswerVisualState.Correct -> BorderStroke(2.dp, Green)
-                AnswerVisualState.Incorrect -> BorderStroke(2.dp, Red)
-                AnswerVisualState.Default -> null
-            }
-
-            val labelBackgroundColor = when (visualState) {
-                AnswerVisualState.Selected -> MutedBlue
-                AnswerVisualState.Correct -> Green.copy(alpha = 0.2f)
-                AnswerVisualState.Incorrect -> Red.copy(alpha = 0.2f)
-                AnswerVisualState.Default -> OffWhite
-            }
-
-            val labelTextColor = when (visualState) {
-                AnswerVisualState.Correct -> Green
-                AnswerVisualState.Incorrect -> Red
-                else -> DarkNavyBlue
-            }
-
             AnswerItem(
                 label = generatedLabel,
                 answerText = answer.answer,
@@ -84,9 +68,9 @@ fun AnswerEditor(
                     newList[index] = newList[index].copy(answer = newText)
                     onAnswerOptionsUpdate(newList)
                 },
-                border = cardBorder,
-                labelBackgroundColor = labelBackgroundColor,
-                labelTextColor = labelTextColor,
+                border = visualState.border,
+                labelBackgroundColor = visualState.labelBackgroundColor,
+                labelTextColor = visualState.labelTextColor,
                 readOnly = false,
                 selectionControl = if (selectionControl != null) {
                     { selectionControl(answer,index) }
@@ -176,7 +160,7 @@ private fun AnswerEditorPreview() {
                         )
                     } else
                         TrueFalseToggle(
-                            currentValue = if (answer.isCorrect) "V" else "F",
+                            currentValue = if (answer.isCorrect) "T" else "F",
                             onToggle = { _ ->
                                 listaTeste2 = listaTeste2.mapIndexed { i, a ->
                                     if (i == index) a.copy(isCorrect = !a.isCorrect)

@@ -1,6 +1,5 @@
 package com.example.cognilink.ui.components.flashcard
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,13 +10,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -33,11 +29,11 @@ import com.example.cognilink.ui.theme.VividCyan
 import com.example.cognilink.ui.theme.White
 
 @Composable
-fun Header(modifier: Modifier = Modifier,
-           deckName: String = "Deck Name",
-           actualCard: Int = 12,
-           totalCards: Int = 50,
-           onCloseClick: () -> Unit = {},
+fun FlashcardHeader(modifier: Modifier = Modifier,
+                    deckName: String = "Deck Name",
+                    actualCard: Int = 12,
+                    totalCards: Int = 50,
+                    onCloseClick: () -> Unit = {},
 ) {
 
     GradientSurface()
@@ -108,8 +104,8 @@ fun Header(modifier: Modifier = Modifier,
 
 @Preview
 @Composable
-private fun HeaderPreview() {
+private fun FlashcardHeaderPreview() {
     CogniLinkTheme{
-        Header()
+        FlashcardHeader()
     }
 }

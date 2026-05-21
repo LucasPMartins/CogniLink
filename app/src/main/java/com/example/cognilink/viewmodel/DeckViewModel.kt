@@ -1,7 +1,7 @@
 package com.example.cognilink.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.example.cognilink.domain.Deck
+import com.example.cognilink.data.model.Deck
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

@@ -19,7 +19,7 @@ import com.example.cognilink.ui.theme.CogniLinkTheme
 import com.example.cognilink.ui.theme.White
 
 @Composable
-fun Header() {
+fun AuthHeader() {
     GradientSurface(shape = RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
     {
         Column(
@@ -55,8 +55,8 @@ fun Header() {
 
 @Preview
 @Composable
-private fun HeaderPreview() {
+private fun AuthHeaderPreview() {
     CogniLinkTheme {
-        Header()
+        AuthHeader()
     }
 }

@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cognilink.R
-import com.example.cognilink.domain.FlashcardType
+import com.example.cognilink.domain.model.FlashcardType
 import com.example.cognilink.ui.components.utils.labels.CustomLabel
 import com.example.cognilink.ui.theme.CogniLinkTheme
 import java.lang.reflect.Type

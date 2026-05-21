@@ -23,14 +23,14 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cognilink.R
-import com.example.cognilink.domain.DifficultyLevel
-import com.example.cognilink.domain.Flashcard
-import com.example.cognilink.domain.deck1
+import com.example.cognilink.domain.model.DifficultyLevel
+import com.example.cognilink.data.model.Flashcard
+import com.example.cognilink.data.model.deck1
 import com.example.cognilink.ui.components.utils.buttons.NeonActionButton
 import com.example.cognilink.ui.components.utils.NavigationHeader
 import com.example.cognilink.ui.components.utils.buttons.SimpleGradientButton
 import com.example.cognilink.ui.theme.CogniLinkTheme
-import com.example.cognilink.ui.components.deck.DeckCardItem
+import com.example.cognilink.ui.components.deck.FlashcardItem
 import com.example.cognilink.ui.components.deck.EmptyDeckContent
 import com.example.cognilink.ui.components.deck.ViewDeckContent
 import com.example.cognilink.ui.components.utils.labels.CustomLabel
@@ -142,7 +142,7 @@ fun DeckContent(
                     }
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         deckFlashcards.forEach { flashcard ->
-                            DeckCardItem(flashcardType = flashcard.cardType, flashcardQuestion = flashcard.question, nextReview = "10",onSelectCard = {onFlashcardClick(flashcard)})
+                            FlashcardItem(flashcardType = flashcard.cardType, flashcardQuestion = flashcard.question, nextReview = "10",onSelectCard = {onFlashcardClick(flashcard)})
                         }
                     }
                 }

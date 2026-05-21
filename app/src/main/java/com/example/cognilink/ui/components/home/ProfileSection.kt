@@ -34,7 +34,7 @@ import com.example.cognilink.ui.theme.White
 fun ProfileSection(
     userName: String = "João Silva",
     overallMastery: Float = 0.8f,
-    dayStreak: Int = 10,
+    totalStudyTime: String = "20 dias",
     cardsDone: Int = 1200,
     learnRetention: Float = 0.8f,
     ) {
@@ -106,13 +106,13 @@ fun ProfileSection(
                             modifier = Modifier.weight(1f)
                         ) {
                             Text(
-                                text = "SINCRONIZAÇÃO ATUAL", 
+                                text = "TEMPO TOTAL DE ESTUDO",
                                 color = DarkGray.copy(alpha = 0.6f), 
                                 fontWeight = FontWeight.Bold, 
                                 fontSize = 10.sp
                             )
                             Text(
-                                text = "SEQUÊNCIA DE $dayStreak DIAS", 
+                                text = totalStudyTime,
                                 color = DarkNavyBlue,
                                 fontWeight = FontWeight.ExtraBold, 
                                 fontSize = 18.sp

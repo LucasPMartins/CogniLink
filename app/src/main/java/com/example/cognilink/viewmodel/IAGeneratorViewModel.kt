@@ -1,8 +1,8 @@
 package com.example.cognilink.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.example.cognilink.domain.DifficultyLevel
-import com.example.cognilink.domain.FlashcardType
+import com.example.cognilink.domain.model.DifficultyLevel
+import com.example.cognilink.domain.model.FlashcardType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

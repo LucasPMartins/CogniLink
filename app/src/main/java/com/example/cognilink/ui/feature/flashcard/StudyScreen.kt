@@ -36,24 +36,23 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cognilink.R
-import com.example.cognilink.domain.Answer
-import com.example.cognilink.domain.Flashcard
-import com.example.cognilink.domain.FlashcardType
-import com.example.cognilink.domain.flashcard1
+import com.example.cognilink.data.model.Answer
+import com.example.cognilink.data.model.Flashcard
+import com.example.cognilink.domain.model.FlashcardType
+import com.example.cognilink.data.model.flashcard1
 import com.example.cognilink.ui.components.flashcard.AnswerSelector
-import com.example.cognilink.ui.components.flashcard.AnswerVisualState
-import com.example.cognilink.ui.components.flashcard.Header
+import com.example.cognilink.ui.components.flashcard.FlashcardHeader
 import com.example.cognilink.ui.components.flashcard.HintReveal
 import com.example.cognilink.ui.components.flashcard.TrueFalseToggle
 import com.example.cognilink.ui.components.input.CustomTextField
 import com.example.cognilink.ui.components.utils.buttons.SimpleGradientButton
+import com.example.cognilink.ui.model.AnswerVisualState
 import com.example.cognilink.ui.theme.CogniLinkTheme
 import com.example.cognilink.ui.theme.DarkGray
 import com.example.cognilink.ui.theme.DarkNavyBlue
 import com.example.cognilink.ui.theme.OffWhite
 import com.example.cognilink.ui.theme.VeryLightGray
 import com.example.cognilink.ui.theme.White
-import com.example.cognilink.viewmodel.FlashcardPlayerUiState
 import com.example.cognilink.viewmodel.FlashcardPlayerViewModel
 import kotlinx.coroutines.delay
 
@@ -91,8 +90,8 @@ fun StudyContent(
     flashcard: Flashcard,
     selectedAnswers: Map<Answer, String> = mapOf(),
     onSelectAnswer: (Answer, String) -> Unit = { _, _ -> },
-    isQuestionAnswered: Boolean = false,
-    isQuestionVerified: Boolean = false,
+    isQuestionAnswered: Boolean,
+    isQuestionVerified: Boolean,
     onClickToVerifyQuestion: () -> Unit = {},
     onClickToNextFlashcard: () -> Unit = {}
     ) {
@@ -117,7 +116,7 @@ fun StudyContent(
             .fillMaxSize()
             .imePadding()
             .statusBarsPadding(),
-        topBar = { Header() },
+        topBar = { FlashcardHeader() },
         containerColor = OffWhite,
         bottomBar = {
             Column(modifier = Modifier.padding(24.dp)) {

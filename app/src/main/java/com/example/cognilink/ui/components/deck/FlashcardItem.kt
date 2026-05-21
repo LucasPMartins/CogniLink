@@ -21,7 +21,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.cognilink.R
-import com.example.cognilink.domain.FlashcardType
+import com.example.cognilink.domain.model.FlashcardType
 import com.example.cognilink.ui.theme.DarkGray
 import com.example.cognilink.ui.theme.DarkNavyBlue
 import com.example.cognilink.ui.theme.LightGray
@@ -30,7 +30,7 @@ import com.example.cognilink.ui.theme.VeryDarkGray
 import com.example.cognilink.ui.theme.White
 
 @Composable
-fun DeckCardItem(
+fun FlashcardItem(
     modifier: Modifier = Modifier,
     flashcardType: FlashcardType,
     flashcardQuestion: String,

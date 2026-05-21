@@ -25,8 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cognilink.R
-import com.example.cognilink.domain.Flashcard
-import com.example.cognilink.domain.deck1
+import com.example.cognilink.data.model.deck1
 import com.example.cognilink.ui.components.input.CustomTextField
 import com.example.cognilink.ui.components.utils.buttons.NeonActionButton
 import com.example.cognilink.ui.components.utils.NavigationHeader
@@ -35,7 +34,7 @@ import com.example.cognilink.ui.theme.CogniLinkTheme
 import com.example.cognilink.ui.theme.DarkGray
 import com.example.cognilink.ui.theme.DarkNavyBlue
 import com.example.cognilink.ui.theme.White
-import com.example.cognilink.ui.components.deck.DeckCardItem
+import com.example.cognilink.ui.components.deck.FlashcardItem
 import com.example.cognilink.ui.components.deck.EditDeckContent
 import com.example.cognilink.ui.components.deck.EmptyDeckContent
 import com.example.cognilink.viewmodel.DeckEditorUiState
@@ -183,7 +182,7 @@ fun DeckEditorContent(
                     }
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         uiState.deckFlashcards.forEach { card ->
-                            DeckCardItem(flashcardType = card.cardType, flashcardQuestion = card.question, nextReview = "10", onSelectCard = {})
+                            FlashcardItem(flashcardType = card.cardType, flashcardQuestion = card.question, nextReview = "10", onSelectCard = {})
                         }
                     }
                 }

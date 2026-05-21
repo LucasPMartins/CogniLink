@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.example.cognilink.R
-import com.example.cognilink.domain.DifficultyLevel
+import com.example.cognilink.domain.model.DifficultyLevel
 import com.example.cognilink.ui.components.utils.GradientSurface
 import com.example.cognilink.ui.components.utils.ProgressBar
 import com.example.cognilink.ui.theme.DarkGray

@@ -1,7 +1,7 @@
 package com.example.cognilink.ui.theme
 
 import androidx.compose.ui.graphics.Color
-import com.example.cognilink.domain.DifficultyLevel
+import com.example.cognilink.domain.model.DifficultyLevel
 
 val DarkNavyBlue = Color(0xFF1A237E)
 
