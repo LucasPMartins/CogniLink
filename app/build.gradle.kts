@@ -43,6 +43,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.compose.markdown)
     implementation(libs.kotlinx.datetime)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

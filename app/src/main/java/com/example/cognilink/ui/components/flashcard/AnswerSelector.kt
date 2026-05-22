@@ -17,10 +17,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cognilink.data.model.Answer
-import com.example.cognilink.ui.model.AnswerVisualState
-import com.example.cognilink.ui.model.border
-import com.example.cognilink.ui.model.labelBackgroundColor
-import com.example.cognilink.ui.model.labelTextColor
+import com.example.cognilink.ui.states.AnswerVisualState
+import com.example.cognilink.ui.states.border
+import com.example.cognilink.ui.states.labelBackgroundColor
+import com.example.cognilink.ui.states.labelTextColor
 import com.example.cognilink.ui.theme.CogniLinkTheme
 import com.example.cognilink.ui.theme.DarkNavyBlue
 

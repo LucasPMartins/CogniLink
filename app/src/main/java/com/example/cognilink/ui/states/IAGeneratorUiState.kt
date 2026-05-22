@@ -1,0 +1,14 @@
+package com.example.cognilink.ui.states
+
+import com.example.cognilink.domain.model.DifficultyLevel
+import com.example.cognilink.domain.model.FlashcardType
+import kotlin.enums.enumEntries
+
+data class IAGeneratorUiState(
+    val flashcardTheme: String = "",
+    val quantity: Int = 1,
+    val selectedDifficulty: DifficultyLevel? = null,
+    val typeOptions: List<FlashcardType> = enumEntries<FlashcardType>(),
+    val selectedType: FlashcardType? = null,
+    val isLoading: Boolean = false
+)

@@ -25,23 +25,26 @@ import com.example.cognilink.ui.theme.DarkNavyBlue
 import com.example.cognilink.ui.theme.White
 
 @Composable
-fun NavigationHeader(modifier: Modifier = Modifier,
-                     title: String = "TOP BAR",
-                     onBackClick: () -> Unit = {},
-                     menuEnabled: Boolean = false,
-                     onMenuClick: () -> Unit = {},
+fun NavigationHeader(
+    modifier: Modifier = Modifier,
+    title: String = "TOP BAR",
+    onBackClick: () -> Unit = {},
+    menuEnabled: Boolean = false,
+    onMenuClick: () -> Unit = {},
 ) {
 
     Surface(
-            modifier = Modifier
-                .fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth(),
         color = White
+    ) {
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .height(64.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
         ) {
-            Row(
-                modifier = modifier.fillMaxWidth().height(64.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center,
-            ) {
             IconButton(onClick = onBackClick) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_arrow_back),
@@ -51,22 +54,24 @@ fun NavigationHeader(modifier: Modifier = Modifier,
                 )
             }
 
-            Text(text = title,
+            Text(
+                text = title,
                 color = DarkNavyBlue,
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
                 textAlign = TextAlign.Start,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.weight(1f))
-
-                IconButton(onClick = onMenuClick, enabled = menuEnabled) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_menu),
-                        contentDescription = "Menu",
-                        tint = if (menuEnabled) DarkNavyBlue else Transparent,
-                    )
-                }
+                modifier = Modifier.weight(1f)
+            )
+            if(menuEnabled)
+            IconButton(onClick = onMenuClick) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_menu),
+                    contentDescription = "Menu",
+                    tint = DarkNavyBlue,
+                )
+            }
 
 
         }
@@ -76,7 +81,7 @@ fun NavigationHeader(modifier: Modifier = Modifier,
 @Preview
 @Composable
 private fun NavigationHeaderPreview() {
-    CogniLinkTheme{
+    CogniLinkTheme {
         NavigationHeader()
     }
 }

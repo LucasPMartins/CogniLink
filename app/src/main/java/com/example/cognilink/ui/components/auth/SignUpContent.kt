@@ -44,8 +44,8 @@ fun SignUpContent(
     onPasswordChange: (String) -> Unit = {},
     confirmPassword: String = "",
     onConfirmPasswordChange: (String) -> Unit = {},
-    checkedTerms: Boolean = false,
-    onCheckedTermsChange: (Boolean) -> Unit = {},
+    isTermsAccepted: Boolean = false,
+    onTermsAcceptedChange: (Boolean) -> Unit = {},
     onSignUpClick: () -> Unit = {}
 ) {
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(20.dp)) {
@@ -86,12 +86,12 @@ fun SignUpContent(
         )
 
         val annotatedString = buildAnnotatedString {
-            append("Concordo com os ")
+            append("Li e concordo com os ")
 
-            // Estilo para Termos de Serviço
+            // Estilo para Termos de Uso
             pushStringAnnotation(tag = "TERMS", annotation = "")
             withStyle(style = SpanStyle(color = DarkNavyBlue, fontWeight = FontWeight.Bold)) {
-                append("Termos de Serviço")
+                append("Termos de Uso")
             }
             pop()
 
@@ -114,8 +114,8 @@ fun SignUpContent(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Checkbox(
-                checked = checkedTerms,
-                onCheckedChange = onCheckedTermsChange,
+                checked = isTermsAccepted,
+                onCheckedChange = onTermsAcceptedChange,
                 colors = CheckboxDefaults.colors(checkedColor = DarkNavyBlue)
             )
 
@@ -133,7 +133,7 @@ fun SignUpContent(
             height = 40.dp,
             icon = R.drawable.ic_arrow_forward,
             iconRightSide = true,
-            isEnabled = checkedTerms,
+            isEnabled = isTermsAccepted,
             onClickButton = onSignUpClick
         )
 
@@ -159,8 +159,8 @@ private fun SignUpContentPreview() {
             onPasswordChange = { password = it },
             confirmPassword = confirmPassword,
             onConfirmPasswordChange = { confirmPassword = it },
-            checkedTerms = isTermsAccepted,
-            onCheckedTermsChange = { isTermsAccepted = it }
+            isTermsAccepted = isTermsAccepted,
+            onTermsAcceptedChange = { isTermsAccepted = it }
         )
     }
 }

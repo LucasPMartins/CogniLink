@@ -1,6 +1,5 @@
 package com.example.cognilink.ui.components.flashcard
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -28,16 +27,12 @@ import com.example.cognilink.R
 import com.example.cognilink.data.model.Answer
 import com.example.cognilink.ui.components.utils.GradientSurface
 import com.example.cognilink.ui.components.utils.buttons.DeleteButton
-import com.example.cognilink.ui.model.AnswerVisualState
-import com.example.cognilink.ui.model.border
-import com.example.cognilink.ui.model.labelBackgroundColor
-import com.example.cognilink.ui.model.labelTextColor
+import com.example.cognilink.ui.states.AnswerVisualState
+import com.example.cognilink.ui.states.border
+import com.example.cognilink.ui.states.labelBackgroundColor
+import com.example.cognilink.ui.states.labelTextColor
 import com.example.cognilink.ui.theme.CogniLinkTheme
-import com.example.cognilink.ui.theme.DarkNavyBlue
 import com.example.cognilink.ui.theme.Green
-import com.example.cognilink.ui.theme.MutedBlue
-import com.example.cognilink.ui.theme.OffWhite
-import com.example.cognilink.ui.theme.Red
 import com.example.cognilink.ui.theme.White
 
 @Composable
