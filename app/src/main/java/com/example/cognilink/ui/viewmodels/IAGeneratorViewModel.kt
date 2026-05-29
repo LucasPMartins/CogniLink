@@ -31,6 +31,10 @@ class IAGeneratorViewModel : ViewModel() {
         _uiState.update { it.copy(selectedType = newType) }
     }
 
+    fun onUploadFile(){
+        //TODO
+    }
+
     fun generateFlashcards() {
         _uiState.update { it.copy(isLoading = true) }
         // TODO: Lógica para chamar a IA

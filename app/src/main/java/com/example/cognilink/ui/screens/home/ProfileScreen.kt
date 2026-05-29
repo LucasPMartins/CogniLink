@@ -65,7 +65,7 @@ import androidx.compose.runtime.LaunchedEffect
 @Composable
 fun ProfileScreen(
     userId: Long,
-    onBackClick: () -> Unit,
+    onNavigateBack: () -> Unit,
     viewModel: ProfileViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -90,7 +90,7 @@ fun ProfileScreen(
                 retentionRateInsight = state.ranking.retentionInsight,
                 formattedStudyTime = viewModel.formatTime(state.stats.totalStudyTime),
                 formattedLastReview = viewModel.formatLastReview(state.stats.lastReview),
-                onBackClick = onBackClick
+                onNavigateBack = onNavigateBack
             )
         }
         is ProfileUiState.Error -> {
@@ -112,7 +112,7 @@ fun ProfileContent(
     retentionRateInsight: String,
     formattedStudyTime: String,
     formattedLastReview: String,
-    onBackClick: () -> Unit
+    onNavigateBack: () -> Unit
 ) {
     val scrollState = rememberScrollState()
     Scaffold(
@@ -120,7 +120,7 @@ fun ProfileContent(
             .padding()
             .statusBarsPadding(),
         topBar = {
-            NavigationHeader(title = "Perfil", onBackClick = onBackClick)
+            NavigationHeader(title = "Perfil", onBackClick = onNavigateBack)
         },
         containerColor = OffWhite
     ) { padding ->
@@ -636,6 +636,6 @@ private fun ProfileContentPreview() {
         retentionRateInsight = "Considere revisar os cartões com maior frequência.",
         formattedStudyTime = "12h 30min",
         formattedLastReview = "2h atrás Última Revisão",
-        onBackClick = {}
+        onNavigateBack = {}
     )
 }

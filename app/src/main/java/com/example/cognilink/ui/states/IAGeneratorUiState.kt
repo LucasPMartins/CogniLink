@@ -10,5 +10,6 @@ data class IAGeneratorUiState(
     val selectedDifficulty: DifficultyLevel? = null,
     val typeOptions: List<FlashcardType> = enumEntries<FlashcardType>(),
     val selectedType: FlashcardType? = null,
+    val hasFile: Boolean = false,
     val isLoading: Boolean = false
 )

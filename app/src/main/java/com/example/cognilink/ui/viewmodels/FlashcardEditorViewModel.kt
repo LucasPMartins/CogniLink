@@ -3,10 +3,10 @@ package com.example.cognilink.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cognilink.data.model.Answer
-import com.example.cognilink.domain.model.DifficultyLevel
 import com.example.cognilink.data.model.Flashcard
 import com.example.cognilink.data.repository.FlashcardRepository
 import com.example.cognilink.data.repository.FlashcardRepositoryImpl
+import com.example.cognilink.domain.model.DifficultyLevel
 import com.example.cognilink.domain.model.FlashcardType
 import com.example.cognilink.ui.states.FlashcardEditorUiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,24 +22,38 @@ class FlashcardEditorViewModel(
     private val _uiState = MutableStateFlow(FlashcardEditorUiState())
     val uiState: StateFlow<FlashcardEditorUiState> = _uiState.asStateFlow()
 
-    fun loadFlashcard(flashcard: Flashcard) {
-        _uiState.update { currentState ->
-            if (currentState.isInitialized) return@update currentState
+    fun loadFlashcard(flashcardId: Long) {
+        viewModelScope.launch {
+            val flashcard = repository.getFlashcardById(flashcardId)
+            if (flashcard != null) {
+                _uiState.update { currentState ->
+                    if (currentState.isInitialized) return@update currentState
 
-            currentState.copy(
-                currentFlashcardId = flashcard.id,
-                questionText = flashcard.question,
-                cardType = flashcard.cardType,
-                difficulty = flashcard.difficulty,
-                answerOptions = flashcard.answerOptions,
-                hints = flashcard.hints,
-                isInitialized = true
-            )
+                    currentState.copy(
+                        currentFlashcardId = flashcard.id,
+                        questionText = flashcard.question,
+                        cardType = flashcard.cardType,
+                        difficulty = flashcard.difficulty,
+                        answerOptions = flashcard.answerOptions,
+                        hints = flashcard.hints,
+                        isInitialized = true
+                    )
+                }
+            }
         }
     }
 
     fun onBasicAnswerChange(newAnswerText: String) {
-        _uiState.update { it.copy(answerOptions = listOf(Answer(answer = newAnswerText, isCorrect = true))) }
+        _uiState.update {
+            it.copy(
+                answerOptions = listOf(
+                    Answer(
+                        answer = newAnswerText,
+                        isCorrect = true
+                    )
+                )
+            )
+        }
     }
 
     fun removeAnswer(answer: Answer) {

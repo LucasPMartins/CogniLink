@@ -19,11 +19,11 @@ import dev.jeziellago.compose.markdowntext.MarkdownText
 
 @Composable
 fun TermsScreen(
-    onBackClick: () -> Unit,
+    onNavigateBack: () -> Unit,
     termsViewModel: TermsViewModel
 ) {
     TermsContent(
-        onBackClick = onBackClick,
+        onNavigateBack = onNavigateBack,
         termsMarkdown = termsViewModel.termsText.trimIndent()
     )
 }
@@ -31,7 +31,7 @@ fun TermsScreen(
 @Composable
 fun TermsContent(
     modifier: Modifier = Modifier,
-    onBackClick: () -> Unit,
+    onNavigateBack: () -> Unit,
     termsMarkdown: String,
 ) {
     val scrollState = rememberScrollState()
@@ -43,7 +43,7 @@ fun TermsContent(
         topBar = {
             NavigationHeader(
                 title = "Termos de Uso e Política de Privacidade",
-                onBackClick = onBackClick
+                onBackClick = onNavigateBack
             )
         }
     ) { padding ->
@@ -64,7 +64,7 @@ fun TermsContent(
 @Composable
 private fun TermsContentPreview() {
     TermsContent(
-        onBackClick = {},
+        onNavigateBack = {},
         termsMarkdown = """
             # Termos de Uso
             

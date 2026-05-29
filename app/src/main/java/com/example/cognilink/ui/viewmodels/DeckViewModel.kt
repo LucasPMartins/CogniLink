@@ -53,6 +53,18 @@ class DeckViewModel(
         viewModelScope.launch {
             try {
                 val flashcards = flashcardRepository.getFlashcardsForDeck(deckId)
+                _uiState.update { it.copy(flashcards = flashcards.take(3)) }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(errorMessage = "Erro ao carregar flashcards") }
+            }
+        }
+    }
+
+    fun loadAllFlashcards() {
+        val deckId = _uiState.value.currentDeck?.id ?: return
+        viewModelScope.launch {
+            try {
+                val flashcards = flashcardRepository.getFlashcardsForDeck(deckId)
                 _uiState.update { it.copy(flashcards = flashcards) }
             } catch (e: Exception) {
                 _uiState.update { it.copy(errorMessage = "Erro ao carregar flashcards") }
@@ -82,6 +94,11 @@ class DeckViewModel(
         }
     }
 
+    fun toggleMenu(){
+        _uiState.update { it.copy(isMenuExpanded = !it.isMenuExpanded) }
+    }
 
-
+    fun toggleAddFlashcardDialog() {
+        _uiState.update { it.copy(isAddFlashcardDialogOpen = !it.isAddFlashcardDialogOpen) }
+    }
 }

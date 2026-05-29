@@ -11,7 +11,7 @@ interface AuthRepository {
 class AuthRepositoryImpl : AuthRepository {
     override suspend fun signIn(email: String, password: String): User? {
         // Simulação de login
-        return if (email == "alex.silva@example.com" && password == "123456") {
+        return if (email == "lucas" && password == "123") {
             fakeUser
         } else {
             null

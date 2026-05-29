@@ -27,38 +27,40 @@ import com.example.cognilink.ui.components.flashcard.QuantitySelector
 import com.example.cognilink.ui.components.flashcard.TypeOptionList
 import com.example.cognilink.ui.components.input.CustomTextField
 import com.example.cognilink.ui.components.input.FileUploadArea
-import com.example.cognilink.ui.components.utils.labels.LabeledText
 import com.example.cognilink.ui.components.utils.NavigationHeader
 import com.example.cognilink.ui.components.utils.buttons.NeonActionButton
 import com.example.cognilink.ui.components.utils.labels.CustomLabel
+import com.example.cognilink.ui.components.utils.labels.LabeledText
 import com.example.cognilink.ui.theme.CogniLinkTheme
 import com.example.cognilink.ui.theme.DarkGray
 import com.example.cognilink.ui.theme.OffWhite
 import com.example.cognilink.ui.viewmodels.IAGeneratorViewModel
 
 @Composable
-fun IAGeneratorScreen(
-    modifier: Modifier = Modifier,
-    viewModel: IAGeneratorViewModel = viewModel()
+fun CreateFlashcardWithIAScreen(
+    deckId: Long,
+    viewModel: IAGeneratorViewModel = viewModel(),
+    onNavigateBack: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    uiState.selectedType?.let { selectedType ->
-        IAGeneratorContent(
-            modifier = modifier,
-            flashcardTheme = uiState.flashcardTheme,
-            onFlashcardThemeChange = viewModel::onThemeChange,
-            quantity = uiState.quantity,
-            onQuantityChange = viewModel::onQuantityChange,
-            selectedDifficulty = uiState.selectedDifficulty,
-            onDifficultyChange = viewModel::onDifficultyChange,
-            typeOptions = uiState.typeOptions,
-            selectedType = selectedType,
-            onTypeChange = viewModel::onTypeChange,
-            onGenerateClick = viewModel::generateFlashcards,
-            isLoading = uiState.isLoading
-        )
-    }
+    IAGeneratorContent(
+        flashcardTheme = uiState.flashcardTheme,
+        onFlashcardThemeChange = viewModel::onThemeChange,
+        quantity = uiState.quantity,
+        onQuantityChange = viewModel::onQuantityChange,
+        selectedDifficulty = uiState.selectedDifficulty,
+        onDifficultyChange = viewModel::onDifficultyChange,
+        typeOptions = uiState.typeOptions,
+        selectedType = uiState.selectedType,
+        onTypeChange = viewModel::onTypeChange,
+        onGenerateClick = viewModel::generateFlashcards,
+        hasFile = uiState.hasFile,
+        onUploadClick = viewModel::onUploadFile,
+        isLoading = uiState.isLoading,
+        onBackClick = onNavigateBack
+    )
+
 }
 
 @Composable
@@ -74,7 +76,10 @@ fun IAGeneratorContent(
     selectedType: FlashcardType? = null,
     onTypeChange: (FlashcardType?) -> Unit = {},
     onGenerateClick: () -> Unit = {},
-    isLoading: Boolean = false
+    onUploadClick: () -> Unit = {},
+    hasFile: Boolean = false,
+    isLoading: Boolean = false,
+    onBackClick: () -> Unit
 ) {
     val scrollState = rememberScrollState()
 
@@ -83,7 +88,7 @@ fun IAGeneratorContent(
             .fillMaxSize()
             .imePadding()
             .statusBarsPadding(),
-        topBar = { NavigationHeader(title = "CRIAR NOVO FLASHCARD") },
+        topBar = { NavigationHeader(title = "CRIAR NOVO FLASHCARD", onBackClick = onBackClick) },
         containerColor = OffWhite
     ) { innerPadding ->
 
@@ -120,7 +125,10 @@ fun IAGeneratorContent(
             Column {
                 CustomLabel(text = "Anexo de Arquivo (Opcional)")
 
-                FileUploadArea(onUploadClick = { /* TODO */ })
+                FileUploadArea(
+                    onUploadClick = onUploadClick,
+                    hasFile = hasFile
+                )
 
                 LabeledText(
                     modifier = Modifier.padding(top = 8.dp),
@@ -166,7 +174,8 @@ fun IAGeneratorContent(
             NeonActionButton(
                 text = if (isLoading) "GERANDO..." else "GERAR FLASHCARDS COM IA",
                 icon = R.drawable.ic_stars,
-                onClickButton = onGenerateClick
+                onClickButton = onGenerateClick,
+                isEnabled = !isLoading && (flashcardTheme.isNotBlank() || hasFile)
             )
 
         }
@@ -188,7 +197,10 @@ private fun IAGeneratorContentPreview() {
             selectedType = FlashcardType.MULTIPLE_CHOICE,
             onTypeChange = {},
             onGenerateClick = {},
-            isLoading = false
+            onUploadClick = {},
+            hasFile = false,
+            isLoading = false,
+            onBackClick = {}
         )
     }
 }

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -21,6 +22,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -54,13 +56,15 @@ import com.example.cognilink.ui.viewmodels.FlashcardEditorViewModel
 @Composable
 fun FlashcardEditorScreen(
     viewModel: FlashcardEditorViewModel = viewModel(),
-    flashcard: Flashcard? = null
+    flashcardId: Long? = null,
+    deckId: Long,
+    onNavigateBack: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(flashcard) {
-        if (flashcard != null) {
-            viewModel.loadFlashcard(flashcard)
+    LaunchedEffect(flashcardId) {
+        if (flashcardId != null) {
+            viewModel.loadFlashcard(flashcardId)
         }
     }
     FlashcardEditorContent(
@@ -80,8 +84,9 @@ fun FlashcardEditorScreen(
         onHintsUpdate = viewModel::updateHints,
         isRemoveModeActive = uiState.isDeleteMode,
         onToggleRemoveMode = viewModel::toggleDeletionMode,
-        isEditMode = flashcard != null,
-        onSaveChanges = viewModel::saveFlashcard
+        isEditMode = flashcardId != null,
+        onSaveChanges = viewModel::saveFlashcard,
+        onBackClick = onNavigateBack
     )
 }
 
@@ -106,15 +111,22 @@ fun FlashcardEditorContent(
     isRemoveModeActive: Boolean = false,
     onToggleRemoveMode: () -> Unit = {},
     onSaveChanges: () -> Unit = {},
+    onBackClick: () -> Unit = {}
 ) {
     val scrollState = rememberScrollState()
 
     Scaffold(
-        modifier = modifier,
+        modifier = modifier.systemBarsPadding(),
         containerColor = Color.Transparent,
+        topBar = {
+            NavigationHeader(
+                title = if (isEditMode) "EDITAR FLASHCARD"
+                else "CRIAR FLASHCARD",
+                onBackClick = onBackClick,
+            )
+        },
         bottomBar = {
-            val paddingValue = 24.dp
-            Column(modifier = Modifier.padding(paddingValue)) {
+            Column(modifier = Modifier.padding(24.dp)) {
                 SimpleGradientButton(
                     text = if(isEditMode) "SALVAR" else "CRIAR",
                     height = 40.dp,
@@ -129,10 +141,6 @@ fun FlashcardEditorContent(
                 .padding(innerPadding)
                 .verticalScroll(scrollState),
         ) {
-            NavigationHeader(
-                title = if (isEditMode) "EDITAR FLASHCARD"
-                else "CRIAR FLASHCARD"
-            )
             Column(
                 modifier = Modifier.padding(horizontal = 24.dp, vertical = 30.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)

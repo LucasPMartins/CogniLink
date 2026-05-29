@@ -7,8 +7,16 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Surface
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.unit.sp
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -39,12 +47,19 @@ import com.example.cognilink.ui.viewmodels.DeckViewModel
 
 
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.text.style.TextAlign
+import com.example.cognilink.ui.theme.LightGray
 
 @Composable
 fun DeckScreen(
     deckId: Long,
     userId: Long,
-    onBackClick: () -> Unit,
+    onNavigateBack: () -> Unit,
+    onNavigateToEdit: () -> Unit,
+    onNavigateToCreateFlashcard: (Long) -> Unit,
+    onNavigateToCreateWithIA: (Long) -> Unit,
+    onNavigateToStudy: (Long) -> Unit,
+    onNavigateToFlashcard: (Long) -> Unit,
     viewModel: DeckViewModel = viewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -57,6 +72,7 @@ fun DeckScreen(
     val deck = uiState.currentDeck
     DeckContent(
         deckName = deck?.name,
+        deckId = deckId,
         deckCategories = deck?.categories,
         deckDescription = deck?.description,
         deckDifficulty = deck?.difficulty,
@@ -64,36 +80,95 @@ fun DeckScreen(
         deckTotalCards = deck?.totalCards,
         deckCardsToReview = deck?.cardsToReview,
         deckFlashcards = uiState.flashcards,
-        onMenuClick = { /* TODO: DropDownMenu: Abrir menu de opções(editar,exclui) */ },
-        onAddFlashcardClick = { /* TODO: Navegar para criação de card */ },
-        onFlashcardClick = { /* TODO: Navegar para jogar de card */ },
-        onClickSeeMore = { /* TODO: Navegar para lista de flashcards */ },
-        onBackClick = onBackClick
+        isMenuExpanded = uiState.isMenuExpanded,
+        isAddFlashcardDialogOpen = uiState.isAddFlashcardDialogOpen,
+        onMenuClick = { viewModel.toggleMenu() },
+        onAddFlashcardClick = { viewModel.toggleAddFlashcardDialog() },
+        onDismissAddFlashcardDialog = { viewModel.toggleAddFlashcardDialog() },
+        onCreateFlashcardManuallyClick = {
+            viewModel.toggleAddFlashcardDialog()
+            onNavigateToCreateFlashcard(deckId)
+        },
+        onCreateFlashcardWithIAClick = {
+            viewModel.toggleAddFlashcardDialog()
+            onNavigateToCreateWithIA(deckId)
+        },
+        onFlashcardClick = {flashcardId -> onNavigateToFlashcard(flashcardId) },
+        onStudyNowClick = {
+            onNavigateToStudy(deckId)
+        },
+        onClickSeeMore = { viewModel.loadAllFlashcards() },
+        onBackClick = onNavigateBack,
+        onDeleteClick = {
+            viewModel.toggleMenu()
+            viewModel.deleteDeck(deckId,userId)
+            onNavigateBack()
+        },
+        onEditClick = {
+            viewModel.toggleMenu()
+            onNavigateToEdit()
+        }
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DeckContent(
     modifier: Modifier = Modifier,
     deckName: String?,
     deckCategories: List<String>?,
+    deckId: Long = 0,
     deckDifficulty: DifficultyLevel?,
     deckDescription: String?,
     deckMastery: Float?,
     deckTotalCards: Int?,
     deckCardsToReview: Int?,
     deckFlashcards: List<Flashcard>?,
+    isMenuExpanded: Boolean = false,
+    isAddFlashcardDialogOpen: Boolean = false,
     onAddFlashcardClick: () -> Unit,
-    onFlashcardClick: (Flashcard) -> Unit,
+    onDismissAddFlashcardDialog: () -> Unit,
+    onCreateFlashcardWithIAClick: (Long) -> Unit,
+    onCreateFlashcardManuallyClick: (Long)->Unit,
+    onFlashcardClick: (Long) -> Unit,
+    onStudyNowClick: () -> Unit,
     onClickSeeMore: () -> Unit,
     onBackClick: () -> Unit,
     onMenuClick: () -> Unit,
+    onDeleteClick: () -> Unit,
+    onEditClick: () -> Unit
 ) {
     val scrollState = rememberScrollState()
 
     Scaffold(
         modifier = modifier,
         containerColor = Color.Transparent,
+        topBar = {
+            NavigationHeader(
+                title = deckName ?: "Nome do Baralho",
+                onMenuClick = onMenuClick,
+                onBackClick = onBackClick,
+                menuEnabled = true,
+                showMenu = isMenuExpanded,
+                onDismissMenu = onMenuClick,
+                menuContent = {
+                    DropdownMenuItem(
+                        text = { Text("Editar") },
+                        onClick = {
+                            onEditClick()
+                        }
+                    )
+                    HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp, color = LightGray)
+                    DropdownMenuItem(
+                        text = { Text("Excluir") },
+                        onClick = {
+                            onDeleteClick()
+                        }
+                    )
+                },
+                modifier = Modifier.statusBarsPadding()
+            )
+        },
         bottomBar = {
             Column(modifier = Modifier.padding(24.dp)) {
                 SimpleGradientButton(
@@ -101,7 +176,7 @@ fun DeckContent(
                     height = 40.dp,
                     icon = R.drawable.ic_arrow_forward,
                     iconRightSide = true,
-                    onClickButton = {}
+                    onClickButton = onStudyNowClick
                 )
             }
         }
@@ -111,12 +186,6 @@ fun DeckContent(
                 .verticalScroll(scrollState)
                 .padding(padding),
         ) {
-            NavigationHeader(
-                title = deckName ?: "Nome do Baralho",
-                onMenuClick = onMenuClick,
-                onBackClick = onBackClick,
-                menuEnabled = true
-            )
             Column(
                 modifier = Modifier.padding(horizontal = 24.dp, vertical = 30.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -138,6 +207,44 @@ fun DeckContent(
                     onClickButton = onAddFlashcardClick
                 )
 
+                if (isAddFlashcardDialogOpen) {
+                    BasicAlertDialog(
+                        onDismissRequest = onDismissAddFlashcardDialog,
+                    ) {
+                        Surface(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            shape = RoundedCornerShape(28.dp),
+                            color = Color.White
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(24.dp),
+                                verticalArrangement = Arrangement.spacedBy(16.dp)
+                            ) {
+                                Text(
+                                    text = "Como deseja criar?",
+                                    fontWeight = FontWeight.Bold,
+                                    color = DarkNavyBlue,
+                                    fontSize = 20.sp,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                                SimpleGradientButton(
+                                    text = "Criar manualmente",
+                                    height = 56.dp,
+                                    onClickButton = { onCreateFlashcardManuallyClick(deckId) }
+                                )
+                                SimpleGradientButton(
+                                    text = "Criar com IA",
+                                    height = 56.dp,
+                                    onClickButton = { onCreateFlashcardWithIAClick(deckId) }
+                                )
+                            }
+                        }
+                    }
+                }
+
                 if (!deckFlashcards.isNullOrEmpty()) {
                     Row(
                         Modifier.fillMaxWidth(),
@@ -155,7 +262,12 @@ fun DeckContent(
                     }
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         deckFlashcards.forEach { flashcard ->
-                            FlashcardItem(flashcardType = flashcard.cardType, flashcardQuestion = flashcard.question, nextReview = "10",onSelectCard = {onFlashcardClick(flashcard)})
+                            FlashcardItem(
+                                flashcardType = flashcard.cardType,
+                                flashcardQuestion = flashcard.question,
+                                nextReview = "10",
+                                onSelectCard = { onFlashcardClick(flashcard.id) }
+                            )
                         }
                     }
                 }
@@ -183,10 +295,16 @@ private fun DeckContentPreview() {
             deckCardsToReview = deck1.cardsToReview,
             deckFlashcards = emptyList(),
             onMenuClick = {},
-            onAddFlashcardClick = {},
+            onCreateFlashcardWithIAClick = {},
+            onCreateFlashcardManuallyClick = {},
             onFlashcardClick = {},
+            onStudyNowClick = {},
             onClickSeeMore = {},
-            onBackClick = {}
+            onBackClick = {},
+            onDeleteClick = {},
+            onEditClick = {},
+            onAddFlashcardClick = {},
+            onDismissAddFlashcardDialog = {}
         )
     }
 }

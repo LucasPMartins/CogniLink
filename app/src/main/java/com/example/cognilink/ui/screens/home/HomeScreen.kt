@@ -45,7 +45,7 @@ import com.example.cognilink.ui.viewmodels.HomeViewModel
 @Composable
 fun HomeScreen(
     userId: Long,
-    onNavigateToCreateDeck: () -> Unit = { },
+    onNavigateToCreateDeck: (Long) -> Unit = { },
     onNavigateToDeck: (Long) -> Unit = { },
     onNavigateToProfile: () -> Unit = {},
     viewModel: HomeViewModel = viewModel(
@@ -73,7 +73,7 @@ fun HomeScreen(
         decks = uiState.decks,
         onSearchValueChange = viewModel::onSearchValueChange,
         onDeckClick = onNavigateToDeck,
-        onCreateDeckClick = onNavigateToCreateDeck,
+        onNavigateToCreateDeck = { onNavigateToCreateDeck(userId) },
         onNavigateToProfile = onNavigateToProfile
     )
 }
@@ -90,7 +90,7 @@ fun HomeContent(
     decks: List<Deck> = emptyList(),
     onSearchValueChange: (String) -> Unit = {},
     onDeckClick: (Long) -> Unit = { },
-    onCreateDeckClick: () -> Unit = {},
+    onNavigateToCreateDeck: () -> Unit = {},
     onNavigateToProfile: () -> Unit = {}
 ) {
 
@@ -106,7 +106,7 @@ fun HomeContent(
                 buttonDescription = "Criar baralho de flashcards",
                 iconColor = White,
                 icon = R.drawable.ic_add,
-                onClick = onCreateDeckClick
+                onClick = onNavigateToCreateDeck
             )
         }
     ) { padding ->

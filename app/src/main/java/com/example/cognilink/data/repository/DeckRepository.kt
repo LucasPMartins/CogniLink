@@ -8,7 +8,7 @@ import com.example.cognilink.data.model.deck3
 interface DeckRepository {
     suspend fun getDecks(userId: Long): List<Deck>
     suspend fun getDeckById(deckId: Long, userId: Long): Deck?
-    suspend fun saveDeck(deck: Deck, userId: Long)
+    suspend fun saveDeck(deck: Deck, userId: Long): Long
     suspend fun deleteDeck(deckId: Long, userId: Long)
 }
 
@@ -23,9 +23,10 @@ class DeckRepositoryImpl : DeckRepository {
         return listOf(deck1, deck2, deck3).find { it.userId == userId && it.id == deckId }
     }
 
-    override suspend fun saveDeck(deck: Deck, userId: Long) {
+    override suspend fun saveDeck(deck: Deck, userId: Long): Long {
         // Simulação de salvar deck: Em um cenário real, isso persistiria no DB ou API
         println("Deck ${deck.name} salvo com sucesso para o usuário: $userId")
+        return 1L
     }
 
     override suspend fun deleteDeck(deckId: Long, userId: Long) {

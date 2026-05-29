@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.AlertDialog
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
@@ -43,9 +44,16 @@ import com.example.cognilink.ui.viewmodels.DeckEditorViewModel
 
 @Composable
 fun DeckEditorScreen(
+    userId: Long,
+    deckId:Long?,
+    onNavigateBack: () -> Unit,
     viewModel: DeckEditorViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(userId, deckId) {
+        viewModel.loadDeckData(userId , deckId)
+    }
 
     DeckEditorContent(
         isEditMode = true,
@@ -59,8 +67,9 @@ fun DeckEditorScreen(
         onRemoveCategory = viewModel::removeCategory,
         onConfirmCategory = viewModel::handleCategoryConfirmation,
         onDismissCategoryDialog = viewModel::closeCategoryDialog,
-        onSaveClick = viewModel::saveDeck,
-        onAddFlashcardClick = { /* TODO: Navegar para criação de card */ }
+        onSaveClick = { viewModel.saveDeck(userId,deckId) }  ,
+        onAddFlashcardClick = { /* TODO: Navegar para criação de card */ },
+        onNavigateBack = onNavigateBack
     )
 }
 
@@ -79,6 +88,7 @@ fun DeckEditorContent(
     onToggleRemoveMode: () -> Unit,
     onSaveClick: () -> Unit,
     onAddFlashcardClick: () -> Unit,
+    onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
@@ -136,6 +146,7 @@ fun DeckEditorContent(
         ) {
             NavigationHeader(
                 title = if (isEditMode) "Editar Baralho" else "Novo Baralho",
+                onBackClick = onNavigateBack
             )
             Column(
                 modifier = Modifier.padding(horizontal = 24.dp, vertical = 30.dp),
@@ -219,7 +230,8 @@ private fun DeckEditorContentPreview() {
             onDismissCategoryDialog = {},
             onToggleRemoveMode = {},
             onSaveClick = {},
-            onAddFlashcardClick = {}
+            onAddFlashcardClick = {},
+            onNavigateBack = {}
         )
 
     }
