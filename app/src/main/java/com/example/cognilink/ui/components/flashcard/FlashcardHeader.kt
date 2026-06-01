@@ -79,24 +79,26 @@ fun FlashcardHeader(modifier: Modifier = Modifier,
                     )
                 }
             }
-
+            if(totalCards > 1)
             // Bloco da Direita: Contador + Barra de Progresso
-            Column(
-                modifier = Modifier.width(120.dp), // Largura fixa para a barra não variar
-                horizontalAlignment = Alignment.End,
-                verticalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                Text(
-                    text = "$actualCard / $totalCards",
-                    color = Color.White,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 13.sp
-                )
+            {
+                Column(
+                    modifier = Modifier.width(120.dp), // Largura fixa para a barra não variar
+                    horizontalAlignment = Alignment.End,
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Text(
+                        text = "$actualCard / $totalCards",
+                        color = Color.White,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 13.sp
+                    )
 
-                ProgressBar(
-                    progress = actualCard/totalCards.toFloat(),
-                    progressColor = White,
-                )
+                    ProgressBar(
+                        progress = actualCard / totalCards.toFloat(),
+                        progressColor = White,
+                    )
+                }
             }
 
         }

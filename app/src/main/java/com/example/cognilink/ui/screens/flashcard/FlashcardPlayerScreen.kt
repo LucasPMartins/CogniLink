@@ -87,6 +87,8 @@ fun FlashcardPlayerScreen(
     uiState.currentFlashcard?.let { flashcard ->
         StudyContent(
             flashcard = flashcard,
+            currentFlashcardIndex = uiState.currentFlashcardIndex,
+            totalFlashcards = uiState.sessionFlashcards.size,
             sessionTitle = uiState.sessionTitle,
             selectedAnswers = uiState.selectedAnswers,
             onSelectAnswer = viewModel::onSelectAnswer,
@@ -125,6 +127,8 @@ fun FlashcardPlayerScreen(
 fun StudyContent(
     modifier: Modifier = Modifier,
     flashcard: Flashcard,
+    currentFlashcardIndex: Int,
+    totalFlashcards: Int,
     sessionTitle: String = "",
     selectedAnswers: Map<Answer, String> = mapOf(),
     onSelectAnswer: (Answer, String) -> Unit = { _, _ -> },
@@ -133,7 +137,7 @@ fun StudyContent(
     isCloseDialogOpen: Boolean = false,
     isSessionInsightDialogOpen: Boolean = false,
     isLastFlashcard: Boolean = false,
-    isSessionFinished:  Boolean = false,
+    isSessionFinished: Boolean = false,
     elapsedTime: String,
     sequenceHits: Int = 0,
     onDismissSessionInsight: () -> Unit = {},
@@ -151,7 +155,13 @@ fun StudyContent(
             .fillMaxSize()
             .imePadding()
             .statusBarsPadding(),
-        topBar = { FlashcardHeader(title = sessionTitle, onCloseClick = onCloseClick) },
+        topBar = {
+            FlashcardHeader(
+                title = sessionTitle, onCloseClick = onCloseClick,
+                actualCard = currentFlashcardIndex + 1,
+                totalCards = totalFlashcards
+            )
+        },
         containerColor = OffWhite,
         bottomBar = {
             Column(modifier = Modifier.padding(24.dp)) {
@@ -437,6 +447,8 @@ private fun StudyContentPreview() {
     CogniLinkTheme {
         StudyContent(
             flashcard = flashcard1,
+            currentFlashcardIndex = 0,
+            totalFlashcards = 0,
             selectedAnswers = emptyMap(),
             isQuestionAnswered = false,
             isQuestionVerified = false,

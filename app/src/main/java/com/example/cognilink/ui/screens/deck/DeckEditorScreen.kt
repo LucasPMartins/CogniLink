@@ -272,7 +272,7 @@ fun DeckEditorContent(
                     text = "ADICIONAR FLASHCARD",
                     icon = R.drawable.ic_add,
                     onClickButton = onClickAddFlashcardDialog,
-                        modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth()
                 )
 
                 if (deckFlashcards.isNotEmpty()) {
@@ -336,7 +336,6 @@ fun DeckEditorContent(
 }
 
 
-@SuppressLint("ViewModelConstructorInComposable")
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun DeckEditorContentPreview() {
@@ -345,6 +344,7 @@ private fun DeckEditorContentPreview() {
             deckName = deck1.name,
             deckDescription = deck1.description,
             deckCategories = deck1.categories,
+            deckFlashcards = listOf(flashcard1)
         )
 
         DeckEditorContent(
@@ -352,7 +352,7 @@ private fun DeckEditorContentPreview() {
             deckName = uiState.deckName,
             deckDescription = uiState.deckDescription,
             deckCategories = uiState.deckCategories,
-            deckFlashcards = listOf(flashcard1),
+            deckFlashcards = uiState.deckFlashcards ,
             showCategoryDialog = false,
             categoryBeingEdited = null,
             categoryText = "",
