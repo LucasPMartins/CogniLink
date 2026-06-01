@@ -1,8 +1,5 @@
 package com.example.cognilink.data.model
 
-import com.example.cognilink.domain.model.CogniRank
-import com.example.cognilink.domain.model.UserRankingResult
-
 /**
  * Representa o usuário principal do sistema e seus dados agregados.
  */

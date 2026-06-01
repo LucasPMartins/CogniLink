@@ -3,7 +3,6 @@ package com.example.cognilink.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cognilink.data.model.Deck
-import com.example.cognilink.data.model.Flashcard
 import com.example.cognilink.data.repository.DeckRepository
 import com.example.cognilink.data.repository.DeckRepositoryImpl
 import com.example.cognilink.data.repository.FlashcardRepository
@@ -44,7 +43,7 @@ class DeckViewModel(
                     _uiState.update { it.copy(errorMessage = "Baralho não encontrado") }
                 }
                 _uiState.update { it.copy(isLoading = false) }
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 _uiState.update { it.copy(isLoading = false, errorMessage = "Erro ao carregar baralho") }
             }
         }
@@ -55,7 +54,7 @@ class DeckViewModel(
             try {
                 val flashcards = flashcardRepository.getFlashcardsForDeck(deckId)
                 _uiState.update { it.copy(flashcards = flashcards.take(3)) }
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 _uiState.update { it.copy(errorMessage = "Erro ao carregar flashcards") }
             }
         }
@@ -67,7 +66,7 @@ class DeckViewModel(
             try {
                 val flashcards = flashcardRepository.getFlashcardsForDeck(deckId)
                 _uiState.update { it.copy(flashcards = flashcards) }
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 _uiState.update { it.copy(errorMessage = "Erro ao carregar flashcards") }
             }
         }

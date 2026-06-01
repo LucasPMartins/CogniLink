@@ -10,6 +10,7 @@ import com.example.cognilink.data.model.flashcard1
 import com.example.cognilink.data.model.flashcard2
 import com.example.cognilink.data.model.flashcard3
 import com.example.cognilink.data.model.flashcard4
+import kotlinx.coroutines.flow.Flow
 
 interface FlashcardRepository {
     suspend fun getFlashcardsForDeck(deckId: Long): List<Flashcard>
@@ -27,6 +28,8 @@ interface FlashcardRepository {
     suspend fun getReviewPending(userId: Long): List<Flashcard>?
 
     suspend fun getDeckName(deckId: Long): String?
+
+    suspend fun getReviewCountForDeck(deckId: Long, todayTimestamp: Long): Flow<Int>
 }
 
 class FlashcardRepositoryImpl : FlashcardRepository {
@@ -65,5 +68,9 @@ class FlashcardRepositoryImpl : FlashcardRepository {
 
     override suspend fun getDeckName(deckId: Long): String? {
         return listOf(deck1, deck2, deck3).find { it.id == deckId }?.name
+    }
+
+    override suspend fun getReviewCountForDeck(deckId: Long, todayTimestamp: Long): Flow<Int> {
+        return 3 as Flow<Int>
     }
 }

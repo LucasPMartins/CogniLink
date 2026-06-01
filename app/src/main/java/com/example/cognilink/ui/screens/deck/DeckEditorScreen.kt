@@ -302,7 +302,7 @@ fun DeckEditorContent(
                             FlashcardItem(
                                 flashcardType = card.cardType,
                                 flashcardQuestion = card.question,
-                                nextReview = "10",
+                                nextReview = null,
                                 onSelectCard = {
                                     if (!isRemoveMode) {
                                         onEditFlashcardClick(card.id)

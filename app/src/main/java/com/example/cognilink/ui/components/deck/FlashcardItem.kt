@@ -34,7 +34,7 @@ fun FlashcardItem(
     modifier: Modifier = Modifier,
     flashcardType: FlashcardType,
     flashcardQuestion: String,
-    nextReview: String,
+    nextReview: String? = null,
     onSelectCard: () -> Unit,
     selectionControl: @Composable (() -> Unit)? = null,
 ) {
@@ -74,14 +74,17 @@ fun FlashcardItem(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-                Text(
-                    text = nextReview,
-                    fontSize = 14.sp,
-                    color = DarkGray,
-                    modifier = Modifier.fillMaxWidth(),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+                if (!nextReview.isNullOrBlank())
+                {
+                    Text(
+                        text = nextReview,
+                        fontSize = 14.sp,
+                        color = DarkGray,
+                        modifier = Modifier.fillMaxWidth(),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
             }
             if (selectionControl != null) {
                 selectionControl()

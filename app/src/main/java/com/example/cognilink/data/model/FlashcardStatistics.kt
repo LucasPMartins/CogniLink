@@ -6,6 +6,11 @@ data class FlashcardStatistics(
     val misses: Int,
     val studyTime: Long,
     /**
+     * PRÓXIMA REVISÃO: Timestamp (Unix Epoch) indicando quando este card deve ser
+     * revisado novamente pelo usuário.
+     */
+    val nextReview: Long,
+    /**
      * LATÊNCIA DO CARD: Tempo médio que o usuário leva para evocar a resposta DESTE card.
      * Se o usuário acerta (hit), mas a latência é alta (ex: 7 segundos), o esforço cognitivo
      * ainda é alto. Se a latência for baixa (ex: 1.2 segundos), o conhecimento foi automatizado.
@@ -60,7 +65,8 @@ val fakeFlashcardStatistics = listOf(
         bestPerformingContext = "HOME_QUIET",
         consecutiveMisses = 0,
         retentionRate = 0.83f,
-        mastery = 0.85f
+        mastery = 0.85f,
+        nextReview = 1200L
     ),
     FlashcardStatistics(
         idFlashcard = 2L,
@@ -73,6 +79,7 @@ val fakeFlashcardStatistics = listOf(
         bestPerformingContext = null,
         consecutiveMisses = 3,
         retentionRate = 0.38f,
-        mastery = 0.20f
+        mastery = 0.20f,
+        nextReview = 32000L
     )
 )

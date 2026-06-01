@@ -3,14 +3,12 @@ package com.example.cognilink.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cognilink.data.model.Deck
-import com.example.cognilink.data.model.Flashcard
 import com.example.cognilink.data.repository.DeckRepository
 import com.example.cognilink.data.repository.DeckRepositoryImpl
 import com.example.cognilink.data.repository.FlashcardRepository
 import com.example.cognilink.data.repository.FlashcardRepositoryImpl
-import com.example.cognilink.data.repository.UserRepository
-import com.example.cognilink.data.repository.UserRepositoryImpl
-import com.example.cognilink.domain.model.DifficultyLevel
+import com.example.cognilink.domain.usecase.CalculateDeckReviewCountUseCase
+import com.example.cognilink.domain.usecase.CalculateDifficultyLevelUseCase
 import com.example.cognilink.ui.states.DeckEditorUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,7 +18,8 @@ import kotlinx.coroutines.launch
 
 class DeckEditorViewModel(
     private val deckRepository: DeckRepository = DeckRepositoryImpl(),
-    private val flashcardRepository: FlashcardRepository = FlashcardRepositoryImpl()
+    private val flashcardRepository: FlashcardRepository = FlashcardRepositoryImpl(),
+    private val calculateDifficultyLevelUseCase: CalculateDifficultyLevelUseCase = CalculateDifficultyLevelUseCase(),
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(DeckEditorUiState())
     val uiState: StateFlow<DeckEditorUiState> = _uiState.asStateFlow()
@@ -29,20 +28,8 @@ class DeckEditorViewModel(
         _uiState.update { it.copy(isRemoveMode = !it.isRemoveMode) }
     }
 
-    fun addFlashcard(flashcard: Flashcard) {
-        _uiState.update { it.copy(deckFlashcards = it.deckFlashcards + flashcard) }
-    }
-
     fun removeFlashcard(flashcardId: Long) {
         _uiState.update { it.copy(deckFlashcards = it.deckFlashcards.filter { it.id != flashcardId }) }
-    }
-
-    fun updateFlashcard(oldFlashcard: Flashcard, newFlashcard: Flashcard) {
-        _uiState.update { state ->
-            state.copy(
-                deckFlashcards = state.deckFlashcards.map { if (it == oldFlashcard) newFlashcard else it }
-            )
-        }
     }
 
     fun onDeckNameChange(newValue: String) {
@@ -116,10 +103,10 @@ class DeckEditorViewModel(
                     name = currentState.deckName,
                     description = currentState.deckDescription,
                     categories = currentState.deckCategories,
-                    difficulty = DifficultyLevel.EASY, //TODO: Se deckFlashcards não for nulo: Calcular a média de dificuldade dos flashcards
+                    difficulty = calculateDifficultyLevelUseCase(currentState.deckFlashcards),
                     mastery = 0f,
                     totalCards = currentState.deckFlashcards.size,
-                    cardsToReview = currentState.deckFlashcards.size
+                    cardsToReview = 0
                 )
                 val savedDeckId = deckRepository.saveDeck(deckToSave, userId)
                 if (currentState.deckFlashcards.isNotEmpty()) {
