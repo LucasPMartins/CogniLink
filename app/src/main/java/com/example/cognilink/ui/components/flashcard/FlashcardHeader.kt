@@ -25,12 +25,14 @@ import com.example.cognilink.R
 import com.example.cognilink.ui.components.utils.GradientSurface
 import com.example.cognilink.ui.components.utils.ProgressBar
 import com.example.cognilink.ui.theme.CogniLinkTheme
+import com.example.cognilink.ui.theme.LavenderBlue
+import com.example.cognilink.ui.theme.MutedBlue
 import com.example.cognilink.ui.theme.VividCyan
 import com.example.cognilink.ui.theme.White
 
 @Composable
 fun FlashcardHeader(modifier: Modifier = Modifier,
-                    deckName: String = "Deck Name",
+                    title: String = "REVISÃO",
                     actualCard: Int = 12,
                     totalCards: Int = 50,
                     onCloseClick: () -> Unit = {},
@@ -61,7 +63,7 @@ fun FlashcardHeader(modifier: Modifier = Modifier,
                 }
                 Column {
                     Text(
-                        text = deckName,
+                        text = title,
                         color = Color.White,
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp,
@@ -93,8 +95,7 @@ fun FlashcardHeader(modifier: Modifier = Modifier,
 
                 ProgressBar(
                     progress = actualCard/totalCards.toFloat(),
-                    progressColor = VividCyan,
-                    backgroundColor = White
+                    progressColor = White,
                 )
             }
 

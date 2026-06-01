@@ -3,6 +3,8 @@ package com.example.cognilink.ui.components.utils.buttons
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -36,32 +38,29 @@ fun SimpleGradientButton(
     onClickButton: () -> Unit,
 ) {
     GradientSurface(
-        modifier = modifier.height(height),
+        modifier = modifier,
         shape = RoundedCornerShape(26.dp),
         initialColor = if (isEnabled) Color(0xFF000666) else Gray,
         finalColor = if (isEnabled) Color(0xFF1222B0) else OffWhite,
-        shadowElevation = if (isEnabled) 1 else 0,
     )
     {
         Row(
             modifier = Modifier
-                .fillMaxWidth()
+                .height(height).fillMaxWidth()
                 .clickable(enabled = isEnabled, onClick = onClickButton),
             verticalAlignment = CenterVertically,
-            horizontalArrangement = Arrangement.Center
+            horizontalArrangement = Arrangement.Center,
         ) {
             if (icon != null && !iconRightSide) {
-
                 Icon(
                     painter = painterResource(id = icon),
                     contentDescription = null,
                     tint = iconColor,
                 )
-
             }
             Text(
                 text = text,
-                color = White,
+                color = if (isEnabled) White else Gray,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(horizontal = 20.dp, vertical = 0.dp)
             )
@@ -81,5 +80,9 @@ fun SimpleGradientButton(
 @Preview
 @Composable
 private fun SimpleGradientButtonPreview() {
-    SimpleGradientButton(icon = R.drawable.ic_arrow_forward, iconRightSide = true, isEnabled = true) { }
+    SimpleGradientButton(
+        text = "ADICIONAR FLASHCARD",
+        height = 56.dp,
+        onClickButton = { }
+    )
 }

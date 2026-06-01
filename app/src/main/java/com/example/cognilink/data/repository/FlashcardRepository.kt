@@ -2,6 +2,9 @@ package com.example.cognilink.data.repository
 
 import com.example.cognilink.data.model.Flashcard
 import com.example.cognilink.data.model.FlashcardStatistics
+import com.example.cognilink.data.model.deck1
+import com.example.cognilink.data.model.deck2
+import com.example.cognilink.data.model.deck3
 import com.example.cognilink.data.model.fakeFlashcardStatistics
 import com.example.cognilink.data.model.flashcard1
 import com.example.cognilink.data.model.flashcard2
@@ -18,6 +21,12 @@ interface FlashcardRepository {
     suspend fun saveAllFlashcards(flashcards: List<Flashcard>)
 
     suspend fun getFlashcardStatistics(flashcardId: Long): FlashcardStatistics?
+
+    suspend fun getLeeches(userId: Long): List<Flashcard>?
+
+    suspend fun getReviewPending(userId: Long): List<Flashcard>?
+
+    suspend fun getDeckName(deckId: Long): String?
 }
 
 class FlashcardRepositoryImpl : FlashcardRepository {
@@ -44,5 +53,17 @@ class FlashcardRepositoryImpl : FlashcardRepository {
 
     override suspend fun getFlashcardStatistics(flashcardId: Long): FlashcardStatistics? {
         return fakeFlashcardStatistics.find { it.idFlashcard == flashcardId }
+    }
+
+    override suspend fun getLeeches(userId: Long): List<Flashcard>? {
+        return null
+    }
+
+    override suspend fun getReviewPending(userId: Long): List<Flashcard>? {
+        return null
+    }
+
+    override suspend fun getDeckName(deckId: Long): String? {
+        return listOf(deck1, deck2, deck3).find { it.id == deckId }?.name
     }
 }

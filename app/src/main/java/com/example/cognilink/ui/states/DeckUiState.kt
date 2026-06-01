@@ -8,6 +8,7 @@ data class DeckUiState(
     val flashcards: List<Flashcard> = emptyList(),
     val isMenuExpanded: Boolean = false,
     val isAddFlashcardDialogOpen: Boolean = false,
+    val isDeleteDeckDialogOpen: Boolean = false,
     val isLoading: Boolean = false,
     val errorMessage: String? = null
 )

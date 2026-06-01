@@ -46,7 +46,7 @@ fun NeonActionButton(
         shape = RoundedCornerShape(28.dp),
     ) {
         Row(
-            modifier = Modifier.height(height).fillMaxWidth()
+            modifier = Modifier.height(height)
                 .clickable(enabled = isEnabled, onClick = onClickButton),
             verticalAlignment = CenterVertically,
             horizontalArrangement = Arrangement.Center

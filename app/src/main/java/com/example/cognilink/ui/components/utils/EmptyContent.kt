@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -41,8 +42,8 @@ fun EmptyContent(
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier.padding(24.dp)
+            verticalArrangement = Arrangement.SpaceAround,
+            modifier = Modifier.padding(24.dp).height(300.dp)
         ) {
             Icon(
                 painter = painterResource(id = icon),
@@ -56,7 +57,6 @@ fun EmptyContent(
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(top = 24.dp)
                 )
             }
             if (subTitle.isNotBlank()) {
@@ -65,7 +65,6 @@ fun EmptyContent(
                     fontSize = 14.sp,
                     textAlign = TextAlign.Center,
                     color = DarkGray,
-                    modifier = Modifier.padding(top = 8.dp)
                 )
             }
             Row(

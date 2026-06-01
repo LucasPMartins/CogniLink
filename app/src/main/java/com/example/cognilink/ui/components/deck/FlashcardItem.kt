@@ -35,7 +35,8 @@ fun FlashcardItem(
     flashcardType: FlashcardType,
     flashcardQuestion: String,
     nextReview: String,
-    onSelectCard: () -> Unit
+    onSelectCard: () -> Unit,
+    selectionControl: @Composable (() -> Unit)? = null,
 ) {
     Surface(
         shape = RoundedCornerShape(16.dp),
@@ -45,7 +46,7 @@ fun FlashcardItem(
         color = White
     ) {
         Row(
-            modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 16.dp, end = 4.dp),
+            modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 16.dp, end = 16.dp),
             verticalAlignment = CenterVertically
         ) {
             Surface(
@@ -74,7 +75,7 @@ fun FlashcardItem(
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = "Revisão necessária em $nextReview dias",
+                    text = nextReview,
                     fontSize = 14.sp,
                     color = DarkGray,
                     modifier = Modifier.fillMaxWidth(),
@@ -82,17 +83,8 @@ fun FlashcardItem(
                     overflow = TextOverflow.Ellipsis
                 )
             }
-
-            IconButton(
-                onClick = onSelectCard,
-                modifier = Modifier.offset(x = 8.dp)
-            ){
-                Icon(
-                    painterResource(id = R.drawable.ic_keyboard_arrow_down),
-                    contentDescription = null,
-                    tint = LightGray,
-                    modifier = Modifier.rotate(-90f)
-                )
+            if (selectionControl != null) {
+                selectionControl()
             }
         }
     }

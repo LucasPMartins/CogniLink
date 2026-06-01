@@ -175,7 +175,8 @@ fun IAGeneratorContent(
                 text = if (isLoading) "GERANDO..." else "GERAR FLASHCARDS COM IA",
                 icon = R.drawable.ic_stars,
                 onClickButton = onGenerateClick,
-                isEnabled = !isLoading && (flashcardTheme.isNotBlank() || hasFile)
+                isEnabled = !isLoading && (flashcardTheme.isNotBlank() || hasFile),
+                modifier = Modifier.fillMaxWidth()
             )
 
         }

@@ -10,6 +10,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -20,9 +21,9 @@ fun GradientSurface(
     startOffset: Offset = Offset.Zero,
     endOffset: Offset = Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY),
     shape: Shape = RectangleShape,
-    border: BorderStroke = BorderStroke(0.dp, Color.Transparent),
-    shadowElevation: Int = 0,
-    content: @Composable () -> Unit,
+    border: BorderStroke? = null,
+    shadowElevation: Dp = 0.dp,
+    content: @Composable () -> Unit
     ) {
     Surface(
         modifier = modifier
@@ -38,9 +39,9 @@ fun GradientSurface(
                 ),
                 shape = shape
             ),
-        color = Color.Transparent,
+        color = Color.Unspecified,
         shape = shape,
-        shadowElevation = shadowElevation.dp,
+        shadowElevation = shadowElevation,
         border = border
     ){
         content()

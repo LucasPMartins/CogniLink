@@ -11,6 +11,7 @@ data class DeckEditorUiState(
     val categoryBeingEdited: String? = null,
     val categoryText: String = "",
     val isRemoveMode: Boolean = false,
+    val isAddFlashcardDialogOpen: Boolean = false,
     val isLoading: Boolean = false,
     val isSaved: Boolean = false,
     val errorMessage: String? = null

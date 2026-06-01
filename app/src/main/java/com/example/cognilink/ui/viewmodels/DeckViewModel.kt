@@ -3,6 +3,7 @@ package com.example.cognilink.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cognilink.data.model.Deck
+import com.example.cognilink.data.model.Flashcard
 import com.example.cognilink.data.repository.DeckRepository
 import com.example.cognilink.data.repository.DeckRepositoryImpl
 import com.example.cognilink.data.repository.FlashcardRepository
@@ -100,5 +101,9 @@ class DeckViewModel(
 
     fun toggleAddFlashcardDialog() {
         _uiState.update { it.copy(isAddFlashcardDialogOpen = !it.isAddFlashcardDialogOpen) }
+    }
+
+    fun toggleDeleteDeckDialog() {
+        _uiState.update { it.copy(isDeleteDeckDialogOpen = !it.isDeleteDeckDialogOpen) }
     }
 }

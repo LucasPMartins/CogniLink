@@ -33,8 +33,8 @@ class DeckEditorViewModel(
         _uiState.update { it.copy(deckFlashcards = it.deckFlashcards + flashcard) }
     }
 
-    fun removeFlashcard(flashcard: Flashcard) {
-        _uiState.update { it.copy(deckFlashcards = it.deckFlashcards - flashcard) }
+    fun removeFlashcard(flashcardId: Long) {
+        _uiState.update { it.copy(deckFlashcards = it.deckFlashcards.filter { it.id != flashcardId }) }
     }
 
     fun updateFlashcard(oldFlashcard: Flashcard, newFlashcard: Flashcard) {
@@ -144,6 +144,10 @@ class DeckEditorViewModel(
 
     fun clearEvents() {
         _uiState.update { it.copy(isSaved = false, errorMessage = null) }
+    }
+
+    fun toggleAddFlashcardDialog(){
+        _uiState.update { it.copy(isAddFlashcardDialogOpen = !it.isAddFlashcardDialogOpen) }
     }
 
     fun loadDeckData(userId: Long, deckId: Long? = null) {

@@ -47,7 +47,14 @@ fun AuthScreen(
     }
 
     AuthContent(
-        uiState = uiState,
+        isSignUpMode = uiState.isSignUpMode,
+        signInEmail = uiState.signInEmail,
+        signInPassword = uiState.signInPassword,
+        signUpName = uiState.signUpName,
+        signUpEmail = uiState.signUpEmail,
+        signUpPassword = uiState.signUpPassword,
+        signUpConfirmPassword = uiState.signUpConfirmPassword,
+        isTermsAccepted = uiState.isTermsAccepted,
         onModeChange = viewModel::onModeChange,
         onSignInEmailChange = viewModel::onSignInEmailChange,
         onSignInPasswordChange = viewModel::onSignInPasswordChange,
@@ -68,7 +75,14 @@ fun AuthScreen(
 
 @Composable
 fun AuthContent(
-    uiState: AuthUiState,
+    isSignUpMode: Boolean,
+    signInEmail: String,
+    signInPassword: String,
+    signUpName: String,
+    signUpEmail: String,
+    signUpPassword: String,
+    signUpConfirmPassword: String,
+    isTermsAccepted: Boolean,
     onModeChange: (Boolean) -> Unit,
     onSignInEmailChange: (String) -> Unit,
     onSignInPasswordChange: (String) -> Unit,
@@ -113,26 +127,26 @@ fun AuthContent(
                         onClick = { onModeChange(false) },
                         modifier = Modifier.weight(1f).fillMaxHeight(),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (!uiState.isSignUpMode) Color.White else Color.Transparent
+                            containerColor = if (!isSignUpMode) Color.White else Color.Transparent
                         )
                     ) {
                         Text(
                             "ENTRAR",
                             fontWeight = FontWeight.Bold,
-                            color = if (!uiState.isSignUpMode) DarkNavyBlue else DarkGray
+                            color = if (!isSignUpMode) DarkNavyBlue else DarkGray
                         )
                     }
                     Button(
                         onClick = { onModeChange(true) },
                         modifier = Modifier.weight(1f).fillMaxHeight(),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (uiState.isSignUpMode) Color.White else Color.Transparent
+                            containerColor = if (isSignUpMode) Color.White else Color.Transparent
                         )
                     ) {
                         Text(
                             "CADASTRAR",
                             fontWeight = FontWeight.Bold,
-                            color = if (uiState.isSignUpMode) DarkNavyBlue else DarkGray
+                            color = if (isSignUpMode) DarkNavyBlue else DarkGray
                         )
                     }
                 }
@@ -149,26 +163,26 @@ fun AuthContent(
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp),
             ) {
-                if (uiState.isSignUpMode) {
+                if (isSignUpMode) {
                     SignUpContent(
-                        name = uiState.signUpName,
+                        name = signUpName,
                         onNameChange = onSignUpNameChange,
-                        email = uiState.signUpEmail,
+                        email = signUpEmail,
                         onEmailChange = onSignUpEmailChange,
-                        password = uiState.signUpPassword,
+                        password = signUpPassword,
                         onPasswordChange = onSignUpPasswordChange,
-                        confirmPassword = uiState.signUpConfirmPassword,
+                        confirmPassword = signUpConfirmPassword,
                         onConfirmPasswordChange = onSignUpConfirmPasswordChange,
-                        isTermsAccepted = uiState.isTermsAccepted,
+                        isTermsAccepted = isTermsAccepted,
                         onTermsAcceptedChange = onTermsAcceptedChange,
                         onSignUpClick = onSignUpClick,
                         onTermsClick = onNavigateToTerms
                     )
                 } else {
                     SignInContent(
-                        email = uiState.signInEmail,
+                        email = signInEmail,
                         onEmailChange = onSignInEmailChange,
-                        password = uiState.signInPassword,
+                        password = signInPassword,
                         onPasswordChange = onSignInPasswordChange,
                         onSignInClick = onSignInClick,
                         onSignUpClick = { onModeChange(true) }
@@ -187,7 +201,14 @@ private fun AuthScreenPreview() {
         var state by remember { mutableStateOf(AuthUiState()) }
         
         AuthContent(
-            uiState = state,
+            isSignUpMode = state.isSignUpMode,
+            signInEmail = state.signInEmail,
+            signInPassword = state.signInPassword,
+            signUpName = state.signUpName,
+            signUpEmail = state.signUpEmail,
+            signUpPassword = state.signUpPassword,
+            signUpConfirmPassword = state.signUpConfirmPassword,
+            isTermsAccepted = state.isTermsAccepted,
             onModeChange = { state = state.copy(isSignUpMode = it) },
             onSignInEmailChange = { state = state.copy(signInEmail = it) },
             onSignInPasswordChange = { state = state.copy(signInPassword = it) },

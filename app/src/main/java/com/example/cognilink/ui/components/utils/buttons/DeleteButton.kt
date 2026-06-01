@@ -1,6 +1,7 @@
 package com.example.cognilink.ui.components.utils.buttons
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.cognilink.R
 import com.example.cognilink.ui.theme.OffWhite
@@ -9,7 +10,7 @@ import com.example.cognilink.ui.theme.Red
 @Composable
 fun DeleteButton(
     size: Int = 32,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     NeonFAB(
         icon = R.drawable.ic_delete,
@@ -19,6 +20,6 @@ fun DeleteButton(
         neonColor = Red,
         initialBackgroundColor = OffWhite,
         finalBackgroundColor = OffWhite,
-        onClick = onClick
+        onClick = onClick,
     )
 }

@@ -13,6 +13,7 @@ import com.example.cognilink.ui.screens.deck.DeckEditorScreen
 import com.example.cognilink.ui.screens.deck.DeckScreen
 import com.example.cognilink.ui.screens.flashcard.CreateFlashcardWithIAScreen
 import com.example.cognilink.ui.screens.flashcard.FlashcardEditorScreen
+import com.example.cognilink.ui.screens.flashcard.FlashcardPlayerScreen
 import com.example.cognilink.ui.screens.home.HomeScreen
 import com.example.cognilink.ui.screens.home.ProfileScreen
 import com.example.cognilink.ui.viewmodels.TermsViewModel
@@ -47,8 +48,13 @@ sealed class Screen(val route: String) {
     object CreateFlashcardManually: Screen("createFlashcardManually/{deckId}"){
         fun createRoute(deckId: Long) = "createFlashcardManually/$deckId"
     }
+
     object EditFlashcard: Screen("editFlashcard/{deckId}/{flashcardId}"){
         fun createRoute(deckId: Long,flashcardId: Long) = "editFlashcard/$deckId/$flashcardId"
+    }
+
+    object PlayFlashcard : Screen("playFlashcard/{studyMode}/{contextId}") {
+        fun createRoute(studyMode: String, contextId: Long) = "playFlashcard/$studyMode/$contextId"
     }
 
 }
@@ -121,9 +127,8 @@ fun CogniLinkNavGraph(
                         )
                     )
                 },
-                onNavigateToStudy = {
-                    //TODO
-                    navController.popBackStack()
+                onNavigateToStudy = { deckId ->
+                    navController.navigate(Screen.PlayFlashcard.createRoute("DECK", deckId))
                 },
                 onNavigateToCreateFlashcard = {
                     navController.navigate(Screen.CreateFlashcardManually.createRoute(deckId))
@@ -132,7 +137,7 @@ fun CogniLinkNavGraph(
                     navController.navigate(Screen.CreateFlashcardWithIA.createRoute(deckId))
                 },
                 onNavigateToFlashcard = { flashcardId ->
-                    navController.navigate(Screen.EditFlashcard.createRoute(deckId, flashcardId))
+                    navController.navigate(Screen.PlayFlashcard.createRoute("FLASHCARD", flashcardId))
                 }
             )
         }
@@ -147,8 +152,17 @@ fun CogniLinkNavGraph(
         ) { backStackEntry ->
             val userId = backStackEntry.arguments?.getLong("userId") ?: -1L
             DeckEditorScreen(
-                userId = userId, deckId = null,
-                onNavigateBack = { navController.popBackStack() }
+                userId = userId, deckId = 0L,
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToCreateFlashcard = {
+                    navController.navigate(Screen.CreateFlashcardManually.createRoute(0L))
+                },
+                onNavigateToCreateWithIA = {
+                    navController.navigate(Screen.CreateFlashcardWithIA.createRoute(0L))
+                },
+                onNavigateToEditFlashcard = {flashcardId ->
+                    navController.navigate(Screen.EditFlashcard.createRoute(0L,flashcardId))
+                }
             )
         }
 
@@ -170,6 +184,15 @@ fun CogniLinkNavGraph(
                 deckId = deckId,
                 onNavigateBack = {
                     navController.popBackStack()
+                },
+                onNavigateToCreateFlashcard = {
+                    navController.navigate(Screen.CreateFlashcardManually.createRoute(deckId))
+                },
+                onNavigateToCreateWithIA = {
+                    navController.navigate(Screen.CreateFlashcardWithIA.createRoute(deckId))
+                },
+                onNavigateToEditFlashcard = { flashcardId ->
+                    navController.navigate(Screen.EditFlashcard.createRoute(deckId, flashcardId))
                 }
             )
         }
@@ -225,6 +248,22 @@ fun CogniLinkNavGraph(
             )
         }
 
+        composable(
+            route = Screen.PlayFlashcard.route,
+            arguments = listOf(
+                androidx.navigation.navArgument("studyMode") { type = androidx.navigation.NavType.StringType },
+                androidx.navigation.navArgument("contextId") { type = androidx.navigation.NavType.LongType }
+            )
+        ) { backStackEntry ->
+            val studyMode = backStackEntry.arguments?.getString("studyMode") ?: "DECK"
+            val contextId = backStackEntry.arguments?.getLong("contextId") ?: -1L
+
+            FlashcardPlayerScreen(
+                studyMode = studyMode,
+                contextId = contextId,
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
 
         composable(
             route = Screen.Home.route,
@@ -245,6 +284,9 @@ fun CogniLinkNavGraph(
                 },
                 onNavigateToProfile = {
                     navController.navigate(Screen.Profile.createRoute(userId))
+                },
+                onNavigateToPlay = {
+                    navController.navigate(Screen.PlayFlashcard.createRoute(studyMode = "Review", contextId = userId))
                 }
             )
         }

@@ -3,7 +3,9 @@ package com.example.cognilink.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cognilink.data.repository.DeckRepository
+import com.example.cognilink.data.repository.DeckRepositoryImpl
 import com.example.cognilink.data.repository.UserRepository
+import com.example.cognilink.data.repository.UserRepositoryImpl
 import com.example.cognilink.ui.states.HomeUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,8 +15,8 @@ import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
 class HomeViewModel(
-    private val userRepository: UserRepository,
-    private val deckRepository: DeckRepository
+    private val userRepository: UserRepository = UserRepositoryImpl(),
+    private val deckRepository: DeckRepository = DeckRepositoryImpl()
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())

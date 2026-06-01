@@ -76,7 +76,7 @@ fun AnswerEditor(
         if (answerOptions.size < limit) {
             GradientSurface(
                 shape = RoundedCornerShape(50),
-                shadowElevation = 1
+                shadowElevation = 1.dp
             ) {
                 TextButton(
                     onClick = {

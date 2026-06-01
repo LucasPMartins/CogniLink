@@ -55,7 +55,7 @@ fun HintReveal(
         if (hintsVisibleCount < hints.size) {
             GradientSurface(
                 shape = RoundedCornerShape(50),
-                shadowElevation = 1
+                shadowElevation = 1.dp
             ) {
                 TextButton(
                     onClick = { hintsVisibleCount++ },

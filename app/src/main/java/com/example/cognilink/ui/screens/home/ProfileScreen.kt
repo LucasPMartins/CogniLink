@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -90,7 +91,8 @@ fun ProfileScreen(
                 retentionRateInsight = state.ranking.retentionInsight,
                 formattedStudyTime = viewModel.formatTime(state.stats.totalStudyTime),
                 formattedLastReview = viewModel.formatLastReview(state.stats.lastReview),
-                onNavigateBack = onNavigateBack
+                onNavigateBack = onNavigateBack,
+                onReviewLeeches = { /* TODO: Navigate to FlashcardPlayer with leech filter */ }
             )
         }
         is ProfileUiState.Error -> {
@@ -112,7 +114,8 @@ fun ProfileContent(
     retentionRateInsight: String,
     formattedStudyTime: String,
     formattedLastReview: String,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    onReviewLeeches: () -> Unit = {}
 ) {
     val scrollState = rememberScrollState()
     Scaffold(
@@ -266,14 +269,13 @@ fun ProfileContent(
 
                 Row(
                     Modifier
-                        .fillMaxWidth()
-                        .height(180.dp),
+                        .fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Surface(
                         shape = RoundedCornerShape(24.dp),
                         color = White,
-                        modifier = Modifier.weight(0.5f)
+                        modifier = Modifier.weight(0.5f).height(200.dp)
                     ) {
                         Column(
                             modifier = Modifier.padding(24.dp),
@@ -321,7 +323,7 @@ fun ProfileContent(
                         color = White,
                         modifier = Modifier
                             .weight(0.5f)
-                            .fillMaxHeight()
+                            .height(200.dp)
                     ) {
                         Column(
                             modifier = Modifier.padding(24.dp),
@@ -330,7 +332,8 @@ fun ProfileContent(
                             Text(
                                 text = "TAXA DE RETENÇÃO", color = DarkGray,
                                 fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.Bold,
+                                lineHeight = 12.sp
                             )
                             Column()
                             {
@@ -343,7 +346,8 @@ fun ProfileContent(
                                 Text(
                                     text = retentionRateInsight, color = DarkGray,
                                     fontSize = 12.sp,
-                                    fontWeight = FontWeight.Bold
+                                    fontWeight = FontWeight.Bold,
+                                    lineHeight = 10.sp
                                 )
                             }
 
@@ -472,9 +476,8 @@ fun ProfileContent(
                             NeonActionButton(
                                 text = "Rever Sanguessugas",
                                 height = 60.dp,
-                                onClickButton = {
-                                    //TODO
-                                }
+                                onClickButton = onReviewLeeches,
+                                modifier = Modifier.fillMaxWidth()
                             )
                         }
                     }
@@ -589,16 +592,16 @@ fun ProfileContent(
                                     tint = DarkNavyBlue
                                 )
                             }
+                                Text(
+                                    text = "TEMPO DE ESTUDO",
+                                    color = DarkGray.copy(alpha = 0.7f),
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.W700
+                                )
+                            }
                             Text(
-                                text = "TEMPO DE ESTUDO",
-                                color = DarkGray.copy(alpha = 0.7f),
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.W700
-                            )
-                        }
-                        Text(
-                            text = formattedStudyTime,
-                            fontSize = 30.sp,
+                                text = formattedStudyTime,
+                                fontSize = 30.sp,
                             fontWeight = FontWeight.ExtraBold,
                             color = DarkGray
                         )

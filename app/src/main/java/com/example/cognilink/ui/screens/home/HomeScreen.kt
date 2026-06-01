@@ -4,8 +4,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -19,6 +21,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -35,6 +39,7 @@ import com.example.cognilink.ui.components.home.DeckCard
 import com.example.cognilink.ui.components.home.ProfileSection
 import com.example.cognilink.ui.components.input.SearchTextField
 import com.example.cognilink.ui.components.utils.EmptyContent
+import com.example.cognilink.ui.components.utils.buttons.NeonActionButton
 import com.example.cognilink.ui.components.utils.buttons.NeonFAB
 import com.example.cognilink.ui.theme.CogniLinkTheme
 import com.example.cognilink.ui.theme.DarkGray
@@ -48,13 +53,8 @@ fun HomeScreen(
     onNavigateToCreateDeck: (Long) -> Unit = { },
     onNavigateToDeck: (Long) -> Unit = { },
     onNavigateToProfile: () -> Unit = {},
-    viewModel: HomeViewModel = viewModel(
-        factory = object : androidx.lifecycle.ViewModelProvider.Factory {
-            override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
-                return HomeViewModel(UserRepositoryImpl(), DeckRepositoryImpl()) as T
-            }
-        }
-    )
+    onNavigateToPlay: (Long) -> Unit = {},
+    viewModel: HomeViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -64,7 +64,7 @@ fun HomeScreen(
 
     HomeContent(
         userName = uiState.userName,
-        welcomePhrase = uiState.welcomePhrase,
+        homeInsight = uiState.welcomePhrase,
         overallMastery = uiState.overallMastery,
         totalStudyTime = viewModel.formatTime(uiState.totalStudyTime),
         cardsDone = uiState.cardsDone,
@@ -74,46 +74,65 @@ fun HomeScreen(
         onSearchValueChange = viewModel::onSearchValueChange,
         onDeckClick = onNavigateToDeck,
         onNavigateToCreateDeck = { onNavigateToCreateDeck(userId) },
-        onNavigateToProfile = onNavigateToProfile
+        onNavigateToProfile = onNavigateToProfile,
+        onNavigateToPlay = { onNavigateToPlay(userId) }
     )
 }
 
 @Composable
 fun HomeContent(
     userName: String = "João Silva",
-    welcomePhrase: String = "Pronto para subir de nível no seu conhecimento hoje?",
-    overallMastery: Float = 0f,
-    totalStudyTime: String = "",
-    cardsDone: Int = 0,
-    learnRetention: Float = 0f,
+    homeInsight: String = "Você está indo muito bem!",
+    overallMastery: Float = 0.78f,
+    totalStudyTime: String = "120h",
+    cardsDone: Int = 2500,
+    learnRetention: Float = 0.88f,
     searchInput: String = "",
     decks: List<Deck> = emptyList(),
     onSearchValueChange: (String) -> Unit = {},
     onDeckClick: (Long) -> Unit = { },
     onNavigateToCreateDeck: () -> Unit = {},
-    onNavigateToProfile: () -> Unit = {}
+    onNavigateToProfile: () -> Unit = {},
+    onNavigateToPlay: () -> Unit = {}
 ) {
 
     val scrollState = rememberScrollState()
 
     Scaffold(
-        floatingActionButton = {
-            NeonFAB(
-                neonColor = White,
-                size = 70.dp,
-                initialBackgroundColor = DarkNavyBlue,
-                finalBackgroundColor = Color(0xFF1222B0),
-                buttonDescription = "Criar baralho de flashcards",
-                iconColor = White,
-                icon = R.drawable.ic_add,
-                onClick = onNavigateToCreateDeck
-            )
+        bottomBar = {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .padding(12.dp)
+                    .fillMaxWidth()
+            ) {
+                NeonActionButton(
+                    text = "REVISAR AGORA",
+                    icon = R.drawable.ic_cached,
+                    onClickButton = onNavigateToPlay,
+                    modifier = Modifier.weight(1f)
+                )
+                NeonFAB(
+                    neonColor = White,
+                    size = 70.dp,
+                    initialBackgroundColor = DarkNavyBlue,
+                    finalBackgroundColor = Color(0xFF1222B0),
+                    buttonDescription = "Criar baralho de flashcards",
+                    iconColor = White,
+                    icon = R.drawable.ic_add,
+                    onClick = onNavigateToCreateDeck
+                )
+            }
+
         }
     ) { padding ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(24.dp),
             modifier = Modifier
                 .verticalScroll(scrollState)
+                .padding(24.dp)
         ) {
 
             Box(
@@ -122,18 +141,20 @@ fun HomeContent(
             ) {
                 ProfileSection(
                     userName = userName,
+                    homeInsight = homeInsight,
                     overallMastery = overallMastery,
                     totalStudyTime = totalStudyTime,
                     cardsDone = cardsDone,
                     learnRetention = learnRetention,
-                    modifier = Modifier.padding(top = padding.calculateTopPadding())
+                    onOpenProfileClick = onNavigateToProfile,
+                    modifier = Modifier.padding(top = padding.calculateTopPadding() + 20.dp)
                 )
 
                 IconButton(
                     onClick = { /* TODO: Abrir tela de configurações */ },
                     modifier = Modifier
                         .align(Alignment.TopEnd)
-                        .padding(top = 39.dp, end = 19.dp)
+                        .padding(top = padding.calculateTopPadding() + 25.dp, end = 8.dp)
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_settings),
@@ -143,88 +164,53 @@ fun HomeContent(
                 }
 
             }
-            Box(
+
+            SearchTextField(
                 modifier = Modifier
-                    .offset(y = (-18).dp)
-            ) {
-                NeonFAB(
-                    neonColor = White,
-                    initialBackgroundColor = DarkNavyBlue,
-                    finalBackgroundColor = Color(0xFF1222B0),
-                    buttonDescription = "Abrir perfil de usuário",
-                    size = 32.dp,
-                    iconColor = White,
-                    icon = R.drawable.ic_keyboard_arrow_down,
-                    onClick = onNavigateToProfile,
-                )
-            }
+                    .fillMaxWidth(),
+                searchValue = searchInput,
+                onSearchValueChange = onSearchValueChange
+            )
+
+            Text(
+                text = "SEUS BARALHOS",
+                color = DarkGray,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 12.sp,
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+
             Column(
                 modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .fillMaxWidth(),
+                    .padding(bottom = 20.dp)
+                    .fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Text(
-                    text = "Bem-vindo de volta, $userName!",
-                    color = DarkNavyBlue,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 24.sp,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
-
-                Text(
-                    text = welcomePhrase,
-                    color = DarkGray,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 14.sp,
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                SearchTextField(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    searchValue = searchInput,
-                    onSearchValueChange = onSearchValueChange
-                )
-
-                Text(
-                    text = "SEUS BARALHOS",
-                    color = DarkGray,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 12.sp,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
-
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    if (decks.isEmpty()) {
-                        EmptyContent(
-                            title = if (searchInput.isNotEmpty()) stringResource(R.string.home_search_no_results_title) else stringResource(
-                                R.string.home_empty_content_title
-                            ),
-                            subTitle = if (searchInput.isNotEmpty()) stringResource(R.string.home_search_no_results_subtitle) else stringResource(
-                                R.string.home_empty_content_subtitle
-                            )
+                if (decks.isEmpty()) {
+                    EmptyContent(
+                        title = if (searchInput.isNotEmpty()) stringResource(R.string.home_search_no_results_title) else stringResource(
+                            R.string.home_empty_content_title
+                        ),
+                        subTitle = if (searchInput.isNotEmpty()) stringResource(R.string.home_search_no_results_subtitle) else stringResource(
+                            R.string.home_empty_content_subtitle
+                        ),
+                    )
+                } else {
+                    decks.forEach { deck ->
+                        DeckCard(
+                            modifier = Modifier.clickable { onDeckClick(deck.id) },
+                            difficulty = deck.difficulty,
+                            deckName = deck.name,
+                            category = deck.categories.firstOrNull() ?: "Geral",
+                            totalCards = deck.totalCards,
+                            cardsToReview = deck.cardsToReview,
+                            proficiency = deck.mastery
                         )
-                    } else {
-                        decks.forEach { deck ->
-                            DeckCard(
-                                modifier = Modifier.clickable { onDeckClick(deck.id) },
-                                difficulty = deck.difficulty,
-                                deckName = deck.name,
-                                category = deck.categories.firstOrNull() ?: "Geral",
-                                totalCards = deck.totalCards,
-                                cardsToReview = deck.cardsToReview,
-                                proficiency = deck.mastery
-                            )
-                        }
                     }
                 }
-                Box(modifier = Modifier.padding(bottom = 50.dp))
             }
+
         }
     }
 }
