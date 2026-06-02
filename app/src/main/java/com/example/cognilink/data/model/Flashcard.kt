@@ -2,10 +2,11 @@ package com.example.cognilink.data.model
 
 import com.example.cognilink.domain.model.FlashcardType
 import com.example.cognilink.domain.model.DifficultyLevel
+import java.util.UUID
 
 data class Flashcard(
-    val id: Long,
-    val deckId: Long, // Referência ao deck pai
+    val id: String = UUID.randomUUID().toString(),
+    val deckId: String, // Referência ao deck pai
     val question: String,
     val cardType: FlashcardType,
     val difficulty: DifficultyLevel,
@@ -20,8 +21,7 @@ data class Answer(
 
 //Fake Objects
 val flashcard1 = Flashcard(
-    id = 1L,
-    deckId = 1L,
+    deckId = "deck-123",
     question = "Qual é a capital da França?",
     cardType = FlashcardType.MULTIPLE_CHOICE,
     difficulty = DifficultyLevel.EASY,
@@ -29,45 +29,6 @@ val flashcard1 = Flashcard(
         Answer("Paris", true),
         Answer("Londres", false),
         Answer("Roma", false)
-    ),
-    hints = listOf("Dica 1", "Dica 2")
-)
-
-val flashcard2 = Flashcard(
-    id = 2L,
-    deckId = 2L,
-    question = "Quem pintou a Mona Lisa?",
-    cardType = FlashcardType.BASIC,
-    difficulty = DifficultyLevel.MEDIUM,
-    answerOptions = listOf(
-        Answer("Leonardo da Vinci", true)
-    ),
-    hints = listOf("Dica 1", "Dica 2")
-)
-
-val flashcard3 = Flashcard(
-    id = 3L,
-    deckId = 3L,
-    question = "Qual é o maior planeta do sistema solar?",
-    cardType = FlashcardType.TRUE_OR_FALSE,
-    difficulty = DifficultyLevel.HARD,
-    answerOptions = listOf(
-        Answer("Vênus", false)
-    ),
-    hints = listOf("Dica 1", "Dica 2")
-)
-
-val flashcard4 = Flashcard(
-    id = 4L,
-    deckId = 3L,
-    question = "Analise as afirmações abaixo e determine se cada uma é Verdadeira ou Falsa",
-    cardType = FlashcardType.TRUE_OR_FALSE,
-    difficulty = DifficultyLevel.HARD,
-    answerOptions = listOf(
-        Answer("A evaporação ocorre quando a água em estado líquido se transforma em vapor devido ao aquecimento do Sol",isCorrect = true),
-        Answer("A precipitação é o processo pelo qual a água em forma de vapor sobe para a atmosfera e forma as nuvens", isCorrect = false),
-        Answer("A transpiração é a liberação de vapor de água pelos seres vivos, especialmente pelas plantas, contribuindo para a umidade do ar.",isCorrect = true),
-        Answer("A condensação é o processo inverso da evaporação, onde o vapor de água esfria e volta ao estado líquido, originando as gotas que formam as nuvens", isCorrect = true)
     ),
     hints = listOf("Dica 1", "Dica 2")
 )

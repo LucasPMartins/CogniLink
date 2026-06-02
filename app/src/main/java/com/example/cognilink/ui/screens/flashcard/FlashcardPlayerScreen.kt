@@ -66,7 +66,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun FlashcardPlayerScreen(
     studyMode: String,
-    contextId: Long,
+    contextId: String,
     onNavigateBack: () -> Unit,
     viewModel: FlashcardPlayerViewModel = viewModel()
 ) {

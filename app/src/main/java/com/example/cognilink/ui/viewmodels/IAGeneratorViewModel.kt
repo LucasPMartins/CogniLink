@@ -8,12 +8,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlin.enums.enumEntries
 
 class IAGeneratorViewModel : ViewModel() {
 
     private val _uiState = MutableStateFlow(IAGeneratorUiState())
     val uiState: StateFlow<IAGeneratorUiState> = _uiState.asStateFlow()
+
+    fun initialize(deckId: String) {
+        if (_uiState.value.deckId == deckId) return
+        _uiState.update { it.copy(deckId = deckId) }
+    }
 
     fun onThemeChange(newTheme: String) {
         _uiState.update { it.copy(flashcardTheme = newTheme) }
@@ -36,6 +40,7 @@ class IAGeneratorViewModel : ViewModel() {
     }
 
     fun generateFlashcards() {
+        val deckId = _uiState.value.deckId ?: return
         _uiState.update { it.copy(isLoading = true) }
         // TODO: Lógica para chamar a IA
         // viewModelScope.launch { ... }

@@ -22,8 +22,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
-import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -34,8 +32,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cognilink.R
 import com.example.cognilink.data.model.Deck
-import com.example.cognilink.data.repository.DeckRepositoryImpl
-import com.example.cognilink.data.repository.UserRepositoryImpl
 import com.example.cognilink.ui.components.home.DeckCard
 import com.example.cognilink.ui.components.home.ProfileSection
 import com.example.cognilink.ui.components.input.SearchTextField
@@ -50,11 +46,11 @@ import com.example.cognilink.ui.viewmodels.HomeViewModel
 
 @Composable
 fun HomeScreen(
-    userId: Long,
-    onNavigateToCreateDeck: (Long) -> Unit = { },
-    onNavigateToDeck: (Long) -> Unit = { },
+    userId: String,
+    onNavigateToCreateDeck: (String) -> Unit = {},
+    onNavigateToDeck: (String) -> Unit = {},
     onNavigateToProfile: () -> Unit = {},
-    onNavigateToPlay: (Long) -> Unit = {},
+    onNavigateToPlay: (String) -> Unit = {},
     viewModel: HomeViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -82,8 +78,8 @@ fun HomeScreen(
 
 @Composable
 fun HomeContent(
-    userName: String = "João Silva",
-    homeInsight: String = "Você está indo muito bem!",
+    userName: String = "Alex Silva",
+    homeInsight: String = "Pronto para subir de nível?",
     overallMastery: Float = 0.78f,
     totalStudyTime: String = "120h",
     cardsDone: Int = 2500,
@@ -91,7 +87,7 @@ fun HomeContent(
     searchInput: String = "",
     decks: List<Deck> = emptyList(),
     onSearchValueChange: (String) -> Unit = {},
-    onDeckClick: (Long) -> Unit = { },
+    onDeckClick: (String) -> Unit = { },
     onNavigateToCreateDeck: () -> Unit = {},
     onNavigateToProfile: () -> Unit = {},
     onNavigateToPlay: () -> Unit = {}

@@ -3,7 +3,7 @@ package com.example.cognilink.ui.states
 import com.example.cognilink.data.model.Deck
 
 data class HomeUiState(
-    val userId: Long = 0L,
+    val userId: String? = null,
     val userName: String = "",
     val welcomePhrase: String = "Pronto para subir de nível no seu conhecimento hoje?",
     val overallMastery: Float = 0f,

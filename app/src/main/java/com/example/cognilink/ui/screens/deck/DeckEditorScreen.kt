@@ -1,6 +1,5 @@
 package com.example.cognilink.ui.screens.deck
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -28,7 +27,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -39,8 +37,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cognilink.R
-import com.example.cognilink.data.model.deck1
-import com.example.cognilink.data.model.flashcard1
 import com.example.cognilink.ui.components.deck.EditDeckContent
 import com.example.cognilink.ui.components.deck.FlashcardItem
 import com.example.cognilink.ui.components.input.CustomTextField
@@ -62,19 +58,19 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun DeckEditorScreen(
-    userId: Long,
-    deckId: Long?,
+    userId: String,
+    deckId: String?,
     onNavigateBack: () -> Unit,
-    onNavigateToCreateFlashcard: (Long) -> Unit,
-    onNavigateToEditFlashcard: (Long) -> Unit,
-    onNavigateToCreateWithIA: (Long) -> Unit,
+    onNavigateToCreateFlashcard: (String?) -> Unit,
+    onNavigateToEditFlashcard: (String?, String) -> Unit,
+    onNavigateToCreateWithIA: (String?) -> Unit,
     viewModel: DeckEditorViewModel = viewModel()
 ) {
     val scope = androidx.compose.runtime.rememberCoroutineScope()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(userId, deckId) {
-        viewModel.loadDeckData(userId, deckId)
+        viewModel.initialize(deckId, userId)
     }
 
     DeckEditorContent(
@@ -99,23 +95,23 @@ fun DeckEditorScreen(
         onRemoveFlashcard = viewModel::removeFlashcard,
         onDismissCategoryDialog = viewModel::closeCategoryDialog,
         onClickAddFlashcardDialog = { viewModel.toggleAddFlashcardDialog() },
-        onEditFlashcardClick = onNavigateToEditFlashcard,
+        onEditFlashcardClick = { fId -> onNavigateToEditFlashcard(deckId, fId) },
         onDismissAddFlashcardDialog = { viewModel.toggleAddFlashcardDialog() },
         onCreateFlashcardManuallyClick = {
             viewModel.toggleAddFlashcardDialog()
             scope.launch {
                 delay(100)
-                onNavigateToCreateFlashcard(deckId ?: 0L)
+                onNavigateToCreateFlashcard(deckId)
             }
         },
         onCreateFlashcardWithIAClick = {
             viewModel.toggleAddFlashcardDialog()
             scope.launch {
                 delay(100)
-                onNavigateToCreateWithIA(deckId ?: 0L)
+                onNavigateToCreateWithIA(deckId)
             }
         },
-        onSaveClick = { viewModel.saveDeck(userId, deckId) },
+        onSaveClick = { viewModel.saveDeck() },
         onNavigateBack = onNavigateBack
     )
 }
@@ -140,11 +136,11 @@ fun DeckEditorContent(
     onEditCategory: (String) -> Unit,
     onRemoveCategory: (String) -> Unit,
     onConfirmCategory: () -> Unit,
-    onRemoveFlashcard: (Long) -> Unit,
+    onRemoveFlashcard: (String) -> Unit,
     onDismissCategoryDialog: () -> Unit,
     onToggleRemoveMode: () -> Unit,
     onSaveClick: () -> Unit,
-    onEditFlashcardClick: (Long) -> Unit,
+    onEditFlashcardClick: (String) -> Unit,
     onClickAddFlashcardDialog: () -> Unit,
     onDismissAddFlashcardDialog: () -> Unit,
     onCreateFlashcardManuallyClick: () -> Unit,
@@ -341,10 +337,6 @@ fun DeckEditorContent(
 private fun DeckEditorContentPreview() {
     CogniLinkTheme {
         val uiState = DeckEditorUiState(
-            deckName = deck1.name,
-            deckDescription = deck1.description,
-            deckCategories = deck1.categories,
-            deckFlashcards = listOf(flashcard1)
         )
 
         DeckEditorContent(

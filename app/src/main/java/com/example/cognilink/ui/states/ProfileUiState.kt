@@ -6,6 +6,7 @@ import com.example.cognilink.domain.model.UserRankingResult
 sealed interface ProfileUiState {
     object Loading : ProfileUiState
     data class Success(
+        val userId: String,
         val userName: String,
         val stats: UserStats,
         val ranking: UserRankingResult

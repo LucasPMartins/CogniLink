@@ -4,6 +4,8 @@ import com.example.cognilink.data.model.Deck
 import com.example.cognilink.data.model.Flashcard
 
 data class DeckUiState(
+    val userId: String? = null,
+    val deckId: String? = null,
     val currentDeck: Deck? = null,
     val flashcards: List<Flashcard> = emptyList(),
     val isMenuExpanded: Boolean = false,

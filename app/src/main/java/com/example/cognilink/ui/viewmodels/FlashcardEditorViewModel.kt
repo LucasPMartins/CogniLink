@@ -22,23 +22,40 @@ class FlashcardEditorViewModel(
     private val _uiState = MutableStateFlow(FlashcardEditorUiState())
     val uiState: StateFlow<FlashcardEditorUiState> = _uiState.asStateFlow()
 
-    fun loadFlashcard(flashcardId: Long) {
-        viewModelScope.launch {
-            val flashcard = repository.getFlashcardById(flashcardId)
-            if (flashcard != null) {
-                _uiState.update { currentState ->
-                    if (currentState.isInitialized) return@update currentState
+    fun initialize(deckId: String, flashcardId: String? = null) {
+        if (_uiState.value.deckId == deckId && _uiState.value.flashcardId == flashcardId) return
+        _uiState.update { currentState ->
+            currentState.copy(
+                deckId = deckId,
+                flashcardId = flashcardId ?: currentState.flashcardId
+            )
+        }
+        loadFlashcard()
+    }
 
-                    currentState.copy(
-                        currentFlashcardId = flashcard.id,
-                        questionText = flashcard.question,
-                        cardType = flashcard.cardType,
-                        difficulty = flashcard.difficulty,
-                        answerOptions = flashcard.answerOptions,
-                        hints = flashcard.hints,
-                        isInitialized = true
-                    )
+    private fun loadFlashcard() {
+        val currentState = _uiState.value
+        viewModelScope.launch {
+            try {
+                val flashcard = repository.getFlashcardById(currentState.flashcardId)
+                if (flashcard != null) {
+                    _uiState.update { currentState ->
+                        if (currentState.isInitialized) return@update currentState
+
+                        currentState.copy(
+                            flashcardId = flashcard.id,
+                            questionText = flashcard.question,
+                            cardType = flashcard.cardType,
+                            difficulty = flashcard.difficulty,
+                            answerOptions = flashcard.answerOptions,
+                            hints = flashcard.hints,
+                            isInitialized = true
+                        )
+
+                    }
                 }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
             }
         }
     }
@@ -107,17 +124,19 @@ class FlashcardEditorViewModel(
 
     fun saveFlashcard() {
         val currentState = _uiState.value
-        val flashcardParaSalvar = Flashcard(
-            id = currentState.currentFlashcardId,
+        val deckId = currentState.deckId ?: return
+
+        val flashcardToSave = Flashcard(
+            id = currentState.flashcardId,
             question = currentState.questionText,
             cardType = currentState.cardType,
             difficulty = currentState.difficulty,
             answerOptions = currentState.answerOptions,
             hints = currentState.hints,
-            deckId = 1L
+            deckId = deckId
         )
         viewModelScope.launch {
-            repository.saveFlashcard(flashcardParaSalvar)
+            repository.saveFlashcard(flashcardToSave)
         }
     }
 }

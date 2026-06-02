@@ -4,6 +4,8 @@ import com.example.cognilink.data.model.Answer
 import com.example.cognilink.data.model.Flashcard
 
 data class FlashcardPlayerUiState(
+    val studyMode: String? = null,
+    val contextId: String? = null,
     val sessionFlashcards: List<Flashcard> = emptyList(),
     val currentFlashcardIndex: Int = 0,
     val selectedAnswers: Map<Answer, String> = emptyMap(),

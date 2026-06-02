@@ -22,39 +22,39 @@ sealed class Screen(val route: String) {
     object Auth : Screen("auth")
     object Terms : Screen("terms")
     object Profile : Screen("profile/{userId}") {
-        fun createRoute(userId: Long) = "profile/$userId"
+        fun createRoute(userId: String) = "profile/$userId"
     }
 
     object Home : Screen("home/{userId}") {
-        fun createRoute(userId: Long) = "home/$userId"
+        fun createRoute(userId: String) = "home/$userId"
     }
 
     object Deck : Screen("deck/{deckId}/{userId}") {
-        fun createRoute(deckId: Long, userId: Long) = "deck/$deckId/$userId"
+        fun createRoute(deckId: String, userId: String) = "deck/$deckId/$userId"
     }
 
     object CreateDeck : Screen("createDeck/{userId}") {
-        fun createRoute(userId: Long) = "createDeck/$userId"
+        fun createRoute(userId: String) = "createDeck/$userId"
     }
 
     object EditDeck : Screen("editDeck/{deckId}/{userId}") {
-        fun createRoute(deckId: Long, userId: Long) = "editDeck/$deckId/$userId"
+        fun createRoute(deckId: String, userId: String) = "editDeck/$deckId/$userId"
     }
 
     object CreateFlashcardWithIA: Screen("createFlashcardWithIA/{deckId}"){
-        fun createRoute(deckId: Long) = "createFlashcardWithIA/$deckId"
+        fun createRoute(deckId: String) = "createFlashcardWithIA/$deckId"
     }
 
     object CreateFlashcardManually: Screen("createFlashcardManually/{deckId}"){
-        fun createRoute(deckId: Long) = "createFlashcardManually/$deckId"
+        fun createRoute(deckId: String) = "createFlashcardManually/$deckId"
     }
 
     object EditFlashcard: Screen("editFlashcard/{deckId}/{flashcardId}"){
-        fun createRoute(deckId: Long,flashcardId: Long) = "editFlashcard/$deckId/$flashcardId"
+        fun createRoute(deckId: String, flashcardId: String) = "editFlashcard/$deckId/$flashcardId"
     }
 
     object PlayFlashcard : Screen("playFlashcard/{studyMode}/{contextId}") {
-        fun createRoute(studyMode: String, contextId: Long) = "playFlashcard/$studyMode/$contextId"
+        fun createRoute(studyMode: String, contextId: String) = "playFlashcard/$studyMode/$contextId"
     }
 
 }
@@ -88,53 +88,31 @@ fun CogniLinkNavGraph(
             )
         }
 
-        composable(
-            route = Screen.Profile.route,
-            arguments = listOf(
-                androidx.navigation.navArgument("userId") {
-                    type = androidx.navigation.NavType.LongType
-                }
-            )
-        ) { backStackEntry ->
-            val userId = backStackEntry.arguments?.getLong("userId") ?: -1L
+        composable(Screen.Profile.route) { backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId") ?: ""
             ProfileScreen(
                 userId = userId,
                 onNavigateBack = { navController.popBackStack() },
             )
         }
 
-        composable(
-            route = Screen.Deck.route,
-            arguments = listOf(
-                androidx.navigation.navArgument("deckId") {
-                    type = androidx.navigation.NavType.LongType
-                },
-                androidx.navigation.navArgument("userId") {
-                    type = androidx.navigation.NavType.LongType
-                }
-            )
-        ) { backStackEntry ->
-            val deckId = backStackEntry.arguments?.getLong("deckId") ?: -1L
-            val userId = backStackEntry.arguments?.getLong("userId") ?: -1L
+        composable(Screen.Deck.route) { backStackEntry ->
+            val deckId = backStackEntry.arguments?.getString("deckId") ?: ""
+            val userId = backStackEntry.arguments?.getString("userId") ?: ""
             DeckScreen(
                 deckId = deckId, userId = userId,
                 onNavigateBack = { navController.popBackStack() },
                 onNavigateToEdit = {
-                    navController.navigate(
-                        Screen.EditDeck.createRoute(
-                            deckId,
-                            userId
-                        )
-                    )
+                    navController.navigate(Screen.EditDeck.createRoute(deckId, userId))
                 },
-                onNavigateToStudy = { deckId ->
-                    navController.navigate(Screen.PlayFlashcard.createRoute("DECK", deckId))
+                onNavigateToStudy = { dId ->
+                    navController.navigate(Screen.PlayFlashcard.createRoute("DECK", dId))
                 },
-                onNavigateToCreateFlashcard = {
-                    navController.navigate(Screen.CreateFlashcardManually.createRoute(deckId))
+                onNavigateToCreateFlashcard = { dId ->
+                    navController.navigate(Screen.CreateFlashcardManually.createRoute(dId))
                 },
-                onNavigateToCreateWithIA = {
-                    navController.navigate(Screen.CreateFlashcardWithIA.createRoute(deckId))
+                onNavigateToCreateWithIA = { dId ->
+                    navController.navigate(Screen.CreateFlashcardWithIA.createRoute(dId))
                 },
                 onNavigateToFlashcard = { flashcardId ->
                     navController.navigate(Screen.PlayFlashcard.createRoute("FLASHCARD", flashcardId))
@@ -142,85 +120,57 @@ fun CogniLinkNavGraph(
             )
         }
 
-        composable(
-            route = Screen.CreateDeck.route,
-            arguments = listOf(
-                androidx.navigation.navArgument("userId") {
-                    type = androidx.navigation.NavType.LongType
-                }
-            )
-        ) { backStackEntry ->
-            val userId = backStackEntry.arguments?.getLong("userId") ?: -1L
+        composable(Screen.CreateDeck.route) { backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId") ?: ""
             DeckEditorScreen(
-                userId = userId, deckId = 0L,
+                userId = userId, deckId = null,
                 onNavigateBack = { navController.popBackStack() },
-                onNavigateToCreateFlashcard = {
-                    navController.navigate(Screen.CreateFlashcardManually.createRoute(0L))
+                onNavigateToCreateFlashcard = { dId ->
+                    dId?.let { navController.navigate(Screen.CreateFlashcardManually.createRoute(it)) }
                 },
-                onNavigateToCreateWithIA = {
-                    navController.navigate(Screen.CreateFlashcardWithIA.createRoute(0L))
+                onNavigateToCreateWithIA = { dId ->
+                    dId?.let { navController.navigate(Screen.CreateFlashcardWithIA.createRoute(it)) }
                 },
-                onNavigateToEditFlashcard = {flashcardId ->
-                    navController.navigate(Screen.EditFlashcard.createRoute(0L,flashcardId))
+                onNavigateToEditFlashcard = { dId, flashcardId ->
+                    dId?.let { navController.navigate(Screen.EditFlashcard.createRoute(it, flashcardId)) }
                 }
             )
         }
 
-        composable(
-            route = Screen.EditDeck.route,
-            arguments = listOf(
-                androidx.navigation.navArgument("deckId") {
-                    type = androidx.navigation.NavType.LongType
-                },
-                androidx.navigation.navArgument("userId") {
-                    type = androidx.navigation.NavType.LongType
-                }
-            )
-        ) { backStackEntry ->
-            val deckId = backStackEntry.arguments?.getLong("deckId") ?: -1L
-            val userId = backStackEntry.arguments?.getLong("userId") ?: -1L
+        composable(Screen.EditDeck.route) { backStackEntry ->
+            val deckId = backStackEntry.arguments?.getString("deckId") ?: ""
+            val userId = backStackEntry.arguments?.getString("userId") ?: ""
             DeckEditorScreen(
                 userId = userId,
                 deckId = deckId,
                 onNavigateBack = {
                     navController.popBackStack()
                 },
-                onNavigateToCreateFlashcard = {
-                    navController.navigate(Screen.CreateFlashcardManually.createRoute(deckId))
+                onNavigateToCreateFlashcard = { dId ->
+                    val targetId = dId ?: deckId
+                    navController.navigate(Screen.CreateFlashcardManually.createRoute(targetId))
                 },
-                onNavigateToCreateWithIA = {
-                    navController.navigate(Screen.CreateFlashcardWithIA.createRoute(deckId))
+                onNavigateToCreateWithIA = { dId ->
+                    val targetId = dId ?: deckId
+                    navController.navigate(Screen.CreateFlashcardWithIA.createRoute(targetId))
                 },
-                onNavigateToEditFlashcard = { flashcardId ->
-                    navController.navigate(Screen.EditFlashcard.createRoute(deckId, flashcardId))
+                onNavigateToEditFlashcard = { dId, flashcardId ->
+                    val targetId = dId ?: deckId
+                    navController.navigate(Screen.EditFlashcard.createRoute(targetId, flashcardId))
                 }
             )
         }
 
-        composable(
-            route = Screen.CreateFlashcardWithIA.route,
-            arguments = listOf(
-                androidx.navigation.navArgument("deckId") {
-                    type = androidx.navigation.NavType.LongType
-                }
-            )
-        ) { backStackEntry ->
-            val deckId = backStackEntry.arguments?.getLong("deckId") ?: -1L
+        composable(Screen.CreateFlashcardWithIA.route) { backStackEntry ->
+            val deckId = backStackEntry.arguments?.getString("deckId") ?: ""
             CreateFlashcardWithIAScreen(
                 deckId = deckId,
                 onNavigateBack = { navController.popBackStack() }
             )
         }
 
-        composable(
-            route = Screen.CreateFlashcardManually.route,
-            arguments = listOf(
-                androidx.navigation.navArgument("deckId") {
-                    type = androidx.navigation.NavType.LongType
-                }
-            )
-        ) { backStackEntry ->
-            val deckId = backStackEntry.arguments?.getLong("deckId") ?: -1L
+        composable(Screen.CreateFlashcardManually.route) { backStackEntry ->
+            val deckId = backStackEntry.arguments?.getString("deckId") ?: ""
             FlashcardEditorScreen(
                 deckId = deckId,
                 flashcardId = null,
@@ -228,19 +178,9 @@ fun CogniLinkNavGraph(
             )
         }
 
-        composable(
-            route = Screen.EditFlashcard.route,
-            arguments = listOf(
-                androidx.navigation.navArgument("deckId") {
-                    type = androidx.navigation.NavType.LongType
-                },
-                androidx.navigation.navArgument("flashcardId") {
-                    type = androidx.navigation.NavType.LongType
-                }
-            )
-        ) { backStackEntry ->
-            val deckId = backStackEntry.arguments?.getLong("deckId") ?: -1L
-            val flashcardId = backStackEntry.arguments?.getLong("flashcardId") ?: -1L
+        composable(Screen.EditFlashcard.route) { backStackEntry ->
+            val deckId = backStackEntry.arguments?.getString("deckId") ?: ""
+            val flashcardId = backStackEntry.arguments?.getString("flashcardId") ?: ""
             FlashcardEditorScreen(
                 deckId = deckId,
                 flashcardId = flashcardId,
@@ -248,16 +188,9 @@ fun CogniLinkNavGraph(
             )
         }
 
-        composable(
-            route = Screen.PlayFlashcard.route,
-            arguments = listOf(
-                androidx.navigation.navArgument("studyMode") { type = androidx.navigation.NavType.StringType },
-                androidx.navigation.navArgument("contextId") { type = androidx.navigation.NavType.LongType }
-            )
-        ) { backStackEntry ->
+        composable(Screen.PlayFlashcard.route) { backStackEntry ->
             val studyMode = backStackEntry.arguments?.getString("studyMode") ?: "DECK"
-            val contextId = backStackEntry.arguments?.getLong("contextId") ?: -1L
-
+            val contextId = backStackEntry.arguments?.getString("contextId") ?: ""
             FlashcardPlayerScreen(
                 studyMode = studyMode,
                 contextId = contextId,
@@ -265,28 +198,21 @@ fun CogniLinkNavGraph(
             )
         }
 
-        composable(
-            route = Screen.Home.route,
-            arguments = listOf(
-                androidx.navigation.navArgument("userId") {
-                    type = androidx.navigation.NavType.LongType
-                }
-            )
-        ) { backStackEntry ->
-            val userId = backStackEntry.arguments?.getLong("userId") ?: -1L
+        composable(Screen.Home.route) { backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId") ?: ""
             HomeScreen(
                 userId = userId,
-                onNavigateToCreateDeck = {
-                    navController.navigate(Screen.CreateDeck.createRoute(userId))
+                onNavigateToCreateDeck = { uId ->
+                    navController.navigate(Screen.CreateDeck.createRoute(uId))
                 },
-                onNavigateToDeck = { deckId ->
-                    navController.navigate(Screen.Deck.createRoute(deckId, userId))
+                onNavigateToDeck = { dId ->
+                    navController.navigate(Screen.Deck.createRoute(dId, userId))
                 },
                 onNavigateToProfile = {
                     navController.navigate(Screen.Profile.createRoute(userId))
                 },
-                onNavigateToPlay = {
-                    navController.navigate(Screen.PlayFlashcard.createRoute(studyMode = "Review", contextId = userId))
+                onNavigateToPlay = { uId ->
+                    navController.navigate(Screen.PlayFlashcard.createRoute(studyMode = "REVIEW", contextId = uId))
                 }
             )
         }

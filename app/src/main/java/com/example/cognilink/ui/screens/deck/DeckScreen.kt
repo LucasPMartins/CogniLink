@@ -41,8 +41,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cognilink.R
 import com.example.cognilink.data.model.Flashcard
-import com.example.cognilink.data.model.deck1
-import com.example.cognilink.data.model.flashcard1
 import com.example.cognilink.domain.model.DifficultyLevel
 import com.example.cognilink.ui.components.deck.FlashcardItem
 import com.example.cognilink.ui.components.deck.ViewDeckContent
@@ -61,14 +59,14 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun DeckScreen(
-    deckId: Long,
-    userId: Long,
+    deckId: String,
+    userId: String,
     onNavigateBack: () -> Unit,
     onNavigateToEdit: () -> Unit,
-    onNavigateToCreateFlashcard: (Long) -> Unit,
-    onNavigateToCreateWithIA: (Long) -> Unit,
-    onNavigateToStudy: (Long) -> Unit,
-    onNavigateToFlashcard: (Long) -> Unit,
+    onNavigateToCreateFlashcard: (String) -> Unit,
+    onNavigateToCreateWithIA: (String) -> Unit,
+    onNavigateToStudy: (String) -> Unit,
+    onNavigateToFlashcard: (String) -> Unit,
     viewModel: DeckViewModel = viewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -82,7 +80,7 @@ fun DeckScreen(
     val deck = uiState.currentDeck
     DeckContent(
         deckName = deck?.name,
-        deckId = deckId,
+
         deckCategories = deck?.categories,
         deckDescription = deck?.description,
         deckDifficulty = deck?.difficulty,
@@ -118,7 +116,7 @@ fun DeckScreen(
         onBackClick = onNavigateBack,
         onConfirmDeleteClick = {
             viewModel.toggleDeleteDeckDialog()
-            viewModel.deleteDeck(deckId, userId)
+            viewModel.deleteDeck()
             scope.launch {
                 delay(100)
                 onNavigateBack()
@@ -147,7 +145,6 @@ fun DeckContent(
     modifier: Modifier = Modifier,
     deckName: String?,
     deckCategories: List<String>?,
-    deckId: Long = 0,
     deckDifficulty: DifficultyLevel?,
     deckDescription: String?,
     deckMastery: Float?,
@@ -156,14 +153,14 @@ fun DeckContent(
     deckFlashcards: List<Flashcard>?,
     isMenuExpanded: Boolean = false,
     isAddFlashcardDialogOpen: Boolean = false,
-    onCreateFlashcardWithIAClick: (Long) -> Unit,
-    onCreateFlashcardManuallyClick: (Long) -> Unit,
-    onFlashcardClick: (Long) -> Unit,
+    onCreateFlashcardWithIAClick: () -> Unit,
+    onCreateFlashcardManuallyClick: () -> Unit,
+    onFlashcardClick: (String) -> Unit,
     onStudyNowClick: () -> Unit,
     onClickSeeMore: () -> Unit,
     onBackClick: () -> Unit,
     onMenuClick: () -> Unit,
-    onConfirmDeleteClick: (Long) -> Unit,
+    onConfirmDeleteClick: () -> Unit,
     isDeleteDeckDialogOpen: Boolean = false,
     onEditClick: () -> Unit,
     onClickAddFlashcardDialog: () -> Unit,
@@ -260,7 +257,7 @@ fun DeckContent(
                                 SimpleGradientButton(
                                     text = "Sim",
                                     height = 56.dp,
-                                    onClickButton = { onConfirmDeleteClick(deckId) }
+                                    onClickButton = onConfirmDeleteClick
                                 )
                                 SimpleGradientButton(
                                     text = "Cancelar",
@@ -317,16 +314,16 @@ fun DeckContent(
                                 SimpleGradientButton(
                                     text = "Criar manualmente",
                                     height = 56.dp,
-                                    onClickButton = {
-                                        onCreateFlashcardManuallyClick(deckId)
-                                    }
+                                    onClickButton =
+                                        onCreateFlashcardManuallyClick
+
                                 )
                                 SimpleGradientButton(
                                     text = "Criar com IA",
                                     height = 56.dp,
-                                    onClickButton = {
-                                        onCreateFlashcardWithIAClick(deckId)
-                                    }
+                                    onClickButton =
+                                        onCreateFlashcardWithIAClick
+
                                 )
                             }
                         }
@@ -385,14 +382,14 @@ fun DeckContent(
 private fun DeckContentPreview() {
     CogniLinkTheme {
         DeckContent(
-            deckName = deck1.name,
-            deckCategories = deck1.categories,
-            deckDescription = deck1.description,
-            deckDifficulty = deck1.difficulty,
-            deckMastery = deck1.mastery,
-            deckTotalCards = deck1.totalCards,
-            deckCardsToReview = deck1.cardsToReview,
-            deckFlashcards = listOf(flashcard1),
+            deckName = "Deck Name",
+            deckCategories = listOf("Category 1","Category 2"),
+            deckDescription = "Description",
+            deckDifficulty = DifficultyLevel.MEDIUM,
+            deckMastery = 0.7f,
+            deckTotalCards = 1,
+            deckCardsToReview = 1,
+            deckFlashcards = emptyList(),
             onMenuClick = {},
             onCreateFlashcardWithIAClick = {},
             onCreateFlashcardManuallyClick = {},
@@ -401,7 +398,7 @@ private fun DeckContentPreview() {
             onClickSeeMore = {},
             onBackClick = {},
             onConfirmDeleteClick = {},
-            onEditClick = {  },
+            onEditClick = {},
             onClickAddFlashcardDialog = {  },
             onDismissAddFlashcardDialog = {},
             onClickDeleteDeckDialog = {},

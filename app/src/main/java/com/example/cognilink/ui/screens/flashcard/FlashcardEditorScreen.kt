@@ -56,17 +56,16 @@ import com.example.cognilink.ui.viewmodels.FlashcardEditorViewModel
 @Composable
 fun FlashcardEditorScreen(
     viewModel: FlashcardEditorViewModel = viewModel(),
-    flashcardId: Long? = null,
-    deckId: Long,
+    flashcardId: String? = null,
+    deckId: String,
     onNavigateBack: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(flashcardId) {
-        if (flashcardId != null) {
-            viewModel.loadFlashcard(flashcardId)
-        }
+    LaunchedEffect(flashcardId, deckId) {
+        viewModel.initialize(deckId, flashcardId)
     }
+    
     FlashcardEditorContent(
         questionText = uiState.questionText,
         onQuestionTextChange = viewModel::onQuestionTextChange,
@@ -85,7 +84,7 @@ fun FlashcardEditorScreen(
         isRemoveModeActive = uiState.isDeleteMode,
         onToggleRemoveMode = viewModel::toggleDeletionMode,
         isEditMode = flashcardId != null,
-        onSaveChanges = viewModel::saveFlashcard,
+        onSaveChanges = { viewModel.saveFlashcard() },
         onBackClick = onNavigateBack
     )
 }
@@ -285,19 +284,19 @@ fun FlashcardEditorContent(
 private fun FlashcardEditorContentPreview() {
     CogniLinkTheme {
         FlashcardEditorContent(
-            questionText = flashcard1.question,
+            questionText = "Question",
             onQuestionTextChange = {},
-            answerOptions = flashcard1.answerOptions,
+            answerOptions = emptyList(),
             updateAnswers = {},
             onRemoveAnswer = {},
             onToggleTrueFalse = {},
             onSelectCorrectAnswer = {},
             onBasicAnswerChange = {},
-            difficulty = flashcard1.difficulty,
+            difficulty = DifficultyLevel.EASY,
             onDifficultyChange = {},
-            flashcardType = flashcard1.cardType,
+            flashcardType = FlashcardType.BASIC,
             onTypeChange = {},
-            hintList = flashcard1.hints,
+            hintList = emptyList(),
             onHintsUpdate = {},
             isRemoveModeActive = false,
             onToggleRemoveMode = {},

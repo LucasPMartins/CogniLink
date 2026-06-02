@@ -11,5 +11,5 @@ data class AuthUiState(
     val isTermsAccepted: Boolean = false,
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
-    val loggedInUserId: Long? = null
+    val loggedInUserId: String? = null
 )

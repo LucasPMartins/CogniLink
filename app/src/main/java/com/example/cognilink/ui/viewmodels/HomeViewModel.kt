@@ -2,6 +2,7 @@ package com.example.cognilink.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.cognilink.data.model.UserStats
 import com.example.cognilink.data.repository.DeckRepository
 import com.example.cognilink.data.repository.DeckRepositoryImpl
 import com.example.cognilink.data.repository.UserRepository
@@ -22,26 +23,32 @@ class HomeViewModel(
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
-    fun initialize(userId: Long) {
-        if (_uiState.value.userId != 0L) return
-        loadHomeData(userId)
+    fun initialize(userId: String) {
+        if (_uiState.value.userId == userId) return
+        _uiState.update { it.copy(userId = userId) }
+        loadHomeData()
     }
 
-    private fun loadHomeData(userId: Long) {
+    private fun loadHomeData() {
+        val currentState = _uiState.value
+        val userId = currentState.userId ?: return
+
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             try {
                 val user = userRepository.getUserById(userId = userId)
+                val userStats =
+                    userRepository.getUserStats(userId = userId) ?: UserStats(userId = userId)
                 val decks = deckRepository.getDecks(userId = userId)
+
                 _uiState.update {
                     it.copy(
-                        userId = user.id,
-                        userName = user.name,
+                        userName = user?.name ?: "Usuário",
                         decks = decks,
-                        totalStudyTime = user.stats.totalStudyTime,
-                        overallMastery = user.stats.overallMastery,
-                        cardsDone = user.stats.totalFlashcardsDone,
-                        retentionRate = user.stats.retentionRate,
+                        totalStudyTime = userStats.totalStudyTime,
+                        overallMastery = userStats.overallMastery,
+                        cardsDone = userStats.totalFlashcardsDone,
+                        retentionRate = userStats.retentionRate,
                         isLoading = false
                     )
                 }
@@ -59,18 +66,20 @@ class HomeViewModel(
     fun formatTime(milliseconds: Long): String {
         if (milliseconds <= 0) return "0s"
 
-        val days = TimeUnit.MILLISECONDS.toDays(milliseconds)
+        val totalDays = TimeUnit.MILLISECONDS.toDays(milliseconds)
+        val years = totalDays / 365
+        val days = totalDays % 365
         val hours = TimeUnit.MILLISECONDS.toHours(milliseconds) % 24
         val minutes = TimeUnit.MILLISECONDS.toMinutes(milliseconds) % 60
         val seconds = TimeUnit.MILLISECONDS.toSeconds(milliseconds) % 60
 
-        val parts = mutableListOf<String>()
-        if (days > 0) parts.add("${days}d")
-        if (hours > 0) parts.add("${hours}h")
-        if (minutes > 0) parts.add("${minutes}m")
-        if (seconds > 0) parts.add("${seconds}s")
-
-        return parts.joinToString(" ")
+        return when {
+            years > 0 -> "${years}y"
+            days > 0 -> "${days}d"
+            hours > 0 -> "${hours}h"
+            minutes > 0 -> "${minutes}m"
+            else -> "${seconds}s"
+        }
     }
 
     fun onSearchValueChange(newValue: String) {
@@ -80,7 +89,7 @@ class HomeViewModel(
 
     private fun filterDecks(query: String) {
         viewModelScope.launch {
-            val userId = _uiState.value.userId
+            val userId = _uiState.value.userId ?: return@launch
             val allDecks = deckRepository.getDecks(userId)
             val filteredDecks = if (query.isEmpty()) {
                 allDecks
@@ -94,7 +103,7 @@ class HomeViewModel(
     fun refreshDecks() {
         viewModelScope.launch {
             try {
-                val userId = _uiState.value.userId
+                val userId = _uiState.value.userId ?: return@launch
                 val decks = deckRepository.getDecks(userId)
                 _uiState.update { it.copy(decks = decks) }
             } catch (e: Exception) {

@@ -1,76 +1,38 @@
 package com.example.cognilink.data.repository
 
 import com.example.cognilink.data.model.Flashcard
-import com.example.cognilink.data.model.FlashcardStatistics
-import com.example.cognilink.data.model.deck1
-import com.example.cognilink.data.model.deck2
-import com.example.cognilink.data.model.deck3
-import com.example.cognilink.data.model.fakeFlashcardStatistics
-import com.example.cognilink.data.model.flashcard1
-import com.example.cognilink.data.model.flashcard2
-import com.example.cognilink.data.model.flashcard3
-import com.example.cognilink.data.model.flashcard4
+import com.example.cognilink.data.model.FlashcardStats
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 
 interface FlashcardRepository {
-    suspend fun getFlashcardsForDeck(deckId: Long): List<Flashcard>
+    suspend fun getFlashcardsForDeck(deckId: String): List<Flashcard>
     suspend fun saveFlashcard(flashcard: Flashcard)
     suspend fun deleteFlashcard(flashcardId: String)
-
-    suspend fun getFlashcardById(flashcardId: Long): Flashcard?
-
+    suspend fun getFlashcardById(flashcardId: String): Flashcard?
     suspend fun saveAllFlashcards(flashcards: List<Flashcard>)
-
-    suspend fun getFlashcardStatistics(flashcardId: Long): FlashcardStatistics?
-
-    suspend fun getLeeches(userId: Long): List<Flashcard>?
-
-    suspend fun getReviewPending(userId: Long): List<Flashcard>?
-
-    suspend fun getDeckName(deckId: Long): String?
-
-    suspend fun getReviewCountForDeck(deckId: Long, todayTimestamp: Long): Flow<Int>
+    suspend fun getFlashcardStatistics(flashcardId: String): FlashcardStats?
+    suspend fun getLeeches(userId: String): List<Flashcard>?
+    suspend fun getReviewPending(userId: String): List<Flashcard>?
+    suspend fun getDeckName(deckId: String): String?
+    suspend fun getReviewCountForDeck(deckId: String, todayTimestamp: Long): Flow<Int>
+    suspend fun updateFlashcardStatistics(statistics: FlashcardStats)
+    suspend fun getFlashcardsToReview(deckId: String, currentTimestamp: Long): List<Flashcard>
+    suspend fun resetStatistics(flashcardId: String)
 }
 
 class FlashcardRepositoryImpl : FlashcardRepository {
-    override suspend fun getFlashcardsForDeck(deckId: Long): List<Flashcard> {
-        // Filtra os flashcards pelo deckId (simulação)
-        return listOf(flashcard1, flashcard2, flashcard3, flashcard4).filter { it.deckId == deckId }
-    }
-
-    override suspend fun saveFlashcard(flashcard: Flashcard) {
-        // Simulação de salvar flashcard
-    }
-
-    override suspend fun deleteFlashcard(flashcardId: String) {
-        // Simulação de deletar flashcard
-    }
-
-    override suspend fun getFlashcardById(flashcardId: Long): Flashcard? {
-        return listOf(flashcard1, flashcard2, flashcard3, flashcard4).find { it.id == flashcardId }
-    }
-
-    override suspend fun saveAllFlashcards(flashcards: List<Flashcard>) {
-        // Simulação de salvar todos os flashcards
-    }
-
-    override suspend fun getFlashcardStatistics(flashcardId: Long): FlashcardStatistics? {
-        return fakeFlashcardStatistics.find { it.idFlashcard == flashcardId }
-    }
-
-    override suspend fun getLeeches(userId: Long): List<Flashcard>? {
-        return null
-    }
-
-    override suspend fun getReviewPending(userId: Long): List<Flashcard>? {
-        return null
-    }
-
-    override suspend fun getDeckName(deckId: Long): String? {
-        return listOf(deck1, deck2, deck3).find { it.id == deckId }?.name
-    }
-
-    override suspend fun getReviewCountForDeck(deckId: Long, todayTimestamp: Long): Flow<Int> {
-        return 3 as Flow<Int>
-    }
+    override suspend fun getFlashcardsForDeck(deckId: String): List<Flashcard> = emptyList()
+    override suspend fun saveFlashcard(flashcard: Flashcard) {}
+    override suspend fun deleteFlashcard(flashcardId: String) {}
+    override suspend fun getFlashcardById(flashcardId: String): Flashcard? = null
+    override suspend fun saveAllFlashcards(flashcards: List<Flashcard>) {}
+    override suspend fun getFlashcardStatistics(flashcardId: String): FlashcardStats? = null
+    override suspend fun getLeeches(userId: String): List<Flashcard>? = null
+    override suspend fun getReviewPending(userId: String): List<Flashcard>? = null
+    override suspend fun getDeckName(deckId: String): String? = null
+    override suspend fun getReviewCountForDeck(deckId: String, todayTimestamp: Long): Flow<Int> = flowOf(3)
+    override suspend fun updateFlashcardStatistics(statistics: FlashcardStats) {}
+    override suspend fun getFlashcardsToReview(deckId: String, currentTimestamp: Long): List<Flashcard> = emptyList()
+    override suspend fun resetStatistics(flashcardId: String) {}
 }

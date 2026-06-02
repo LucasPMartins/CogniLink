@@ -1,10 +1,11 @@
 package com.example.cognilink.data.model
 
 import com.example.cognilink.domain.model.DifficultyLevel
+import java.util.UUID
 
 data class Deck(
-    val id: Long,
-    val userId: Long, // Referência ao dono do deck
+    val id: String = UUID.randomUUID().toString(),
+    val userId: String, // Referência ao dono do deck
     val name:String,
     val categories: List<String>,
     val description: String,
@@ -16,8 +17,7 @@ data class Deck(
 
 // Fake Object
 val deck1 = Deck(
-    id = 1L,
-    userId = 1001L,
+    userId = "user-123",
     name = "Geografia Mundial",
     categories = listOf("Geografia", "História"),
     description = "Um deck com perguntas sobre geografia mundial",
@@ -28,8 +28,7 @@ val deck1 = Deck(
 )
 
 val deck2 = Deck(
-    id = 2L,
-    userId = 1001L,
+    userId = "user-123",
     name = "História Antiga",
     categories = listOf("História", "Arte"),
     description = "Um deck com perguntas sobre história antiga",
@@ -40,8 +39,7 @@ val deck2 = Deck(
 )
 
 val deck3 = Deck(
-    id = 3L,
-    userId = 1001L,
+    userId = "user-123",
     name = "Conhecimentos Gerais",
     categories = listOf("Ciências", "Matemática"),
     description = "Um deck com perguntas gerais sobre ciência e matemática",

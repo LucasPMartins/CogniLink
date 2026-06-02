@@ -8,7 +8,7 @@ class CalculateDeckReviewCountUseCase(
     private val repository: FlashcardRepository = FlashcardRepositoryImpl()
 ) {
     // O operador invoke permite chamar a classe como se fosse uma função
-    suspend operator fun invoke(deckId: Long): Flow<Int> {
+    suspend operator fun invoke(deckId: String): Flow<Int> {
         val todayTimestamp = System.currentTimeMillis() // Pega a data/hora atual
         return repository.getReviewCountForDeck(deckId, todayTimestamp)
     }

@@ -39,9 +39,12 @@ class FlashcardPlayerViewModel(
         }
     }
 
-    fun initializeSession(studyMode: String, contextId: Long) {
+    fun initializeSession(studyMode: String, contextId: String) {
+        if (_uiState.value.studyMode == studyMode && _uiState.value.contextId == contextId) return
+        
+        _uiState.update { it.copy(studyMode = studyMode, contextId = contextId, isLoading = true) }
+        
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
             val flashcards = when (studyMode) {
                 "DECK" -> repository.getFlashcardsForDeck(contextId)
                 "LEECHES" -> repository.getLeeches(contextId) ?: emptyList()

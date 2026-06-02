@@ -12,6 +12,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
@@ -38,11 +39,15 @@ import com.example.cognilink.ui.viewmodels.IAGeneratorViewModel
 
 @Composable
 fun CreateFlashcardWithIAScreen(
-    deckId: Long,
+    deckId: String,
     viewModel: IAGeneratorViewModel = viewModel(),
     onNavigateBack: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(deckId) {
+        viewModel.initialize(deckId)
+    }
 
     IAGeneratorContent(
         flashcardTheme = uiState.flashcardTheme,

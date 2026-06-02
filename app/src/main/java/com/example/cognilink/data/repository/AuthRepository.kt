@@ -1,18 +1,18 @@
 package com.example.cognilink.data.repository
 
 import com.example.cognilink.data.model.User
-import com.example.cognilink.data.model.fakeUser
 
 interface AuthRepository {
     suspend fun signIn(email: String, password: String): User?
     suspend fun signUp(name: String, email: String, password: String): User?
+    suspend fun signOut()
 }
 
 class AuthRepositoryImpl : AuthRepository {
     override suspend fun signIn(email: String, password: String): User? {
         // Simulação de login
-        return if (email == "lucas" && password == "123") {
-            fakeUser
+        return if (email == "lucas@email.com" && password == "123") {
+            User(id = "user-123", name = "Lucas", email = email)
         } else {
             null
         }
@@ -20,6 +20,10 @@ class AuthRepositoryImpl : AuthRepository {
 
     override suspend fun signUp(name: String, email: String, password: String): User? {
         // Simulação de registro
-        return fakeUser.copy(name = name, email = email)
+        return User(id = "user-123", name = name, email = email)
+    }
+
+    override suspend fun signOut() {
+        // Simulação de logout
     }
 }

@@ -1,8 +1,11 @@
 package com.example.cognilink.ui.states
 
 import com.example.cognilink.data.model.Flashcard
+import java.util.UUID
 
 data class DeckEditorUiState(
+    val userId: String? = null,
+    val deckId: String = UUID.randomUUID().toString(),
     val deckName: String = "",
     val deckDescription: String = "",
     val deckCategories: List<String> = emptyList(),

@@ -4,6 +4,7 @@ import org.gradle.accessors.dm.LibrariesForLibs
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -43,6 +44,9 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
     implementation(libs.compose.markdown)
     implementation(libs.kotlinx.datetime)
     implementation(libs.androidx.core.ktx)
@@ -57,6 +61,7 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.material3)
+    implementation(libs.gson)
 
     testImplementation(libs.junit)
 

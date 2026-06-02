@@ -43,7 +43,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cognilink.R
 import com.example.cognilink.data.model.UserStats
-import com.example.cognilink.data.model.fakeUser
 import com.example.cognilink.ui.components.utils.GradientSurface
 import com.example.cognilink.ui.components.utils.NavigationHeader
 import com.example.cognilink.ui.components.utils.ProgressBar
@@ -65,7 +64,7 @@ import androidx.compose.runtime.LaunchedEffect
 
 @Composable
 fun ProfileScreen(
-    userId: Long,
+    userId: String,
     onNavigateBack: () -> Unit,
     viewModel: ProfileViewModel = viewModel()
 ) {
@@ -106,7 +105,7 @@ fun ProfileScreen(
 @Composable
 fun ProfileContent(
     modifier: Modifier = Modifier,
-    userName: String = "João Silva",
+    userName: String = "Alex Silva",
     userRank: String = "Iniciante",
     userStats: UserStats,
     cognitiveEfficiencyInsight: String,
@@ -633,7 +632,7 @@ fun ProfileContent(
 @Composable
 private fun ProfileContentPreview() {
     ProfileContent(
-        userStats = fakeUser.stats,
+        userStats = UserStats(),
         globalAverageLatencyMsText = "450ms",
         cognitiveEfficiencyInsight = "Seu cérebro está absorvendo mais conteúdo em menos tempo.",
         retentionRateInsight = "Considere revisar os cartões com maior frequência.",

@@ -27,7 +27,7 @@ import com.example.cognilink.ui.viewmodels.AuthViewModel
 fun AuthScreen(
     viewModel: AuthViewModel = viewModel(),
     onNavigateToTerms: () -> Unit = {},
-    onNavigateToHome: (Long) -> Unit = {}
+    onNavigateToHome: (String) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 

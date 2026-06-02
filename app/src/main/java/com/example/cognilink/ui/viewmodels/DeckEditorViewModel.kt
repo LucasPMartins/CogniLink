@@ -7,7 +7,6 @@ import com.example.cognilink.data.repository.DeckRepository
 import com.example.cognilink.data.repository.DeckRepositoryImpl
 import com.example.cognilink.data.repository.FlashcardRepository
 import com.example.cognilink.data.repository.FlashcardRepositoryImpl
-import com.example.cognilink.domain.usecase.CalculateDeckReviewCountUseCase
 import com.example.cognilink.domain.usecase.CalculateDifficultyLevelUseCase
 import com.example.cognilink.ui.states.DeckEditorUiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,11 +23,22 @@ class DeckEditorViewModel(
     private val _uiState = MutableStateFlow(DeckEditorUiState())
     val uiState: StateFlow<DeckEditorUiState> = _uiState.asStateFlow()
 
+    fun initialize(deckId: String?, userId: String) {
+        if (_uiState.value.deckId == deckId && _uiState.value.userId == userId) return
+        _uiState.update { currentState ->
+            currentState.copy(
+                userId = userId,
+                deckId = deckId ?: currentState.deckId
+            )
+        }
+        loadDeckData()
+    }
+
     fun toggleRemoveMode() {
         _uiState.update { it.copy(isRemoveMode = !it.isRemoveMode) }
     }
 
-    fun removeFlashcard(flashcardId: Long) {
+    fun removeFlashcard(flashcardId: String) {
         _uiState.update { it.copy(deckFlashcards = it.deckFlashcards.filter { it.id != flashcardId }) }
     }
 
@@ -92,13 +102,15 @@ class DeckEditorViewModel(
         _uiState.update { it.copy(deckCategories = it.deckCategories - category) }
     }
 
-    fun saveDeck(userId: Long, deckId: Long? = null) {
+    fun saveDeck() {
+        val currentState = _uiState.value
+        val userId = currentState.userId ?: return
+
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             try {
-                val currentState = _uiState.value
                 val deckToSave = Deck(
-                    id = deckId ?: 0,
+                    id = currentState.deckId,
                     userId = userId,
                     name = currentState.deckName,
                     description = currentState.deckDescription,
@@ -108,11 +120,11 @@ class DeckEditorViewModel(
                     totalCards = currentState.deckFlashcards.size,
                     cardsToReview = 0
                 )
-                val savedDeckId = deckRepository.saveDeck(deckToSave, userId)
+                deckRepository.saveDeck(deckToSave, userId)
                 if (currentState.deckFlashcards.isNotEmpty()) {
                     flashcardRepository.saveAllFlashcards(currentState.deckFlashcards.map {
                         it.copy(
-                            deckId = savedDeckId
+                            deckId = currentState.deckId
                         )
                     })
                 }
@@ -133,28 +145,28 @@ class DeckEditorViewModel(
         _uiState.update { it.copy(isSaved = false, errorMessage = null) }
     }
 
-    fun toggleAddFlashcardDialog(){
+    fun toggleAddFlashcardDialog() {
         _uiState.update { it.copy(isAddFlashcardDialogOpen = !it.isAddFlashcardDialogOpen) }
     }
 
-    fun loadDeckData(userId: Long, deckId: Long? = null) {
+    fun loadDeckData() {
+        val currentState = _uiState.value
+        val deckId = currentState.deckId
+        val userId = currentState.userId ?: return
+
+        _uiState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
             try {
-                if (deckId != null) {
-                    val deck = deckRepository.getDeckById(deckId, userId)
-                    val flashcards = flashcardRepository.getFlashcardsForDeck(deckId)
-                    _uiState.update {
-                        it.copy(
-                            deckName = deck?.name ?: "",
-                            deckDescription = deck?.description ?: "",
-                            deckCategories = deck?.categories ?: emptyList(),
-                            deckFlashcards = flashcards,
-                            isLoading = false,
-                        )
-                    }
-                } else {
-                    _uiState.update { it.copy(isLoading = false) }
+                val deck = deckRepository.getDeckById(deckId, userId)
+                val flashcards = flashcardRepository.getFlashcardsForDeck(deckId)
+                _uiState.update {
+                    it.copy(
+                        deckName = deck?.name ?: "",
+                        deckDescription = deck?.description ?: "",
+                        deckCategories = deck?.categories ?: emptyList(),
+                        deckFlashcards = flashcards,
+                        isLoading = false,
+                    )
                 }
             } catch (e: Exception) {
                 _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
