@@ -1,4 +1,4 @@
-package com.example.cognilink.ui.screens.auth
+package com.example.cognilink.ui.screens
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,15 +16,16 @@ import com.example.cognilink.ui.components.utils.NavigationHeader
 import com.example.cognilink.ui.theme.OffWhite
 import com.example.cognilink.ui.viewmodels.TermsViewModel
 import dev.jeziellago.compose.markdowntext.MarkdownText
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun TermsScreen(
     onNavigateBack: () -> Unit,
-    termsViewModel: TermsViewModel
+    viewModel: TermsViewModel = koinViewModel()
 ) {
     TermsContent(
         onNavigateBack = onNavigateBack,
-        termsMarkdown = termsViewModel.termsText.trimIndent()
+        termsMarkdown = viewModel.termsText.trimIndent()
     )
 }
 

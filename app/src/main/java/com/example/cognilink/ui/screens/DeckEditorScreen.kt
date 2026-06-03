@@ -1,4 +1,4 @@
-package com.example.cognilink.ui.screens.deck
+package com.example.cognilink.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,6 +24,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -35,8 +36,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cognilink.R
+import com.example.cognilink.data.model.Flashcard
 import com.example.cognilink.data.preview.PreviewDataProvider
 import com.example.cognilink.ui.components.deck.EditDeckContent
 import com.example.cognilink.ui.components.deck.FlashcardItem
@@ -51,9 +52,10 @@ import com.example.cognilink.ui.theme.DarkGray
 import com.example.cognilink.ui.theme.DarkNavyBlue
 import com.example.cognilink.ui.theme.LightGray
 import com.example.cognilink.ui.theme.White
-import com.example.cognilink.ui.viewmodels.DeckEditorViewModel
+import com.example.cognilink.ui.viewmodels.DeckFormViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
@@ -64,9 +66,9 @@ fun DeckEditorScreen(
     onNavigateToCreateFlashcard: (String?) -> Unit,
     onNavigateToEditFlashcard: (String?, String) -> Unit,
     onNavigateToCreateWithIA: (String?) -> Unit,
-    viewModel: DeckEditorViewModel = viewModel()
+    viewModel: DeckFormViewModel = koinViewModel()
 ) {
-    val scope = androidx.compose.runtime.rememberCoroutineScope()
+    val scope = rememberCoroutineScope()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(userId, deckId) {
@@ -123,7 +125,7 @@ fun DeckEditorContent(
     deckName: String,
     deckDescription: String,
     deckCategories: List<String>,
-    deckFlashcards: List<com.example.cognilink.data.model.Flashcard>,
+    deckFlashcards: List<Flashcard>,
     showCategoryDialog: Boolean,
     categoryBeingEdited: String?,
     categoryText: String,

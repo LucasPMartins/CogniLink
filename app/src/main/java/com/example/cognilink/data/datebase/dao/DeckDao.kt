@@ -12,6 +12,9 @@ interface DeckDao {
     @Query("SELECT * FROM decks")
     fun getAllDecks(): Flow<List<DeckEntity>>
 
+    @Query("SELECT * FROM decks WHERE userId = :userId")
+    fun getDecksByUserId(userId: String): Flow<List<DeckEntity>>
+
     @Query("SELECT * FROM decks WHERE id = :id")
     suspend fun getDeckById(id: String): DeckEntity?
 

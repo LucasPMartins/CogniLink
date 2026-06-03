@@ -16,8 +16,8 @@ import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
 class HomeViewModel(
-    private val userRepository: UserRepository = UserRepositoryImpl(),
-    private val deckRepository: DeckRepository = DeckRepositoryImpl()
+    private val userRepository: UserRepository,
+    private val deckRepository: DeckRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())

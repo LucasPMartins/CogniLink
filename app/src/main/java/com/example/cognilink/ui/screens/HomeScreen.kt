@@ -1,4 +1,4 @@
-package com.example.cognilink.ui.screens.home
+package com.example.cognilink.ui.screens
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -29,7 +29,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cognilink.R
 import com.example.cognilink.data.model.Deck
 import com.example.cognilink.data.preview.PreviewDataProvider
@@ -44,6 +43,7 @@ import com.example.cognilink.ui.theme.DarkGray
 import com.example.cognilink.ui.theme.DarkNavyBlue
 import com.example.cognilink.ui.theme.White
 import com.example.cognilink.ui.viewmodels.HomeViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun HomeScreen(
@@ -52,7 +52,7 @@ fun HomeScreen(
     onNavigateToDeck: (String) -> Unit = {},
     onNavigateToProfile: () -> Unit = {},
     onNavigateToPlay: (String) -> Unit = {},
-    viewModel: HomeViewModel = viewModel()
+    viewModel: HomeViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
 

@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class AuthViewModel(
-    private val repository: AuthRepository = AuthRepositoryImpl()
+    private val repository: AuthRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AuthUiState())
@@ -33,11 +33,12 @@ class AuthViewModel(
 
     fun onSignInClick() {
         viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
             val user = repository.signIn(_uiState.value.signInEmail, _uiState.value.signInPassword)
             if (user != null) {
-                _uiState.update { it.copy(loggedInUserId = user.id) }
+                _uiState.update { it.copy(loggedInUserId = user.id, isLoading = false) }
             } else {
-                _uiState.update { it.copy(errorMessage = "Invalid email or password") }
+                _uiState.update { it.copy(errorMessage = "Invalid email or password", isLoading = false) }
             }
         }
     }
@@ -65,13 +66,14 @@ class AuthViewModel(
 
     fun onSignUpClick() {
         viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
             val user = repository.signUp(
                 _uiState.value.signUpName,
                 _uiState.value.signUpEmail,
                 _uiState.value.signUpPassword
             )
             if (user != null) {
-                _uiState.update { it.copy(loggedInUserId = user.id) }
+                _uiState.update { it.copy(loggedInUserId = user.id, isLoading = false) }
             } else {
                 _uiState.update { it.copy(errorMessage = "Registration failed. Please try again.") }
             }

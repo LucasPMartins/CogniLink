@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cognilink.data.model.Answer
 import com.example.cognilink.data.repository.FlashcardRepository
-import com.example.cognilink.data.repository.FlashcardRepositoryImpl
 import com.example.cognilink.domain.model.FlashcardType
 import com.example.cognilink.ui.states.FlashcardPlayerUiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,8 +15,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class FlashcardPlayerViewModel(
-    private val repository: FlashcardRepository = FlashcardRepositoryImpl()
+class StudySessionViewModel(
+    private val repository: FlashcardRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FlashcardPlayerUiState())

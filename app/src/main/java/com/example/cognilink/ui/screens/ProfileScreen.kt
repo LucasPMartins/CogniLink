@@ -1,4 +1,4 @@
-package com.example.cognilink.ui.screens.home
+package com.example.cognilink.ui.screens
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -40,7 +38,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cognilink.R
 import com.example.cognilink.data.model.UserStats
 import com.example.cognilink.ui.components.utils.GradientSurface
@@ -59,6 +56,7 @@ import com.example.cognilink.ui.theme.VeryLightRed
 import com.example.cognilink.ui.theme.White
 import com.example.cognilink.ui.states.ProfileUiState
 import com.example.cognilink.ui.viewmodels.ProfileViewModel
+import org.koin.androidx.compose.koinViewModel
 
 import androidx.compose.runtime.LaunchedEffect
 
@@ -66,7 +64,7 @@ import androidx.compose.runtime.LaunchedEffect
 fun ProfileScreen(
     userId: String,
     onNavigateBack: () -> Unit,
-    viewModel: ProfileViewModel = viewModel()
+    viewModel: ProfileViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 

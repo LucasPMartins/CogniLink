@@ -1,4 +1,4 @@
-package com.example.cognilink.ui.screens.auth
+package com.example.cognilink.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -14,7 +14,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cognilink.ui.components.auth.AuthFooter
 import com.example.cognilink.ui.components.auth.AuthHeader
 import com.example.cognilink.ui.components.auth.SignInContent
@@ -22,10 +21,11 @@ import com.example.cognilink.ui.components.auth.SignUpContent
 import com.example.cognilink.ui.theme.*
 import com.example.cognilink.ui.states.AuthUiState
 import com.example.cognilink.ui.viewmodels.AuthViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun AuthScreen(
-    viewModel: AuthViewModel = viewModel(),
+    viewModel: AuthViewModel = koinViewModel(),
     onNavigateToTerms: () -> Unit = {},
     onNavigateToHome: (String) -> Unit = {}
 ) {

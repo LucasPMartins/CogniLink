@@ -1,22 +1,19 @@
 package com.example.cognilink.ui.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.cognilink.ui.screens.auth.AuthScreen
-import com.example.cognilink.ui.screens.auth.TermsScreen
-import com.example.cognilink.ui.screens.deck.DeckEditorScreen
-import com.example.cognilink.ui.screens.deck.DeckScreen
-import com.example.cognilink.ui.screens.flashcard.CreateFlashcardWithIAScreen
-import com.example.cognilink.ui.screens.flashcard.FlashcardEditorScreen
-import com.example.cognilink.ui.screens.flashcard.FlashcardPlayerScreen
-import com.example.cognilink.ui.screens.home.HomeScreen
-import com.example.cognilink.ui.screens.home.ProfileScreen
-import com.example.cognilink.ui.viewmodels.TermsViewModel
+import com.example.cognilink.ui.screens.AuthScreen
+import com.example.cognilink.ui.screens.TermsScreen
+import com.example.cognilink.ui.screens.DeckEditorScreen
+import com.example.cognilink.ui.screens.DeckScreen
+import com.example.cognilink.ui.screens.CreateFlashcardWithIAScreen
+import com.example.cognilink.ui.screens.FlashcardEditorScreen
+import com.example.cognilink.ui.screens.StudySessionScreen
+import com.example.cognilink.ui.screens.HomeScreen
+import com.example.cognilink.ui.screens.ProfileScreen
 
 sealed class Screen(val route: String) {
     object Auth : Screen("auth")
@@ -78,13 +75,8 @@ fun CogniLinkNavGraph(
         }
 
         composable(Screen.Terms.route) {
-            val context = LocalContext.current
-            val termsViewModel: TermsViewModel = viewModel(
-                factory = TermsViewModel.provideFactory(context)
-            )
             TermsScreen(
-                onNavigateBack = { navController.popBackStack() },
-                termsViewModel = termsViewModel
+                onNavigateBack = { navController.popBackStack() }
             )
         }
 
@@ -191,7 +183,7 @@ fun CogniLinkNavGraph(
         composable(Screen.PlayFlashcard.route) { backStackEntry ->
             val studyMode = backStackEntry.arguments?.getString("studyMode") ?: "DECK"
             val contextId = backStackEntry.arguments?.getString("contextId") ?: ""
-            FlashcardPlayerScreen(
+            StudySessionScreen(
                 studyMode = studyMode,
                 contextId = contextId,
                 onNavigateBack = { navController.popBackStack() }

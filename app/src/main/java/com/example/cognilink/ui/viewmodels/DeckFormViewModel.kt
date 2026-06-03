@@ -4,9 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cognilink.data.model.Deck
 import com.example.cognilink.data.repository.DeckRepository
-import com.example.cognilink.data.repository.DeckRepositoryImpl
 import com.example.cognilink.data.repository.FlashcardRepository
-import com.example.cognilink.data.repository.FlashcardRepositoryImpl
 import com.example.cognilink.domain.usecase.CalculateDifficultyLevelUseCase
 import com.example.cognilink.ui.states.DeckEditorUiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,10 +13,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class DeckEditorViewModel(
-    private val deckRepository: DeckRepository = DeckRepositoryImpl(),
-    private val flashcardRepository: FlashcardRepository = FlashcardRepositoryImpl(),
-    private val calculateDifficultyLevelUseCase: CalculateDifficultyLevelUseCase = CalculateDifficultyLevelUseCase(),
+class DeckFormViewModel(
+    private val deckRepository: DeckRepository,
+    private val flashcardRepository: FlashcardRepository,
+    private val calculateDifficultyLevelUseCase: CalculateDifficultyLevelUseCase,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(DeckEditorUiState())
     val uiState: StateFlow<DeckEditorUiState> = _uiState.asStateFlow()

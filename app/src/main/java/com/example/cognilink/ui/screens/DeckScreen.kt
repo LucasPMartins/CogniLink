@@ -1,4 +1,4 @@
-package com.example.cognilink.ui.screens.deck
+package com.example.cognilink.ui.screens
 
 
 import android.annotation.SuppressLint
@@ -27,6 +27,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -38,7 +39,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cognilink.R
 import com.example.cognilink.data.model.Flashcard
 import com.example.cognilink.data.preview.PreviewDataProvider
@@ -57,6 +57,7 @@ import com.example.cognilink.ui.theme.LightGray
 import com.example.cognilink.ui.viewmodels.DeckViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun DeckScreen(
@@ -68,10 +69,10 @@ fun DeckScreen(
     onNavigateToCreateWithIA: (String) -> Unit,
     onNavigateToStudy: (String) -> Unit,
     onNavigateToFlashcard: (String) -> Unit,
-    viewModel: DeckViewModel = viewModel(),
+    viewModel: DeckViewModel = koinViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val scope = androidx.compose.runtime.rememberCoroutineScope()
+    val scope = rememberCoroutineScope()
 
 
     LaunchedEffect(deckId, userId) {

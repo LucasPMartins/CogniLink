@@ -15,8 +15,8 @@ import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 class ProfileViewModel(
-    private val calculateUserRankingUseCase: CalculateUserRankingUseCase = CalculateUserRankingUseCase(),
-    private val userRepository: UserRepository = UserRepositoryImpl()
+    private val calculateUserRankingUseCase: CalculateUserRankingUseCase,
+    private val userRepository: UserRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<ProfileUiState>(ProfileUiState.Loading)
     val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()

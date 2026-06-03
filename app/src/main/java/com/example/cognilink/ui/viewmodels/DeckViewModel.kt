@@ -14,8 +14,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class DeckViewModel(
-    private val deckRepository: DeckRepository = DeckRepositoryImpl(),
-    private val flashcardRepository: FlashcardRepository = FlashcardRepositoryImpl()
+    private val deckRepository: DeckRepository,
+    private val flashcardRepository: FlashcardRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(DeckUiState())

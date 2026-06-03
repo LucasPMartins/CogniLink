@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.cognilink.data.model.Answer
 import com.example.cognilink.data.model.Flashcard
 import com.example.cognilink.data.repository.FlashcardRepository
-import com.example.cognilink.data.repository.FlashcardRepositoryImpl
 import com.example.cognilink.domain.model.DifficultyLevel
 import com.example.cognilink.domain.model.FlashcardType
 import com.example.cognilink.ui.states.FlashcardEditorUiState
@@ -15,8 +14,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class FlashcardEditorViewModel(
-    private val repository: FlashcardRepository = FlashcardRepositoryImpl()
+class FlashcardFormViewModel(
+    private val repository: FlashcardRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FlashcardEditorUiState())
