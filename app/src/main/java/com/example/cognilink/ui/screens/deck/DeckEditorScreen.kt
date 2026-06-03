@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cognilink.R
+import com.example.cognilink.data.preview.PreviewDataProvider
 import com.example.cognilink.ui.components.deck.EditDeckContent
 import com.example.cognilink.ui.components.deck.FlashcardItem
 import com.example.cognilink.ui.components.input.CustomTextField
@@ -45,7 +46,6 @@ import com.example.cognilink.ui.components.utils.NavigationHeader
 import com.example.cognilink.ui.components.utils.buttons.DeleteButton
 import com.example.cognilink.ui.components.utils.buttons.NeonActionButton
 import com.example.cognilink.ui.components.utils.buttons.SimpleGradientButton
-import com.example.cognilink.ui.states.DeckEditorUiState
 import com.example.cognilink.ui.theme.CogniLinkTheme
 import com.example.cognilink.ui.theme.DarkGray
 import com.example.cognilink.ui.theme.DarkNavyBlue
@@ -129,24 +129,23 @@ fun DeckEditorContent(
     categoryText: String,
     isRemoveMode: Boolean,
     isAddFlashcardDialogOpen: Boolean,
-    onDeckNameChange: (String) -> Unit,
-    onDeckDescriptionChange: (String) -> Unit,
-    onCategoryTextChange: (String) -> Unit,
-    onAddCategory: () -> Unit,
-    onEditCategory: (String) -> Unit,
-    onRemoveCategory: (String) -> Unit,
-    onConfirmCategory: () -> Unit,
-    onRemoveFlashcard: (String) -> Unit,
-    onDismissCategoryDialog: () -> Unit,
-    onToggleRemoveMode: () -> Unit,
-    onSaveClick: () -> Unit,
-    onEditFlashcardClick: (String) -> Unit,
-    onClickAddFlashcardDialog: () -> Unit,
-    onDismissAddFlashcardDialog: () -> Unit,
-    onCreateFlashcardManuallyClick: () -> Unit,
-    onCreateFlashcardWithIAClick: () -> Unit,
-    onNavigateBack: () -> Unit,
-    modifier: Modifier = Modifier
+    onDeckNameChange: (String) -> Unit = {},
+    onDeckDescriptionChange: (String) -> Unit = {},
+    onCategoryTextChange: (String) -> Unit = {},
+    onAddCategory: () -> Unit = {},
+    onEditCategory: (String) -> Unit = {},
+    onRemoveCategory: (String) -> Unit = {},
+    onConfirmCategory: () -> Unit = {},
+    onRemoveFlashcard: (String) -> Unit = {},
+    onDismissCategoryDialog: () -> Unit = {},
+    onToggleRemoveMode: () -> Unit = {},
+    onSaveClick: () -> Unit = {},
+    onEditFlashcardClick: (String) -> Unit = {},
+    onClickAddFlashcardDialog: () -> Unit = {},
+    onDismissAddFlashcardDialog: () -> Unit = {},
+    onCreateFlashcardManuallyClick: () -> Unit = {},
+    onCreateFlashcardWithIAClick: () -> Unit = {},
+    onNavigateBack: () -> Unit = {},
 ) {
     val scrollState = rememberScrollState()
 
@@ -225,7 +224,7 @@ fun DeckEditorContent(
     }
 
     Scaffold(
-        modifier = modifier.statusBarsPadding(),
+        modifier = Modifier.statusBarsPadding(),
         containerColor = Color.Transparent,
         topBar = {
             NavigationHeader(
@@ -310,7 +309,9 @@ fun DeckEditorContent(
                                     } else {
                                         IconButton(
                                             onClick = { onEditFlashcardClick(card.id) },
-                                            modifier = Modifier.offset(x = 10.dp).size(32.dp)
+                                            modifier = Modifier
+                                                .offset(x = 10.dp)
+                                                .size(32.dp)
                                         ) {
                                             Icon(
                                                 painterResource(id = R.drawable.ic_keyboard_arrow_down),
@@ -336,37 +337,20 @@ fun DeckEditorContent(
 @Composable
 private fun DeckEditorContentPreview() {
     CogniLinkTheme {
-        val uiState = DeckEditorUiState(
-        )
+        val deck = PreviewDataProvider.deck
+        val flashcards = PreviewDataProvider.flashcardList.filter { it.deckId == deck.id }
 
         DeckEditorContent(
             isEditMode = true,
-            deckName = uiState.deckName,
-            deckDescription = uiState.deckDescription,
-            deckCategories = uiState.deckCategories,
-            deckFlashcards = uiState.deckFlashcards ,
+            deckName = deck.name,
+            deckDescription = deck.description,
+            deckCategories = deck.categories,
+            deckFlashcards = flashcards,
             showCategoryDialog = false,
             categoryBeingEdited = null,
             categoryText = "",
             isRemoveMode = false,
             isAddFlashcardDialogOpen = false,
-            onDeckNameChange = {},
-            onDeckDescriptionChange = {},
-            onCategoryTextChange = {},
-            onAddCategory = {},
-            onEditCategory = {},
-            onRemoveCategory = {},
-            onConfirmCategory = {},
-            onRemoveFlashcard = {},
-            onDismissCategoryDialog = {},
-            onToggleRemoveMode = {},
-            onSaveClick = {},
-            onClickAddFlashcardDialog = {},
-            onEditFlashcardClick = { _ -> },
-            onDismissAddFlashcardDialog = {},
-            onCreateFlashcardManuallyClick = {},
-            onCreateFlashcardWithIAClick = {},
-            onNavigateBack = {}
         )
 
     }

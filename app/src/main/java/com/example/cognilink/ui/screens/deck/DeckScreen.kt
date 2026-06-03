@@ -41,6 +41,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cognilink.R
 import com.example.cognilink.data.model.Flashcard
+import com.example.cognilink.data.preview.PreviewDataProvider
 import com.example.cognilink.domain.model.DifficultyLevel
 import com.example.cognilink.ui.components.deck.FlashcardItem
 import com.example.cognilink.ui.components.deck.ViewDeckContent
@@ -142,7 +143,6 @@ fun DeckScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DeckContent(
-    modifier: Modifier = Modifier,
     deckName: String?,
     deckCategories: List<String>?,
     deckDifficulty: DifficultyLevel?,
@@ -153,25 +153,25 @@ fun DeckContent(
     deckFlashcards: List<Flashcard>?,
     isMenuExpanded: Boolean = false,
     isAddFlashcardDialogOpen: Boolean = false,
-    onCreateFlashcardWithIAClick: () -> Unit,
-    onCreateFlashcardManuallyClick: () -> Unit,
-    onFlashcardClick: (String) -> Unit,
-    onStudyNowClick: () -> Unit,
-    onClickSeeMore: () -> Unit,
-    onBackClick: () -> Unit,
-    onMenuClick: () -> Unit,
-    onConfirmDeleteClick: () -> Unit,
+    onCreateFlashcardWithIAClick: () -> Unit = {},
+    onCreateFlashcardManuallyClick: () -> Unit = {},
+    onFlashcardClick: (String) -> Unit = {},
+    onStudyNowClick: () -> Unit = {},
+    onClickSeeMore: () -> Unit = {},
+    onBackClick: () -> Unit = {},
+    onMenuClick: () -> Unit = {},
+    onConfirmDeleteClick: () -> Unit = {},
+    onEditClick: () -> Unit = {},
+    onClickAddFlashcardDialog: () -> Unit = {},
+    onDismissAddFlashcardDialog: () -> Unit = {},
+    onClickDeleteDeckDialog: () -> Unit = {},
+    onDismissDeleteDeckDialog: () -> Unit = {},
     isDeleteDeckDialogOpen: Boolean = false,
-    onEditClick: () -> Unit,
-    onClickAddFlashcardDialog: () -> Unit,
-    onDismissAddFlashcardDialog: () -> Unit,
-    onClickDeleteDeckDialog: () -> Unit,
-    onDismissDeleteDeckDialog: () -> Unit,
 ) {
     val scrollState = rememberScrollState()
 
     Scaffold(
-        modifier = modifier,
+        modifier = Modifier.statusBarsPadding(),
         containerColor = Color.Transparent,
         topBar = {
             NavigationHeader(
@@ -200,7 +200,6 @@ fun DeckContent(
                         }
                     )
                 },
-                modifier = Modifier.statusBarsPadding()
             )
         },
         bottomBar = {
@@ -355,7 +354,9 @@ fun DeckContent(
                                 selectionControl = {
                                     IconButton(
                                         onClick = { onFlashcardClick(flashcard.id) },
-                                        modifier = Modifier.offset(x = 10.dp).size(32.dp)
+                                        modifier = Modifier
+                                            .offset(x = 10.dp)
+                                            .size(32.dp)
                                     ) {
                                         Icon(
                                             painterResource(id = R.drawable.ic_keyboard_arrow_down),
@@ -381,28 +382,18 @@ fun DeckContent(
 @Composable
 private fun DeckContentPreview() {
     CogniLinkTheme {
+        val deck = PreviewDataProvider.deck
+        val flashcards = PreviewDataProvider.flashcardList.filter { it.deckId == deck.id }
+
         DeckContent(
-            deckName = "Deck Name",
-            deckCategories = listOf("Category 1","Category 2"),
-            deckDescription = "Description",
-            deckDifficulty = DifficultyLevel.MEDIUM,
-            deckMastery = 0.7f,
-            deckTotalCards = 1,
-            deckCardsToReview = 1,
-            deckFlashcards = emptyList(),
-            onMenuClick = {},
-            onCreateFlashcardWithIAClick = {},
-            onCreateFlashcardManuallyClick = {},
-            onFlashcardClick = {},
-            onStudyNowClick = {},
-            onClickSeeMore = {},
-            onBackClick = {},
-            onConfirmDeleteClick = {},
-            onEditClick = {},
-            onClickAddFlashcardDialog = {  },
-            onDismissAddFlashcardDialog = {},
-            onClickDeleteDeckDialog = {},
-            onDismissDeleteDeckDialog = {},
+            deckName = deck.name,
+            deckCategories = deck.categories,
+            deckDescription = deck.description,
+            deckDifficulty = deck.difficulty,
+            deckMastery = deck.mastery,
+            deckTotalCards = deck.totalCards,
+            deckCardsToReview = deck.cardsToReview,
+            deckFlashcards = flashcards,
         )
     }
 }

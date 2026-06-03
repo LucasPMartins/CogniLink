@@ -13,22 +13,3 @@ data class Flashcard(
     var answerOptions: List<Answer>,
     val hints: List<String>
 )
-
-data class Answer(
-    val answer: String,
-    val isCorrect: Boolean
-)
-
-//Fake Objects
-val flashcard1 = Flashcard(
-    deckId = "deck-123",
-    question = "Qual é a capital da França?",
-    cardType = FlashcardType.MULTIPLE_CHOICE,
-    difficulty = DifficultyLevel.EASY,
-    answerOptions = listOf(
-        Answer("Paris", true),
-        Answer("Londres", false),
-        Answer("Roma", false)
-    ),
-    hints = listOf("Dica 1", "Dica 2")
-)

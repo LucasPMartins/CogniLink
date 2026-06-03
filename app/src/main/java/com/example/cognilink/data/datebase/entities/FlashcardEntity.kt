@@ -2,6 +2,7 @@ package com.example.cognilink.data.datebase.entities
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.example.cognilink.data.model.Answer
 import com.example.cognilink.domain.model.DifficultyLevel
@@ -16,7 +17,8 @@ import com.example.cognilink.domain.model.FlashcardType
             childColumns = ["deckId"],
             onDelete = ForeignKey.CASCADE
         )
-    ]
+    ],
+    indices = [Index(value = ["deckId"])]
 )
 data class FlashcardEntity(
     @PrimaryKey

@@ -1,6 +1,7 @@
 package com.example.cognilink.data.datebase.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -15,12 +16,18 @@ interface FlashcardDao {
     @Query("SELECT * FROM flashcards WHERE id = :id")
     suspend fun getFlashcardById(id: String): FlashcardEntity?
 
+    @Query("SELECT * FROM flashcards WHERE deckId = :id")
+    suspend fun getFlashcardForDeckById(id: String): List<FlashcardEntity>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertFlashcard(flashcard: FlashcardEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun saveAll(flashcards: List<FlashcardEntity>)
+    suspend fun saveAllFlashcards(flashcards: List<FlashcardEntity>)
 
     @Query("DELETE FROM flashcards")
-    suspend fun deleteAll()
+    suspend fun deleteAllFlashcards()
+
+    @Query("DELETE FROM flashcards WHERE id = :id")
+    suspend fun deleteFlashcardById(id: String)
 }

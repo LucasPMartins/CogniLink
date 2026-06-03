@@ -8,18 +8,20 @@ import androidx.room.Update
 import com.example.cognilink.data.datebase.entities.UserStatsEntity
 import kotlinx.coroutines.flow.Flow
 
-
 @Dao
 interface UserStatsDao {
     @Query("SELECT * FROM users_stats WHERE userId = :userId")
-    fun getUserStats(userId: String): Flow<UserStatsEntity?>
+    fun getUserStatsByUserId(userId: String): Flow<UserStatsEntity?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertOrUpdateStats(stats: UserStatsEntity)
+    suspend fun insertUserStats(stats: UserStatsEntity)
 
     @Update
-    suspend fun updateStats(stats: UserStatsEntity)
+    suspend fun updateUserStats(stats: UserStatsEntity)
 
     @Query("DELETE FROM users_stats WHERE userId = :userId")
-    suspend fun deleteStatsForUser(userId: String)
+    suspend fun deleteUserStatsByUserId(userId: String)
+
+    @Query("DELETE FROM users_stats")
+    suspend fun deleteAllUserStats()
 }

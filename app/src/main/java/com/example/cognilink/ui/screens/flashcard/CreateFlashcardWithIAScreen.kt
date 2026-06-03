@@ -70,26 +70,25 @@ fun CreateFlashcardWithIAScreen(
 
 @Composable
 fun IAGeneratorContent(
-    modifier: Modifier = Modifier,
     flashcardTheme: String = "",
-    onFlashcardThemeChange: (String) -> Unit = {},
     quantity: Int = 1,
-    onQuantityChange: (Int) -> Unit = {},
     selectedDifficulty: DifficultyLevel? = null,
-    onDifficultyChange: (DifficultyLevel?) -> Unit = {},
     typeOptions: List<FlashcardType> = emptyList(),
     selectedType: FlashcardType? = null,
+    hasFile: Boolean = false,
+    isLoading: Boolean = false,
+    onQuantityChange: (Int) -> Unit = {},
+    onFlashcardThemeChange: (String) -> Unit = {},
+    onDifficultyChange: (DifficultyLevel?) -> Unit = {},
     onTypeChange: (FlashcardType?) -> Unit = {},
     onGenerateClick: () -> Unit = {},
     onUploadClick: () -> Unit = {},
-    hasFile: Boolean = false,
-    isLoading: Boolean = false,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit = {}
 ) {
     val scrollState = rememberScrollState()
 
     Scaffold(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .imePadding()
             .statusBarsPadding(),
@@ -105,7 +104,6 @@ fun IAGeneratorContent(
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
 
-            // --- SEÇÃO TEMA ---
             Column {
                 CustomTextField(
                     inputValue = flashcardTheme,
@@ -126,7 +124,6 @@ fun IAGeneratorContent(
                 )
             }
 
-            // --- SEÇÃO ANEXO ---
             Column {
                 CustomLabel(text = "Anexo de Arquivo (Opcional)")
 
@@ -142,8 +139,6 @@ fun IAGeneratorContent(
                 )
             }
 
-            // --- SEÇÃO SELETOR ---
-
             TypeOptionList(
                 options = typeOptions,
                 selectedOption = selectedType,
@@ -151,7 +146,6 @@ fun IAGeneratorContent(
             )
 
 
-            // --- SEÇÃO CONFIGURAÇÕES (Dificuldade e Quantidade) ---
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -196,17 +190,11 @@ private fun IAGeneratorContentPreview() {
             flashcardTheme = "Mitocôndrias",
             onFlashcardThemeChange = {},
             quantity = 5,
-            onQuantityChange = {},
             selectedDifficulty = DifficultyLevel.MEDIUM,
-            onDifficultyChange = {},
             typeOptions = FlashcardType.entries,
             selectedType = FlashcardType.MULTIPLE_CHOICE,
-            onTypeChange = {},
-            onGenerateClick = {},
-            onUploadClick = {},
             hasFile = false,
             isLoading = false,
-            onBackClick = {}
         )
     }
 }

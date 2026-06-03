@@ -54,20 +54,3 @@ data class FlashcardStats(
      */
     val mastery: Float = 0f
 )
-
-val fakeFlashcardStatistics = listOf(
-    FlashcardStats(
-        flashcardId = "flashcard-123",
-        hits = 15,
-        misses = 3,
-        studyTime = 120000L,
-        averageLatencyMs = 1500L,
-        memoryStabilityDays = 4.5f,
-        easeFactor = 2.6f,
-        bestPerformingContext = "HOME_QUIET",
-        consecutiveMisses = 0,
-        retentionRate = 0.83f,
-        mastery = 0.85f,
-        nextReview = 1200L
-    )
-)

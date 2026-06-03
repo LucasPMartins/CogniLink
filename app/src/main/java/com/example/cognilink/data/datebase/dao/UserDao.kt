@@ -12,20 +12,20 @@ import kotlinx.coroutines.flow.Flow
 interface UserDao {
 
     @Query("SELECT * FROM users")
-    fun findAll(): Flow<List<UserEntity>>
+    fun findAllUsers(): Flow<List<UserEntity>>
 
     @Query("SELECT * FROM users WHERE id = :id")
-    suspend fun findById(id: String): UserEntity?
+    suspend fun findUserById(id: String): UserEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun save(user: UserEntity)
+    suspend fun saveUser(user: UserEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun saveAll(users: List<UserEntity>)
+    suspend fun saveAllUsers(users: List<UserEntity>)
 
-    @Delete
-    suspend fun delete(user: UserEntity)
+    @Query("DELETE FROM users WHERE id = :id")
+    suspend fun deleteUserById(id: String)
 
     @Query("DELETE FROM users")
-    suspend fun deleteAll()
+    suspend fun deleteAllUsers()
 }

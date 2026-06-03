@@ -1,7 +1,7 @@
 package com.example.cognilink.domain.usecase
 
 import com.example.cognilink.data.model.UserStats
-import com.example.cognilink.domain.model.CogniRank
+import com.example.cognilink.domain.model.UserRank
 import com.example.cognilink.domain.model.UserRankingResult
 
 class CalculateUserRankingUseCase {
@@ -44,14 +44,14 @@ class CalculateUserRankingUseCase {
             .coerceIn(0.0f, 100.0f)
 
         // Determinando o Rank atual
-        val rank = CogniRank.fromScore(finalScore)
+        val rank = UserRank.fromScore(finalScore)
 
         // 6. Geração da Microcopy Dinâmica (Insight Contextual)
         val insight = when {
             stats.activeLeechesCount > 5 ->
                 "Seu potencial está alto, mas ${stats.activeLeechesCount} cartões 'Sanguessugas' estão travando seu avanço. Reestruture esses conceitos!"
 
-            stats.globalAverageLatencyMs < 1500 && rank == CogniRank.MESTRE_DO_RECALL ->
+            stats.globalAverageLatencyMs < 1500 && rank == UserRank.RECALL_MASTER ->
                 "Incrível! Sua velocidade de evocação de ${(stats.globalAverageLatencyMs / 1000.0)}s indica conhecimento totalmente automatizado."
 
             stats.contextTriggerConversionRate > 0.8f ->

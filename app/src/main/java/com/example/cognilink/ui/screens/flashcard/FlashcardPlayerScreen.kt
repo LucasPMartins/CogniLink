@@ -44,7 +44,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cognilink.R
 import com.example.cognilink.data.model.Answer
 import com.example.cognilink.data.model.Flashcard
-import com.example.cognilink.data.model.flashcard1
+import com.example.cognilink.data.preview.PreviewDataProvider
 import com.example.cognilink.domain.model.FlashcardType
 import com.example.cognilink.ui.components.flashcard.AnswerSelector
 import com.example.cognilink.ui.components.flashcard.FlashcardHeader
@@ -141,9 +141,9 @@ fun StudyContent(
     elapsedTime: String,
     sequenceHits: Int = 0,
     onDismissSessionInsight: () -> Unit = {},
-    onCloseClick: () -> Unit,
-    onAcceptCloseDialog: () -> Unit,
-    onDismissCloseDialog: () -> Unit,
+    onCloseClick: () -> Unit = {},
+    onAcceptCloseDialog: () -> Unit = {},
+    onDismissCloseDialog: () -> Unit = {},
     onClickToVerifyQuestion: () -> Unit = {},
     onClickToNextFlashcard: () -> Unit = {}
 ) {
@@ -446,7 +446,7 @@ fun StudyContent(
 private fun StudyContentPreview() {
     CogniLinkTheme {
         StudyContent(
-            flashcard = flashcard1,
+            flashcard = PreviewDataProvider.flashcard,
             currentFlashcardIndex = 0,
             totalFlashcards = 0,
             selectedAnswers = emptyMap(),
@@ -455,13 +455,6 @@ private fun StudyContentPreview() {
             isCloseDialogOpen = false,
             isSessionFinished = false,
             elapsedTime = "00:00",
-            onCloseClick = {},
-            onDismissSessionInsight = {},
-            onAcceptCloseDialog = {},
-            onSelectAnswer = { _, _ -> },
-            onDismissCloseDialog = {},
-            onClickToVerifyQuestion = { },
-            onClickToNextFlashcard = {},
         )
     }
 }

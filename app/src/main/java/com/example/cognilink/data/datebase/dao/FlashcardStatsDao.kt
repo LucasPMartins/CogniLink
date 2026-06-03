@@ -6,20 +6,23 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.example.cognilink.data.model.FlashcardStats
+import com.example.cognilink.data.datebase.entities.FlashcardStatsEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface FlashcardStatsDao {
     @Query("SELECT * FROM flashcards_stats WHERE flashcardId = :flashcardId")
-    fun getStatsForFlashcard(flashcardId: Long): Flow<FlashcardStats?>
+    fun getFlashcardStatsById(flashcardId: String): Flow<FlashcardStatsEntity?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertStats(stats: FlashcardStats)
+    suspend fun insertFlashcardStats(stats: FlashcardStatsEntity)
 
     @Update
-    suspend fun updateStats(stats: FlashcardStats)
+    suspend fun updateFlashcardStats(stats: FlashcardStatsEntity)
 
-    @Delete
-    suspend fun deleteStats(stats: FlashcardStats)
+    @Query("DELETE FROM flashcards_stats")
+    suspend fun deleteAllFlashcardStats()
+
+    @Query("DELETE FROM flashcards_stats WHERE flashcardId = :flashcardId")
+    suspend fun deleteFlashcardStatsById(flashcardId: String)
 }

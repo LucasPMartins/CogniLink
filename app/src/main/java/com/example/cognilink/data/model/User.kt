@@ -10,9 +10,3 @@ data class User(
     val name: String = "",
     val email: String = "",
 )
-
-val fakeUser = User(
-    id = "user-123",
-    name = "Alex Silva",
-    email = "alex.silva@example.com"
-)

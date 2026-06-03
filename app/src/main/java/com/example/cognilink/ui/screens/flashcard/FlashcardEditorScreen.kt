@@ -22,7 +22,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -33,9 +32,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cognilink.R
 import com.example.cognilink.data.model.Answer
 import com.example.cognilink.domain.model.DifficultyLevel
-import com.example.cognilink.data.model.Flashcard
 import com.example.cognilink.domain.model.FlashcardType
-import com.example.cognilink.data.model.flashcard1
 import com.example.cognilink.ui.components.flashcard.AnswerEditor
 import com.example.cognilink.ui.components.flashcard.DifficultySelector
 import com.example.cognilink.ui.components.flashcard.HintEditor
@@ -95,11 +92,13 @@ fun FlashcardEditorContent(
     questionText: String = "",
     onQuestionTextChange: (String) -> Unit = {},
     answerOptions: List<Answer> = emptyList(),
-    updateAnswers: (List<Answer>) -> Unit,
-    onRemoveAnswer: (Answer) -> Unit,
-    onToggleTrueFalse: (Int) -> Unit,
-    onSelectCorrectAnswer: (Int) -> Unit,
+    onSelectCorrectAnswer: (Int) -> Unit = {},
     onBasicAnswerChange: (String) -> Unit = {},
+    updateAnswers: (List<Answer>) -> Unit = {},
+    onRemoveAnswer: (Answer) -> Unit = {},
+    onToggleTrueFalse: (Int) -> Unit = {},
+    isRemoveModeActive: Boolean = false,
+    onToggleRemoveMode: () -> Unit = {},
     difficulty: DifficultyLevel = DifficultyLevel.EASY,
     onDifficultyChange: (DifficultyLevel) -> Unit = {},
     flashcardType: FlashcardType = FlashcardType.BASIC,
@@ -107,8 +106,6 @@ fun FlashcardEditorContent(
     hintList: List<String> = emptyList(),
     onHintsUpdate: (List<String>) -> Unit = {},
     isEditMode: Boolean = false,
-    isRemoveModeActive: Boolean = false,
-    onToggleRemoveMode: () -> Unit = {},
     onSaveChanges: () -> Unit = {},
     onBackClick: () -> Unit = {}
 ) {
@@ -285,23 +282,12 @@ private fun FlashcardEditorContentPreview() {
     CogniLinkTheme {
         FlashcardEditorContent(
             questionText = "Question",
-            onQuestionTextChange = {},
             answerOptions = emptyList(),
-            updateAnswers = {},
-            onRemoveAnswer = {},
-            onToggleTrueFalse = {},
-            onSelectCorrectAnswer = {},
-            onBasicAnswerChange = {},
             difficulty = DifficultyLevel.EASY,
-            onDifficultyChange = {},
             flashcardType = FlashcardType.BASIC,
-            onTypeChange = {},
             hintList = emptyList(),
-            onHintsUpdate = {},
             isRemoveModeActive = false,
-            onToggleRemoveMode = {},
             isEditMode = true,
-            onSaveChanges = {}
         )
     }
 }

@@ -5,7 +5,7 @@ import java.util.UUID
 
 data class Deck(
     val id: String = UUID.randomUUID().toString(),
-    val userId: String, // Referência ao dono do deck
+    val userId: String,
     val name:String,
     val categories: List<String>,
     val description: String,
@@ -13,38 +13,4 @@ data class Deck(
     val mastery: Float,
     val totalCards: Int,
     val cardsToReview: Int
-)
-
-// Fake Object
-val deck1 = Deck(
-    userId = "user-123",
-    name = "Geografia Mundial",
-    categories = listOf("Geografia", "História"),
-    description = "Um deck com perguntas sobre geografia mundial",
-    difficulty = DifficultyLevel.MEDIUM,
-    mastery = 0.75f,
-    totalCards = 1,
-    cardsToReview = 1
-)
-
-val deck2 = Deck(
-    userId = "user-123",
-    name = "História Antiga",
-    categories = listOf("História", "Arte"),
-    description = "Um deck com perguntas sobre história antiga",
-    difficulty = DifficultyLevel.HARD,
-    mastery = 0.9f,
-    totalCards = 1,
-    cardsToReview = 0
-)
-
-val deck3 = Deck(
-    userId = "user-123",
-    name = "Conhecimentos Gerais",
-    categories = listOf("Ciências", "Matemática"),
-    description = "Um deck com perguntas gerais sobre ciência e matemática",
-    difficulty = DifficultyLevel.EASY,
-    mastery = 0.5f,
-    totalCards = 1,
-    cardsToReview = 1
 )

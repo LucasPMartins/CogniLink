@@ -2,6 +2,7 @@ package com.example.cognilink.data.datebase.entities
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.example.cognilink.domain.model.DifficultyLevel
 
@@ -14,7 +15,8 @@ import com.example.cognilink.domain.model.DifficultyLevel
             childColumns = ["userId"],
             onDelete = ForeignKey.CASCADE
         )
-    ]
+    ],
+    indices = [Index(value = ["userId"])]
 )
 data class DeckEntity(
     @PrimaryKey

@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cognilink.R
 import com.example.cognilink.data.model.Deck
+import com.example.cognilink.data.preview.PreviewDataProvider
 import com.example.cognilink.ui.components.home.DeckCard
 import com.example.cognilink.ui.components.home.ProfileSection
 import com.example.cognilink.ui.components.input.SearchTextField
@@ -78,12 +79,12 @@ fun HomeScreen(
 
 @Composable
 fun HomeContent(
-    userName: String = "Alex Silva",
-    homeInsight: String = "Pronto para subir de nível?",
-    overallMastery: Float = 0.78f,
-    totalStudyTime: String = "120h",
-    cardsDone: Int = 2500,
-    learnRetention: Float = 0.88f,
+    userName: String,
+    homeInsight: String,
+    overallMastery: Float,
+    totalStudyTime: String,
+    cardsDone: Int,
+    learnRetention: Float,
     searchInput: String = "",
     decks: List<Deck> = emptyList(),
     onSearchValueChange: (String) -> Unit = {},
@@ -216,6 +217,17 @@ fun HomeContent(
 @Composable
 private fun HomeContentPreview() {
     CogniLinkTheme {
-        HomeContent()
+        val user = PreviewDataProvider.user
+        val decks = PreviewDataProvider.deckList
+        val userStats = PreviewDataProvider.userStats
+        HomeContent(
+            userName = user.name,
+            homeInsight = "Pronto para subir de nível?",
+            overallMastery = userStats.overallMastery,
+            totalStudyTime = "20d",
+            cardsDone = userStats.totalFlashcardsDone,
+            learnRetention = userStats.retentionRate,
+            decks = decks
+        )
     }
 }

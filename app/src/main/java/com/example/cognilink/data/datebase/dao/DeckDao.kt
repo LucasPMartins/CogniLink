@@ -19,11 +19,11 @@ interface DeckDao {
     suspend fun insertDeck(deck: DeckEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun saveAll(decks: List<DeckEntity>)
+    suspend fun saveAllDecks(decks: List<DeckEntity>)
 
     @Query("DELETE FROM decks")
-    suspend fun deleteAll()
+    suspend fun deleteAllDecks()
 
     @Query("DELETE FROM decks WHERE id = :id")
-    suspend fun deleteById(id: String)
+    suspend fun deleteDeckById(id: String)
 }
