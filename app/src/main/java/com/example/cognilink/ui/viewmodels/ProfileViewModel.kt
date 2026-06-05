@@ -10,6 +10,7 @@ import com.example.cognilink.ui.states.ProfileUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.Locale
 import java.util.concurrent.TimeUnit
@@ -36,15 +37,18 @@ class ProfileViewModel(
                     _uiState.value = ProfileUiState.Error("Usuário não encontrado")
                     return@launch
                 }
-                val userStats = userRepository.getUserStats(userId)
-                val rankingResult = calculateUserRankingUseCase(userStats ?: UserStats(userId = userId))
+                
+                userRepository.getUserStats(userId).collect { stats ->
+                    val userStats = stats ?: UserStats(userId = userId)
+                    val rankingResult = calculateUserRankingUseCase(userStats)
 
-                _uiState.value = ProfileUiState.Success(
-                    userId = userId,
-                    userName = user.name,
-                    stats = userStats ?: UserStats(userId = userId),
-                    ranking = rankingResult
-                )
+                    _uiState.value = ProfileUiState.Success(
+                        userId = userId,
+                        userName = user.name,
+                        stats = userStats,
+                        ranking = rankingResult
+                    )
+                }
             } catch (e: Exception) {
                 _uiState.value = ProfileUiState.Error(e.message ?: "Erro desconhecido")
             }

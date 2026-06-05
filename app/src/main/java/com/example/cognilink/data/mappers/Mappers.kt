@@ -3,6 +3,8 @@ package com.example.cognilink.data.mappers
 import com.example.cognilink.data.datebase.entities.*
 import com.example.cognilink.data.model.*
 
+import com.example.cognilink.domain.model.DifficultyLevel
+
 // User Mappers
 fun UserEntity.toDomain(stats: UserStats): User = User(
     id = id,
@@ -53,7 +55,12 @@ fun UserStats.toEntity(): UserStatsEntity = UserStatsEntity(
 )
 
 // Deck Mappers
-fun DeckEntity.toDomain(): Deck = Deck(
+fun DeckEntity.toDomain(
+    totalCards: Int = 0,
+    cardsToReview: Int = 0,
+    difficulty: DifficultyLevel = DifficultyLevel.EASY,
+    mastery: Float = 0f
+): Deck = Deck(
     id = id,
     userId = userId,
     name = name,
@@ -65,16 +72,19 @@ fun DeckEntity.toDomain(): Deck = Deck(
     cardsToReview = cardsToReview
 )
 
+fun DeckWithStatsEntity.toDomain(): Deck = deck.toDomain(
+    totalCards = totalCards,
+    cardsToReview = cardsToReview,
+    difficulty = DifficultyLevel.fromAverage(averageDifficulty),
+    mastery = averageMastery
+)
+
 fun Deck.toEntity(): DeckEntity = DeckEntity(
     id = id,
     userId = userId,
     name = name,
     categories = categories,
-    description = description,
-    difficulty = difficulty,
-    mastery = mastery,
-    totalCards = totalCards,
-    cardsToReview = cardsToReview
+    description = description
 )
 
 // Flashcard Mappers

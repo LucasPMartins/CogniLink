@@ -2,6 +2,7 @@ package com.example.cognilink.ui.components.deck
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -113,34 +114,37 @@ fun ViewDeckContent(
         {
             Column(
                 modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
                     text = "DOMÍNIO ATUAL",
                     color = White,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 10.sp
+                    fontSize = 10.sp,
+                            lineHeight = 12.sp
                 )
                 Text(
                     text = "${if (mastery != null ) (mastery * 100).toInt() else 0}%",
                     color = White,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 32.sp
+                    fontSize = 32.sp,
+                    lineHeight = 12.sp
                 )
                 ProgressBar(
                     progressColor = White,
                     progress = mastery ?: 0f,
                     modifier = Modifier.height(8.dp)
                 )
+                if(mastery == null || mastery == 0f){
+                    Text(
+                        text = "Estude com flashcards nesse baralho para aumentar seu domínio",
+                        color = White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 10.sp,
+                        lineHeight = 12.sp
+                    )
+                }
             }
-            if(mastery == null || mastery == 0f){
-                Text(
-                    text = "Estude com flashcards nesse baralho para aumentar seu domínio",
-                    color = White,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 10.sp
-                )
-            }
-
         }
 
         Row(modifier = Modifier.fillMaxWidth(),

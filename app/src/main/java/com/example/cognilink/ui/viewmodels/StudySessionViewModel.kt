@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -45,7 +46,7 @@ class StudySessionViewModel(
         
         viewModelScope.launch {
             val flashcards = when (studyMode) {
-                "DECK" -> repository.getFlashcardsForDeck(contextId)
+                "DECK" -> repository.getFlashcardsForDeck(contextId).first()
                 "LEECHES" -> repository.getLeeches(contextId) ?: emptyList()
                 "REVIEW" -> repository.getReviewPending(contextId) ?: emptyList()
                 "FLASHCARD" -> repository.getFlashcardById(contextId)?.let { listOf(it) }

@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.cognilink.data.model.Deck
 import com.example.cognilink.data.repository.DeckRepository
 import com.example.cognilink.data.repository.FlashcardRepository
-import com.example.cognilink.domain.usecase.CalculateDifficultyLevelUseCase
-import com.example.cognilink.ui.states.DeckEditorUiState
+import com.example.cognilink.domain.model.DifficultyLevel
+import com.example.cognilink.ui.states.DeckFormUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,18 +15,18 @@ import kotlinx.coroutines.launch
 
 class DeckFormViewModel(
     private val deckRepository: DeckRepository,
-    private val flashcardRepository: FlashcardRepository,
-    private val calculateDifficultyLevelUseCase: CalculateDifficultyLevelUseCase,
+    private val flashcardRepository: FlashcardRepository
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(DeckEditorUiState())
-    val uiState: StateFlow<DeckEditorUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(DeckFormUiState())
+    val uiState: StateFlow<DeckFormUiState> = _uiState.asStateFlow()
 
     fun initialize(deckId: String?, userId: String) {
         if (_uiState.value.deckId == deckId && _uiState.value.userId == userId) return
         _uiState.update { currentState ->
             currentState.copy(
                 userId = userId,
-                deckId = deckId ?: currentState.deckId
+                deckId = deckId ?: currentState.deckId,
+                isEditMode = deckId != null
             )
         }
         loadDeckData()
@@ -37,19 +37,24 @@ class DeckFormViewModel(
     }
 
     fun removeFlashcard(flashcardId: String) {
-        _uiState.update { it.copy(deckFlashcards = it.deckFlashcards.filter { it.id != flashcardId }) }
+        _uiState.update { currentState ->
+            currentState.copy(
+                deckFlashcards = currentState.deckFlashcards.filter { it.id != flashcardId },
+                wasEdited = true
+            )
+        }
     }
 
     fun onDeckNameChange(newValue: String) {
-        _uiState.update { it.copy(deckName = newValue) }
+        _uiState.update { it.copy(deckName = newValue, wasEdited = true) }
     }
 
     fun onDeckDescriptionChange(newValue: String) {
-        _uiState.update { it.copy(deckDescription = newValue) }
+        _uiState.update { it.copy(deckDescription = newValue, wasEdited = true) }
     }
 
     fun onCategoryTextChange(newText: String) {
-        _uiState.update { it.copy(categoryText = newText) }
+        _uiState.update { it.copy(categoryText = newText, wasEdited = true) }
     }
 
     fun openCategoryDialog(category: String? = null) {
@@ -90,14 +95,15 @@ class DeckFormViewModel(
                     deckCategories = newCategories,
                     showCategoryDialog = false,
                     categoryText = "",
-                    categoryBeingEdited = null
+                    categoryBeingEdited = null,
+                    wasEdited = true
                 )
             }
         }
     }
 
     fun removeCategory(category: String) {
-        _uiState.update { it.copy(deckCategories = it.deckCategories - category) }
+        _uiState.update { it.copy(deckCategories = it.deckCategories - category, wasEdited = true) }
     }
 
     fun saveDeck() {
@@ -107,15 +113,17 @@ class DeckFormViewModel(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             try {
+                // Ao salvar, não precisamos calcular dificuldade e mastery manualmente,
+                // pois o banco de dados fará isso dinamicamente via DeckWithStatsEntity.
                 val deckToSave = Deck(
                     id = currentState.deckId,
                     userId = userId,
                     name = currentState.deckName,
                     description = currentState.deckDescription,
                     categories = currentState.deckCategories,
-                    difficulty = calculateDifficultyLevelUseCase(currentState.deckFlashcards),
-                    mastery = 0f,
-                    totalCards = currentState.deckFlashcards.size,
+                    difficulty = DifficultyLevel.EASY, // Placeholder, não será persistido
+                    mastery = 0f, // Placeholder, não será persistido
+                    totalCards = 0,
                     cardsToReview = 0
                 )
                 deckRepository.saveDeck(deckToSave, userId)
@@ -143,8 +151,12 @@ class DeckFormViewModel(
         _uiState.update { it.copy(isSaved = false, errorMessage = null) }
     }
 
+    fun toggleChangeDialog() {
+        _uiState.update { it.copy(showChangeDialog = !it.showChangeDialog) }
+    }
+
     fun toggleAddFlashcardDialog() {
-        _uiState.update { it.copy(isAddFlashcardDialogOpen = !it.isAddFlashcardDialogOpen) }
+        _uiState.update { it.copy(showAddFlashcardDialog = !it.showAddFlashcardDialog) }
     }
 
     fun loadDeckData() {
@@ -152,22 +164,34 @@ class DeckFormViewModel(
         val deckId = currentState.deckId
         val userId = currentState.userId ?: return
 
-        _uiState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
             try {
-                val deck = deckRepository.getDeckById(deckId, userId)
-                val flashcards = flashcardRepository.getFlashcardsForDeck(deckId)
-                _uiState.update {
-                    it.copy(
-                        deckName = deck?.name ?: "",
-                        deckDescription = deck?.description ?: "",
-                        deckCategories = deck?.categories ?: emptyList(),
-                        deckFlashcards = flashcards,
-                        isLoading = false,
-                    )
+                deckRepository.getDeckById(deckId, userId).collect { deck ->
+                    _uiState.update {
+                        it.copy(
+                            deckName = deck?.name ?: "",
+                            deckDescription = deck?.description ?: "",
+                            deckCategories = deck?.categories ?: emptyList(),
+                            isLoading = false
+                        )
+                    }
                 }
             } catch (e: Exception) {
                 _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
+            }
+        }
+        loadFlashcards(deckId)
+    }
+
+    private fun loadFlashcards(deckId: String) {
+        viewModelScope.launch {
+            try {
+                flashcardRepository.getFlashcardsForDeck(deckId).collect { flashcards ->
+                    _uiState.update { it.copy(deckFlashcards = flashcards) }
+                }
+            } catch (_: Exception) {
+                _uiState.update { it.copy(errorMessage = "Erro ao carregar flashcards") }
             }
         }
     }

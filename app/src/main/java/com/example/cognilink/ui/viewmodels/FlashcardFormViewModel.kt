@@ -2,12 +2,13 @@ package com.example.cognilink.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cognilink.data.model.Answer
 import com.example.cognilink.data.model.Flashcard
 import com.example.cognilink.data.repository.FlashcardRepository
 import com.example.cognilink.domain.model.DifficultyLevel
 import com.example.cognilink.domain.model.FlashcardType
-import com.example.cognilink.ui.states.FlashcardEditorUiState
+import com.example.cognilink.ui.states.FlashcardFormUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,15 +19,17 @@ class FlashcardFormViewModel(
     private val repository: FlashcardRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(FlashcardEditorUiState())
-    val uiState: StateFlow<FlashcardEditorUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(FlashcardFormUiState())
+    val uiState: StateFlow<FlashcardFormUiState> = _uiState.asStateFlow()
 
     fun initialize(deckId: String, flashcardId: String? = null) {
+        println("DeckId: $deckId")
         if (_uiState.value.deckId == deckId && _uiState.value.flashcardId == flashcardId) return
         _uiState.update { currentState ->
             currentState.copy(
                 deckId = deckId,
-                flashcardId = flashcardId ?: currentState.flashcardId
+                flashcardId = flashcardId ?: currentState.flashcardId,
+                isEditMode = flashcardId != null
             )
         }
         loadFlashcard()
@@ -67,13 +70,14 @@ class FlashcardFormViewModel(
                         answer = newAnswerText,
                         isCorrect = true
                     )
-                )
+                ),
+                wasEdited = true
             )
         }
     }
 
     fun removeAnswer(answer: Answer) {
-        _uiState.update { it.copy(answerOptions = it.answerOptions.filter { a -> a != answer }) }
+        _uiState.update { it.copy(answerOptions = it.answerOptions.filter { a -> a != answer },wasEdited = true) }
     }
 
     fun selectCorrectAnswer(selectedIndex: Int) {
@@ -81,7 +85,8 @@ class FlashcardFormViewModel(
             currentState.copy(
                 answerOptions = currentState.answerOptions.mapIndexed { index, answer ->
                     answer.copy(isCorrect = index == selectedIndex)
-                }
+                },
+                wasEdited = true
             )
         }
     }
@@ -92,7 +97,8 @@ class FlashcardFormViewModel(
                 answerOptions = currentState.answerOptions.mapIndexed { i, a ->
                     if (i == index) a.copy(isCorrect = !a.isCorrect)
                     else a
-                }
+                },
+                wasEdited = true
             )
         }
     }
@@ -101,24 +107,36 @@ class FlashcardFormViewModel(
         _uiState.update { it.copy(isDeleteMode = !it.isDeleteMode) }
     }
 
+    fun toggleDeleteDialog(){
+        _uiState.update { it.copy(showDeleteDialog = !it.showDeleteDialog) }
+    }
+
+    fun toggleChangeDialog(){
+        _uiState.update { it.copy(showChangeDialog = !it.showChangeDialog) }
+    }
+
     fun onQuestionTextChange(newQuestion: String) {
-        _uiState.update { it.copy(questionText = newQuestion) }
+        _uiState.update { it.copy(questionText = newQuestion, wasEdited = true) }
     }
 
     fun onDifficultyChange(newDifficulty: DifficultyLevel) {
-        _uiState.update { it.copy(difficulty = newDifficulty) }
+        _uiState.update { it.copy(difficulty = newDifficulty, wasEdited = true) }
     }
 
     fun updateAnswers(newAnswers: List<Answer>) {
-        _uiState.update { it.copy(answerOptions = newAnswers) }
+        _uiState.update { it.copy(answerOptions = newAnswers, wasEdited = true) }
     }
 
     fun updateHints(newHints: List<String>) {
-        _uiState.update { it.copy(hints = newHints) }
+        _uiState.update { it.copy(hints = newHints, wasEdited = true) }
     }
 
     fun onTypeChange(newType: FlashcardType) {
-        _uiState.update { it.copy(cardType = newType, answerOptions = emptyList()) }
+        _uiState.update { it.copy(cardType = newType, answerOptions = emptyList(), wasEdited = true) }
+    }
+
+    fun toggleMenu(){
+        _uiState.update { it.copy(isMenuExpanded = !it.isMenuExpanded) }
     }
 
     fun saveFlashcard() {
@@ -136,6 +154,13 @@ class FlashcardFormViewModel(
         )
         viewModelScope.launch {
             repository.saveFlashcard(flashcardToSave)
+        }
+    }
+
+    fun deleteFlashcard(){
+        viewModelScope.launch {
+            repository.deleteFlashcard(_uiState.value.flashcardId)
+            _uiState.update { it.copy(showDeleteDialog = false) }
         }
     }
 }

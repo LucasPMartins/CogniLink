@@ -82,7 +82,6 @@ fun DeckScreen(
     val deck = uiState.currentDeck
     DeckContent(
         deckName = deck?.name,
-
         deckCategories = deck?.categories,
         deckDescription = deck?.description,
         deckDifficulty = deck?.difficulty,

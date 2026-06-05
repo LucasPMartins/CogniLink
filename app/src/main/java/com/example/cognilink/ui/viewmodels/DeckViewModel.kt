@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class DeckViewModel(
@@ -31,15 +32,14 @@ class DeckViewModel(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             try {
-                val deck = deckRepository.getDeckById(deckId, userId)
-
-                if (deck != null) {
-                    _uiState.update { it.copy(currentDeck = deck) }
-                    loadFlashcards(deck.id)
-                } else {
-                    _uiState.update { it.copy(errorMessage = "Baralho não encontrado") }
+                deckRepository.getDeckById(deckId, userId).collect { deck ->
+                    if (deck != null) {
+                        _uiState.update { it.copy(currentDeck = deck, isLoading = false) }
+                        // Flashcards já estão sendo observados reativamente via loadFlashcards
+                    } else {
+                        _uiState.update { it.copy(errorMessage = "Baralho não encontrado", isLoading = false) }
+                    }
                 }
-                _uiState.update { it.copy(isLoading = false) }
             } catch (_: Exception) {
                 _uiState.update {
                     it.copy(
@@ -49,13 +49,17 @@ class DeckViewModel(
                 }
             }
         }
+
+        // Inicia a observação dos flashcards separadamente
+        loadFlashcards(deckId)
     }
 
     private fun loadFlashcards(deckId: String) {
         viewModelScope.launch {
             try {
-                val flashcards = flashcardRepository.getFlashcardsForDeck(deckId)
-                _uiState.update { it.copy(flashcards = flashcards.take(3)) }
+                flashcardRepository.getFlashcardsForDeck(deckId).collect { flashcards ->
+                    _uiState.update { it.copy(flashcards = flashcards.take(3)) }
+                }
             } catch (_: Exception) {
                 _uiState.update { it.copy(errorMessage = "Erro ao carregar flashcards") }
             }
@@ -66,8 +70,9 @@ class DeckViewModel(
         val deckId = _uiState.value.deckId ?: return
         viewModelScope.launch {
             try {
-                val flashcards = flashcardRepository.getFlashcardsForDeck(deckId)
-                _uiState.update { it.copy(flashcards = flashcards) }
+                flashcardRepository.getFlashcardsForDeck(deckId).collect { flashcards ->
+                    _uiState.update { it.copy(flashcards = flashcards) }
+                }
             } catch (_: Exception) {
                 _uiState.update { it.copy(errorMessage = "Erro ao carregar flashcards") }
             }

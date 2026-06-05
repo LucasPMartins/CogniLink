@@ -63,7 +63,8 @@ val databaseModule = module {
             androidContext(),
             CogniLinkDatabase::class.java,
             "cognilink_db"
-        ).build()
+        ).fallbackToDestructiveMigration(true)
+            .build()
     }
     single { get<CogniLinkDatabase>().userDao() }
     single { get<CogniLinkDatabase>().deckDao() }

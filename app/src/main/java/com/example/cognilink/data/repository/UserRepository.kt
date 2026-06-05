@@ -6,11 +6,12 @@ import com.example.cognilink.data.mappers.toDomain
 import com.example.cognilink.data.mappers.toEntity
 import com.example.cognilink.data.model.User
 import com.example.cognilink.data.model.UserStats
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 interface UserRepository {
     suspend fun getUserById(userId: String): User?
-    suspend fun getUserStats(userId: String): UserStats?
+    fun getUserStats(userId: String): Flow<UserStats?>
     suspend fun updateUser(user: User)
 }
 
@@ -20,13 +21,11 @@ class UserRepositoryImpl(
 ) : UserRepository {
     override suspend fun getUserById(userId: String): User? {
         val userEntity = userDao.findUserById(userId) ?: return null
-        val statsEntity = userStatsDao.getUserStatsByUserId(userId).first()
-        val stats = statsEntity?.toDomain() ?: UserStats(userId = userId)
-        return userEntity.toDomain(stats)
+        return userEntity.toDomain(UserStats(userId = userId))
     }
 
-    override suspend fun getUserStats(userId: String): UserStats? {
-        return userStatsDao.getUserStatsByUserId(userId).first()?.toDomain()
+    override fun getUserStats(userId: String): Flow<UserStats?> {
+        return userStatsDao.getUserStatsByUserId(userId).map { it?.toDomain() }
     }
 
     override suspend fun updateUser(user: User) {

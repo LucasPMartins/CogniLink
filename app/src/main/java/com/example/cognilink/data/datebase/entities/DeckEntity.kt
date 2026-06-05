@@ -24,9 +24,5 @@ data class DeckEntity(
     val userId: String,
     val name: String,
     val categories: List<String>,
-    val description: String,
-    val difficulty: DifficultyLevel,
-    val mastery: Float,
-    val totalCards: Int,
-    val cardsToReview: Int
+    val description: String
 )

@@ -12,12 +12,12 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 interface FlashcardRepository {
-    suspend fun getFlashcardsForDeck(deckId: String): List<Flashcard>
+    fun getFlashcardsForDeck(deckId: String): Flow<List<Flashcard>>
     suspend fun saveFlashcard(flashcard: Flashcard)
     suspend fun deleteFlashcard(flashcardId: String)
     suspend fun getFlashcardById(flashcardId: String): Flashcard?
     suspend fun saveAllFlashcards(flashcards: List<Flashcard>)
-    suspend fun getFlashcardStatistics(flashcardId: String): FlashcardStats?
+    fun getFlashcardStatistics(flashcardId: String): Flow<FlashcardStats?>
     suspend fun getLeeches(userId: String): List<Flashcard>?
     suspend fun getReviewPending(userId: String): List<Flashcard>?
     suspend fun getDeckName(deckId: String): String?
@@ -32,8 +32,10 @@ class FlashcardRepositoryImpl(
     private val flashcardStatsDao: FlashcardStatsDao,
     private val deckDao: DeckDao
 ) : FlashcardRepository {
-    override suspend fun getFlashcardsForDeck(deckId: String): List<Flashcard> {
-        return flashcardDao.getFlashcardForDeckById(deckId).first().map { it.toDomain() }
+    override fun getFlashcardsForDeck(deckId: String): Flow<List<Flashcard>> {
+        return flashcardDao.getFlashcardForDeckById(deckId).map { list ->
+            list.map { it.toDomain() }
+        }
     }
 
     override suspend fun saveFlashcard(flashcard: Flashcard) {
@@ -52,8 +54,8 @@ class FlashcardRepositoryImpl(
         flashcardDao.saveAllFlashcards(flashcards.map { it.toEntity() })
     }
 
-    override suspend fun getFlashcardStatistics(flashcardId: String): FlashcardStats? {
-        return flashcardStatsDao.getFlashcardStatsById(flashcardId).first()?.toDomain()
+    override fun getFlashcardStatistics(flashcardId: String): Flow<FlashcardStats?> {
+        return flashcardStatsDao.getFlashcardStatsById(flashcardId).map { it?.toDomain() }
     }
 
     override suspend fun getLeeches(userId: String): List<Flashcard>? {
@@ -68,7 +70,7 @@ class FlashcardRepositoryImpl(
     }
 
     override suspend fun getDeckName(deckId: String): String? {
-        return deckDao.getDeckById(deckId)?.name
+        return deckDao.getDeckById(deckId).first()?.name
     }
 
     override suspend fun getReviewCountForDeck(deckId: String, todayTimestamp: Long): Flow<Int> {

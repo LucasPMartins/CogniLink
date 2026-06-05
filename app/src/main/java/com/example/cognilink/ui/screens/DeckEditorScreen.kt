@@ -1,5 +1,6 @@
 package com.example.cognilink.ui.screens
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -75,8 +76,16 @@ fun DeckEditorScreen(
         viewModel.initialize(deckId, userId)
     }
 
+    BackHandler {
+        if (uiState.wasEdited) {
+            viewModel.toggleChangeDialog()
+        } else {
+            onNavigateBack()
+        }
+    }
+
     DeckEditorContent(
-        isEditMode = deckId != null,
+        isEditMode = uiState.isEditMode,
         deckName = uiState.deckName,
         deckDescription = uiState.deckDescription,
         deckCategories = uiState.deckCategories,
@@ -85,7 +94,9 @@ fun DeckEditorScreen(
         categoryBeingEdited = uiState.categoryBeingEdited,
         categoryText = uiState.categoryText,
         isRemoveMode = uiState.isRemoveMode,
-        isAddFlashcardDialogOpen = uiState.isAddFlashcardDialogOpen,
+        showAddFlashcardDialog = uiState.showAddFlashcardDialog,
+        showChangeDialog = uiState.showChangeDialog,
+        onDismissChangeDialog = viewModel::toggleChangeDialog,
         onToggleRemoveMode = viewModel::toggleRemoveMode,
         onDeckNameChange = viewModel::onDeckNameChange,
         onDeckDescriptionChange = viewModel::onDeckDescriptionChange,
@@ -96,25 +107,41 @@ fun DeckEditorScreen(
         onConfirmCategory = viewModel::handleCategoryConfirmation,
         onRemoveFlashcard = viewModel::removeFlashcard,
         onDismissCategoryDialog = viewModel::closeCategoryDialog,
-        onClickAddFlashcardDialog = { viewModel.toggleAddFlashcardDialog() },
-        onEditFlashcardClick = { fId -> onNavigateToEditFlashcard(deckId, fId) },
+        onAddFlashcard = { viewModel.toggleAddFlashcardDialog() },
+        onEditFlashcard = { fId -> onNavigateToEditFlashcard(uiState.deckId, fId) },
         onDismissAddFlashcardDialog = { viewModel.toggleAddFlashcardDialog() },
-        onCreateFlashcardManuallyClick = {
+        onConfirmDiscard = {
+            viewModel.toggleChangeDialog()
+            scope.launch {
+                delay(100)
+                onNavigateBack()
+            }
+        },
+        onCreateFlashcardManually = {
             viewModel.toggleAddFlashcardDialog()
             scope.launch {
                 delay(100)
-                onNavigateToCreateFlashcard(deckId)
+                onNavigateToCreateFlashcard(uiState.deckId)
             }
         },
-        onCreateFlashcardWithIAClick = {
+        onCreateFlashcardWithIA = {
             viewModel.toggleAddFlashcardDialog()
             scope.launch {
                 delay(100)
-                onNavigateToCreateWithIA(deckId)
+                onNavigateToCreateWithIA(uiState.deckId)
             }
         },
-        onSaveClick = { viewModel.saveDeck() },
-        onNavigateBack = onNavigateBack
+        onSave = {
+            viewModel.saveDeck()
+            onNavigateBack()
+        },
+        onNavigateBack = {
+            if (uiState.wasEdited) {
+                viewModel.toggleChangeDialog()
+            } else {
+                onNavigateBack()
+            }
+        }
     )
 }
 
@@ -123,30 +150,33 @@ fun DeckEditorScreen(
 fun DeckEditorContent(
     isEditMode: Boolean,
     deckName: String,
-    deckDescription: String,
-    deckCategories: List<String>,
-    deckFlashcards: List<Flashcard>,
-    showCategoryDialog: Boolean,
-    categoryBeingEdited: String?,
-    categoryText: String,
-    isRemoveMode: Boolean,
-    isAddFlashcardDialogOpen: Boolean,
     onDeckNameChange: (String) -> Unit = {},
+    deckDescription: String,
     onDeckDescriptionChange: (String) -> Unit = {},
+    deckCategories: List<String>,
     onCategoryTextChange: (String) -> Unit = {},
     onAddCategory: () -> Unit = {},
     onEditCategory: (String) -> Unit = {},
-    onRemoveCategory: (String) -> Unit = {},
+    categoryBeingEdited: String?,
+    categoryText: String,
+    deckFlashcards: List<Flashcard>,
+    showCategoryDialog: Boolean,
+    showAddFlashcardDialog: Boolean,
+    showChangeDialog: Boolean,
+    onDismissChangeDialog: () -> Unit = {},
+    isRemoveMode: Boolean,
     onConfirmCategory: () -> Unit = {},
+    onRemoveCategory: (String) -> Unit = {},
     onRemoveFlashcard: (String) -> Unit = {},
     onDismissCategoryDialog: () -> Unit = {},
     onToggleRemoveMode: () -> Unit = {},
-    onSaveClick: () -> Unit = {},
-    onEditFlashcardClick: (String) -> Unit = {},
-    onClickAddFlashcardDialog: () -> Unit = {},
+    onSave: () -> Unit = {},
+    onEditFlashcard: (String) -> Unit = {},
+    onAddFlashcard: () -> Unit = {},
     onDismissAddFlashcardDialog: () -> Unit = {},
-    onCreateFlashcardManuallyClick: () -> Unit = {},
-    onCreateFlashcardWithIAClick: () -> Unit = {},
+    onCreateFlashcardManually: () -> Unit = {},
+    onConfirmDiscard: () -> Unit = {},
+    onCreateFlashcardWithIA: () -> Unit = {},
     onNavigateBack: () -> Unit = {},
 ) {
     val scrollState = rememberScrollState()
@@ -183,7 +213,7 @@ fun DeckEditorContent(
         )
     }
 
-    if (isAddFlashcardDialogOpen) {
+    if (showAddFlashcardDialog) {
         BasicAlertDialog(
             onDismissRequest = onDismissAddFlashcardDialog,
         ) {
@@ -210,14 +240,59 @@ fun DeckEditorContent(
                         text = "Criar manualmente",
                         height = 56.dp,
                         onClickButton = {
-                            onCreateFlashcardManuallyClick()
+                            onCreateFlashcardManually()
                         }
                     )
                     SimpleGradientButton(
                         text = "Criar com IA",
                         height = 56.dp,
                         onClickButton = {
-                            onCreateFlashcardWithIAClick()
+                            onCreateFlashcardWithIA()
+                        }
+                    )
+                }
+            }
+        }
+    }
+
+    if (showChangeDialog) {
+        BasicAlertDialog(
+            onDismissRequest = onDismissChangeDialog,
+        ) {
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                shape = RoundedCornerShape(28.dp),
+                color = Color.White
+            ) {
+                Column(
+                    modifier = Modifier.padding(24.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Text(
+                        text = "Alterações não salvas",
+                        fontWeight = FontWeight.Bold,
+                        color = DarkNavyBlue,
+                        fontSize = 20.sp,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Text(
+                        text = "Você possui alterações não salvas. Deseja realmente sair e descartá-las?",
+                        color = DarkGray,
+                        textAlign = TextAlign.Center
+                    )
+                    SimpleGradientButton(
+                        text = "Sair e descartar",
+                        height = 56.dp,
+                        onClickButton = onConfirmDiscard
+                    )
+                    SimpleGradientButton(
+                        text = "Continuar editando",
+                        height = 56.dp,
+                        onClickButton = {
+                            onDismissChangeDialog()
                         }
                     )
                 }
@@ -240,7 +315,7 @@ fun DeckEditorContent(
                     text = if (isEditMode) "SALVAR" else "CRIAR",
                     height = 40.dp,
                     icon = R.drawable.ic_check,
-                    onClickButton = onSaveClick
+                    onClickButton = onSave
                 )
             }
         }
@@ -268,7 +343,7 @@ fun DeckEditorContent(
                 NeonActionButton(
                     text = "ADICIONAR FLASHCARD",
                     icon = R.drawable.ic_add,
-                    onClickButton = onClickAddFlashcardDialog,
+                    onClickButton = onAddFlashcard,
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -302,7 +377,7 @@ fun DeckEditorContent(
                                 nextReview = null,
                                 onSelectCard = {
                                     if (!isRemoveMode) {
-                                        onEditFlashcardClick(card.id)
+                                        onEditFlashcard(card.id)
                                     }
                                 },
                                 selectionControl = {
@@ -310,7 +385,7 @@ fun DeckEditorContent(
                                         DeleteButton(onClick = { onRemoveFlashcard(card.id) })
                                     } else {
                                         IconButton(
-                                            onClick = { onEditFlashcardClick(card.id) },
+                                            onClick = { onEditFlashcard(card.id) },
                                             modifier = Modifier
                                                 .offset(x = 10.dp)
                                                 .size(32.dp)
@@ -352,7 +427,8 @@ private fun DeckEditorContentPreview() {
             categoryBeingEdited = null,
             categoryText = "",
             isRemoveMode = false,
-            isAddFlashcardDialogOpen = false,
+            showAddFlashcardDialog = false,
+            showChangeDialog = false,
         )
 
     }
