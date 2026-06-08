@@ -30,10 +30,10 @@ import com.example.cognilink.ui.theme.VeryLightGray
 
 @Composable
 fun EmptyContent(
+    modifier: Modifier = Modifier,
     title: String = stringResource(R.string.empty_deck_content_default_title),
     subTitle: String = stringResource(R.string.empty_deck_content_default_subtitle),
     icon: Int = R.drawable.ic_deck,
-    modifier: Modifier = Modifier
 ) {
     Surface(
         modifier = modifier.fillMaxSize(),

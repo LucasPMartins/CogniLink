@@ -70,16 +70,16 @@ private fun AnswerSelectorPreview() {
 
     var selectedAnswersMap by remember { mutableStateOf(mapOf<Answer, String>()) }
 
-    var toogleCorrect by remember { mutableStateOf(false) }
+    var toggleCorrect by remember { mutableStateOf(false) }
 
     Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
         CogniLinkTheme {
-            // Exemplo Múltipla Escolha (Single)
+            // Exemplo Múltipla Escolha (‘Single’)
             AnswerSelector(
                 answerOptions = listaTeste,
                 getVisualState = { answer ->
                     val isSelected = selectedAnswersRadio.contains(answer)
-                    if (toogleCorrect) {
+                    if (toggleCorrect) {
                         if (answer.isCorrect) AnswerVisualState.Correct
                         else if (isSelected) AnswerVisualState.Incorrect
                         else AnswerVisualState.Default
@@ -88,11 +88,11 @@ private fun AnswerSelectorPreview() {
                     }
                 },
                 selectionControl = { answer, _ ->
-                    if (!toogleCorrect) {
+                    if (!toggleCorrect) {
                         RadioButton(
                             selected = (selectedAnswersRadio.contains(answer)),
                             onClick = { selectedAnswersRadio = setOf(answer) },
-                            enabled = !toogleCorrect,
+                            enabled = !toggleCorrect,
                             colors = RadioButtonDefaults.colors(selectedColor = DarkNavyBlue),
                         )
                     }
@@ -107,7 +107,7 @@ private fun AnswerSelectorPreview() {
                     val userChoice = selectedAnswersMap[answer]
                     val isAnswerCorrectType = answer.isCorrect
 
-                    if (toogleCorrect) {
+                    if (toggleCorrect) {
                         when {
                             (userChoice == "V" && isAnswerCorrectType) || (userChoice == "F" && !isAnswerCorrectType) -> {
                                 AnswerVisualState.Correct
@@ -120,19 +120,19 @@ private fun AnswerSelectorPreview() {
                     }
                 },
                 selectionControl = { answer, _ ->
-                    if(!toogleCorrect) {
+                    if(!toggleCorrect) {
                         TrueFalseToggle(
                             currentValue = selectedAnswersMap[answer],
                             onToggle = { choice ->
                                 selectedAnswersMap = selectedAnswersMap + (answer to choice)
                             },
-                            enabled = !toogleCorrect
+                            enabled = !toggleCorrect
                         )
                     }
                 },
             )
 
-            Button(onClick = { toogleCorrect = !toogleCorrect }) {
+            Button(onClick = { toggleCorrect = !toggleCorrect }) {
                 Text(text="Corrigir resposta")
             }
         }

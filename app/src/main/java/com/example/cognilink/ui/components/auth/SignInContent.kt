@@ -43,8 +43,10 @@ fun SignInContent(
     modifier: Modifier = Modifier,
     email: String = "",
     onEmailChange: (String) -> Unit = {},
+    emailError: String? = null,
     password: String = "",
     onPasswordChange: (String) -> Unit = {},
+    passwordError: String? = null,
     onSignInClick: () -> Unit = {},
     onSignUpClick: () -> Unit = {}
 ) {
@@ -60,7 +62,8 @@ fun SignInContent(
             placeholder = "seu@email.com",
             keyboardType = KeyboardType.Email,
             inputValue = email,
-            onInputValueChange = onEmailChange
+            onInputValueChange = onEmailChange,
+            errorMessage = emailError
         )
 
         Column(
@@ -70,7 +73,7 @@ fun SignInContent(
         ) {
             Row(modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween) {
-                CustomLabel("SENHA")
+                CustomLabel(text = "SENHA")
                 Text(
                     text = "ESQUECEU A SENHA?",
                     style = MaterialTheme.typography.titleMedium.copy(
@@ -85,7 +88,11 @@ fun SignInContent(
                     }
                 )
             }
-            PasswordTextField(password = password, onPasswordChange = onPasswordChange)
+            PasswordTextField(
+                password = password,
+                onPasswordChange = onPasswordChange,
+                errorMessage = passwordError
+            )
         }
 
         SimpleGradientButton(

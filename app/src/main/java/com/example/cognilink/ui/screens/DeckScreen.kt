@@ -40,7 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.cognilink.R
-import com.example.cognilink.data.model.Flashcard
+import com.example.cognilink.data.model.FlashcardWithStats
 import com.example.cognilink.data.preview.PreviewDataProvider
 import com.example.cognilink.domain.model.DifficultyLevel
 import com.example.cognilink.ui.components.deck.FlashcardItem
@@ -150,7 +150,7 @@ fun DeckContent(
     deckMastery: Float?,
     deckTotalCards: Int?,
     deckCardsToReview: Int?,
-    deckFlashcards: List<Flashcard>?,
+    deckFlashcards: List<FlashcardWithStats>?,
     isMenuExpanded: Boolean = false,
     isAddFlashcardDialogOpen: Boolean = false,
     onCreateFlashcardWithIAClick: () -> Unit = {},
@@ -335,7 +335,7 @@ fun DeckContent(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = CenterVertically
                     ) {
-                        CustomLabel("Próximos tópicos", textColor = DarkNavyBlue)
+                        CustomLabel(text = "Próximos tópicos", textColor = DarkNavyBlue)
                         TextButton(onClick = onClickSeeMore, contentPadding = PaddingValues(0.dp)) {
                             Text(
                                 text = "Ver todos",
@@ -345,11 +345,14 @@ fun DeckContent(
                         }
                     }
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        deckFlashcards.forEach { flashcard ->
+                        deckFlashcards.forEach { flashcardWithStats ->
+                            val flashcard = flashcardWithStats.flashcard
+                            val stats = flashcardWithStats.stats
+                            
                             FlashcardItem(
                                 flashcardType = flashcard.cardType,
                                 flashcardQuestion = flashcard.question,
-                                nextReview = "Revisão necessário em 10 dias",//TODO:
+                                nextReview = if (stats?.nextReview == null) "Novo card" else "Revisar em breve", // TODO: Formatar data real
                                 onSelectCard = { onFlashcardClick(flashcard.id) },
                                 selectionControl = {
                                     IconButton(
@@ -383,7 +386,9 @@ fun DeckContent(
 private fun DeckContentPreview() {
     CogniLinkTheme {
         val deck = PreviewDataProvider.deck
-        val flashcards = PreviewDataProvider.flashcardList.filter { it.deckId == deck.id }
+        val flashcards = PreviewDataProvider.flashcardList
+            .filter { it.deckId == deck.id }
+            .map { FlashcardWithStats(it, null) }
 
         DeckContent(
             deckName = deck.name,

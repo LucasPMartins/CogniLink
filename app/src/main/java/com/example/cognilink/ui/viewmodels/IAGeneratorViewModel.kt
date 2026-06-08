@@ -20,7 +20,7 @@ class IAGeneratorViewModel : ViewModel() {
     }
 
     fun onThemeChange(newTheme: String) {
-        _uiState.update { it.copy(flashcardTheme = newTheme) }
+        _uiState.update { it.copy(flashcardTheme = newTheme, themeError = null) }
     }
 
     fun onQuantityChange(newQuantity: Int) {
@@ -39,7 +39,18 @@ class IAGeneratorViewModel : ViewModel() {
         //TODO
     }
 
+    private fun validate(): Boolean {
+        val state = _uiState.value
+        if (state.flashcardTheme.isBlank() && !state.hasFile) {
+            _uiState.update { it.copy(themeError = "Forneça um tema ou anexe um arquivo") }
+            return false
+        }
+        return true
+    }
+
     fun generateFlashcards() {
+        if (!validate()) return
+
         val deckId = _uiState.value.deckId ?: return
         _uiState.update { it.copy(isLoading = true) }
         // TODO: Lógica para chamar a IA

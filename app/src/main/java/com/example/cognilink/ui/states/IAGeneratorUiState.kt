@@ -13,5 +13,6 @@ data class IAGeneratorUiState(
     val selectedType: FlashcardType? = null,
     val hasFile: Boolean = false,
     val isLoading: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val themeError: String? = null
 )

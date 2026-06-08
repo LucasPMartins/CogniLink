@@ -35,14 +35,14 @@ fun AuthScreen(
     LaunchedEffect(uiState.loggedInUserId) {
         uiState.loggedInUserId?.let { userId ->
             onNavigateToHome(userId)
-            viewModel.clearNavigationEvent() // Limpa para evitar re-navegação ao voltar
+            viewModel.clearNavigationEvent() // Limpa para evitar renavegarão ao voltar
         }
     }
     
     // Exibe erro se houver
     uiState.errorMessage?.let { message ->
         LaunchedEffect(message) {
-            // Aqui poderia ser um SnackbarHostState.showSnackbar
+            // Aqui poderia ser um 'SnackbarHostState.showSnackbar'
         }
     }
 
@@ -55,6 +55,12 @@ fun AuthScreen(
         signUpPassword = uiState.signUpPassword,
         signUpConfirmPassword = uiState.signUpConfirmPassword,
         isTermsAccepted = uiState.isTermsAccepted,
+        signInEmailError = uiState.signInEmailError,
+        signUpEmailError = uiState.signUpEmailError,
+        signInPasswordError = uiState.signInPasswordError,
+        signUpPasswordError = uiState.signUpPasswordError,
+        nameError = uiState.nameError,
+        confirmPasswordError = uiState.confirmPasswordError,
         onModeChange = viewModel::onModeChange,
         onSignInEmailChange = viewModel::onSignInEmailChange,
         onSignInPasswordChange = viewModel::onSignInPasswordChange,
@@ -83,6 +89,12 @@ fun AuthContent(
     signUpPassword: String,
     signUpConfirmPassword: String,
     isTermsAccepted: Boolean,
+    signInEmailError: String? = null,
+    signUpEmailError: String? = null,
+    signInPasswordError: String? = null,
+    signUpPasswordError: String? = null,
+    nameError: String? = null,
+    confirmPasswordError: String? = null,
     onModeChange: (Boolean) -> Unit,
     onSignInEmailChange: (String) -> Unit,
     onSignInPasswordChange: (String) -> Unit,
@@ -167,12 +179,16 @@ fun AuthContent(
                     SignUpContent(
                         name = signUpName,
                         onNameChange = onSignUpNameChange,
+                        nameError = nameError,
                         email = signUpEmail,
                         onEmailChange = onSignUpEmailChange,
+                        emailError = signUpEmailError,
                         password = signUpPassword,
                         onPasswordChange = onSignUpPasswordChange,
+                        passwordError = signUpPasswordError,
                         confirmPassword = signUpConfirmPassword,
                         onConfirmPasswordChange = onSignUpConfirmPasswordChange,
+                        confirmPasswordError = confirmPasswordError,
                         isTermsAccepted = isTermsAccepted,
                         onTermsAcceptedChange = onTermsAcceptedChange,
                         onSignUpClick = onSignUpClick,
@@ -182,8 +198,10 @@ fun AuthContent(
                     SignInContent(
                         email = signInEmail,
                         onEmailChange = onSignInEmailChange,
+                        emailError = signInEmailError,
                         password = signInPassword,
                         onPasswordChange = onSignInPasswordChange,
+                        passwordError = signInPasswordError,
                         onSignInClick = onSignInClick,
                         onSignUpClick = { onModeChange(true) }
                     )

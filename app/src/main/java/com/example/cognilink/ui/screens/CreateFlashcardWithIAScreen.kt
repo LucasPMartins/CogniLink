@@ -51,6 +51,7 @@ fun CreateFlashcardWithIAScreen(
 
     IAGeneratorContent(
         flashcardTheme = uiState.flashcardTheme,
+        themeError = uiState.themeError,
         onFlashcardThemeChange = viewModel::onThemeChange,
         quantity = uiState.quantity,
         onQuantityChange = viewModel::onQuantityChange,
@@ -71,6 +72,7 @@ fun CreateFlashcardWithIAScreen(
 @Composable
 fun IAGeneratorContent(
     flashcardTheme: String = "",
+    themeError: String? = null,
     quantity: Int = 1,
     selectedDifficulty: DifficultyLevel? = null,
     typeOptions: List<FlashcardType> = emptyList(),
@@ -105,18 +107,12 @@ fun IAGeneratorContent(
         ) {
 
             Column {
-                CustomTextField(
-                    inputValue = flashcardTheme,
-                    onInputValueChange = onFlashcardThemeChange,
-                    label = {
+                CustomTextField(inputValue = flashcardTheme, onInputValueChange = onFlashcardThemeChange, label = {
                         CustomLabel(
                             text = "Tema do flashcard",
                             textColor = DarkGray
                         )
-                    },
-                    placeholder = "Ex: Mitocôndrias e Ciclo de Krebs",
-                    keyboardType = KeyboardType.Text
-                )
+                    }, placeholder = "Ex: Mitocôndrias e Ciclo de Krebs", keyboardType = KeyboardType.Text, errorMessage = themeError)
                 LabeledText(
                     modifier = Modifier.padding(top = 8.dp),
                     label = "OBS: ",
@@ -128,8 +124,7 @@ fun IAGeneratorContent(
                 CustomLabel(text = "Anexo de Arquivo (Opcional)")
 
                 FileUploadArea(
-                    onUploadClick = onUploadClick,
-                    hasFile = hasFile
+                    onUploadClick = onUploadClick
                 )
 
                 LabeledText(
@@ -151,7 +146,7 @@ fun IAGeneratorContent(
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Column(modifier = Modifier.weight(1f)) {
-                    CustomLabel("Dificuldade")
+                    CustomLabel(text = "Dificuldade")
                     DifficultySelector(
                         difficultyLevels = DifficultyLevel.entries,
                         selectedDifficulty = selectedDifficulty,
@@ -161,7 +156,7 @@ fun IAGeneratorContent(
                     )
                 }
                 Column(modifier = Modifier.weight(1f)) {
-                    CustomLabel("Quantidade")
+                    CustomLabel(text = "Quantidade")
                     QuantitySelector(
                         quantity = quantity,
                         onQuantityChange = onQuantityChange,

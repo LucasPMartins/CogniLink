@@ -1,7 +1,6 @@
 package com.example.cognilink.ui.components.utils.buttons
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.cognilink.R
 import com.example.cognilink.ui.theme.OffWhite

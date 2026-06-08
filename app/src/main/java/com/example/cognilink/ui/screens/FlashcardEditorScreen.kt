@@ -75,18 +75,29 @@ fun FlashcardEditorScreen(
         viewModel.initialize(deckId, flashcardId)
     }
 
+    LaunchedEffect(uiState.isSaved) {
+        if (uiState.isSaved) {
+            onNavigateBack()
+        }
+    }
+
     BackHandler {
         if (uiState.wasEdited) {
             viewModel.toggleChangeDialog()
         } else {
-            onNavigateBack()
+            scope.launch {
+                delay(150)
+                onNavigateBack()
+            }
         }
     }
 
     FlashcardEditorContent(
         questionText = uiState.questionText,
+        questionTextError = uiState.questionTextError,
         onQuestionTextChange = viewModel::onQuestionTextChange,
         answerOptions = uiState.answerOptions,
+        answersError = uiState.answersError,
         updateAnswers = viewModel::updateAnswers,
         onRemoveAnswer = viewModel::removeAnswer,
         onToggleTrueFalse = viewModel::toggleTrueFalseAnswer,
@@ -103,10 +114,6 @@ fun FlashcardEditorScreen(
         isEditMode = uiState.isEditMode,
         onSaveChanges = {
             viewModel.saveFlashcard()
-            scope.launch {
-                delay(150)
-                onNavigateBack()
-            }
         },
         onDeleteClick = {
             viewModel.toggleDeleteDialog()
@@ -116,23 +123,28 @@ fun FlashcardEditorScreen(
         onDismissDeleteDialog = { viewModel.toggleDeleteDialog() },
         showDeleteDialog = uiState.showDeleteDialog,
         onConfirmDelete = {
-            viewModel.toggleDeleteDialog()
             viewModel.deleteFlashcard()
-            scope.launch {
-                delay(150)
-                onNavigateBack()
-            }
         },
         onBackClick = {
             if (uiState.wasEdited) {
                 viewModel.toggleChangeDialog()
             } else {
-                onNavigateBack()
+                scope.launch {
+                    delay(150)
+                    onNavigateBack()
+                }
             }
         },
         showChangeDialog = uiState.showChangeDialog,
         onDismissChangeDialog = { viewModel.toggleChangeDialog() },
-        onConfirmDiscard = onNavigateBack
+        onConfirmDiscard = {
+            viewModel.discardFlashcard()
+            viewModel.toggleChangeDialog()
+            scope.launch {
+                delay(150)
+                onNavigateBack()
+            }
+        }
     )
 }
 
@@ -140,8 +152,10 @@ fun FlashcardEditorScreen(
 @Composable
 fun FlashcardEditorContent(
     questionText: String = "",
+    questionTextError: String? = null,
     onQuestionTextChange: (String) -> Unit = {},
     answerOptions: List<Answer> = emptyList(),
+    answersError: String? = null,
     onSelectCorrectAnswer: (Int) -> Unit = {},
     onBasicAnswerChange: (String) -> Unit = {},
     updateAnswers: (List<Answer>) -> Unit = {},
@@ -159,7 +173,7 @@ fun FlashcardEditorContent(
     onSaveChanges: () -> Unit = {},
     onDeleteClick: () -> Unit = {},
     onBackClick: () -> Unit = {},
-    onMenuClick:()-> Unit = {},
+    onMenuClick: () -> Unit = {},
     showDeleteDialog: Boolean = false,
     isMenuExpanded: Boolean = false,
     onDismissDeleteDialog: () -> Unit = {},
@@ -311,11 +325,12 @@ fun FlashcardEditorContent(
                         )
                     },
                     placeholder = "Ex: Calcule o valor de x na equação: 2x + 5 = 15",
-                    keyboardType = KeyboardType.Text
+                    keyboardType = KeyboardType.Text,
+                    errorMessage = questionTextError
                 )
 
                 Column {
-                    CustomLabel("Dificuldade")
+                    CustomLabel(text = "Dificuldade")
                     DifficultySelector(
                         difficultyLevels = DifficultyLevel.entries,
                         selectedDifficulty = difficulty,
@@ -329,7 +344,7 @@ fun FlashcardEditorContent(
                 }
 
                 Column {
-                    CustomLabel("Tipo de Flashcard")
+                    CustomLabel(text = "Tipo de Flashcard")
                     TypeSelector(
                         options = FlashcardType.entries,
                         selectedOption = flashcardType,
@@ -342,7 +357,7 @@ fun FlashcardEditorContent(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        CustomLabel("Resposta")
+                        CustomLabel(text = "Resposta")
                         if (flashcardType == FlashcardType.MULTIPLE_CHOICE || flashcardType == FlashcardType.TRUE_OR_FALSE)
                             Text(
                                 text = if (isRemoveModeActive) "VOLTAR PARA SELEÇÃO" else "GERENCIAR",
@@ -361,7 +376,8 @@ fun FlashcardEditorContent(
                             CustomTextField(
                                 inputValue = answerOptions.firstOrNull()?.answer ?: "",
                                 onInputValueChange = onBasicAnswerChange,
-                                placeholder = "Ex: Paris"
+                                placeholder = "Ex: Paris",
+                                errorMessage = answersError
                             )
                         }
 
@@ -420,10 +436,18 @@ fun FlashcardEditorContent(
 
                         }
                     }
+                    if (flashcardType != FlashcardType.BASIC && answersError != null) {
+                        Text(
+                            text = answersError,
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                    }
                 }
 
                 Column {
-                    CustomLabel("Dicas")
+                    CustomLabel(text = "Dicas")
                     HintEditor(
                         hints = hintList,
                         onHintsUpdate = onHintsUpdate

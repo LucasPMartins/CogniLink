@@ -4,15 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cognilink.data.model.UserStats
 import com.example.cognilink.data.repository.DeckRepository
-import com.example.cognilink.data.repository.DeckRepositoryImpl
 import com.example.cognilink.data.repository.UserRepository
-import com.example.cognilink.data.repository.UserRepositoryImpl
 import com.example.cognilink.ui.states.HomeUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
@@ -37,7 +34,13 @@ class HomeViewModel(
         // Observar baralhos de forma reativa
         viewModelScope.launch {
             deckRepository.getDecks(userId).collect { decks ->
-                _uiState.update { it.copy(decks = decks) }
+                _uiState.update {
+                    it.copy(
+                        decks = decks,
+                        isLoading = false
+                    )
+                }
+                filterDecks(_uiState.value.searchInput)
             }
         }
 
@@ -103,10 +106,12 @@ class HomeViewModel(
     }
 
     private fun filterDecks(query: String) {
-        // Agora que os dados são reativos via Flow no loadHomeData, 
-        // a filtragem pode ser feita localmente ou o Flow pode ser combinado.
-        // Por simplicidade aqui, vamos apenas filtrar a lista atual se necessário,
-        // mas o ideal seria usar um StateFlow para a query e combiná-lo com o Flow dos decks.
+        val filteredList = if (query.isEmpty()) {
+            _uiState.value.decks
+        } else {
+            _uiState.value.decks.filter { it.name.contains(query, ignoreCase = true) }
+        }
+        _uiState.update { it.copy(filteredDecks = filteredList) }
     }
 
     fun refreshDecks() {

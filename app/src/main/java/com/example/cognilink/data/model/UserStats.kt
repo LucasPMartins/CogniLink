@@ -1,9 +1,7 @@
 package com.example.cognilink.data.model
 
-import java.util.UUID
-
 data class UserStats(
-    val userId: String = UUID.randomUUID().toString(),
+    val userId: String,
     val totalFlashcardsMisses: Int = 0,
     val totalFlashcardsHits: Int = 0,
     val lastReview: Long = 0L,

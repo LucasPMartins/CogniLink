@@ -1,17 +1,15 @@
 package com.example.cognilink.data.model
 
-import java.util.UUID
-
 data class FlashcardStats(
-    val flashcardId: String = UUID.randomUUID().toString(),
+    val flashcardId: String,
     val hits: Int = 0,
     val misses: Int = 0,
     val studyTime: Long = 0L,
     /**
      * PRÓXIMA REVISÃO: Timestamp (Unix Epoch) indicando quando este card deve ser
-     * revisado novamente pelo usuário.
+     * revisado novamente pelo usuário. Se nulo, o card nunca foi revisado.
      */
-    val nextReview: Long = 0L,
+    val nextReview: Long? = null,
     /**
      * LATÊNCIA DO CARD: Tempo médio que o usuário leva para evocar a resposta DESTE card.
      * Se o usuário acerta (hit), mas a latência é alta (ex: 7 segundos), o esforço cognitivo

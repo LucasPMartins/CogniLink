@@ -22,7 +22,7 @@ import com.example.cognilink.data.datebase.entities.UserStatsEntity
         FlashcardEntity::class,
         FlashcardStatsEntity::class
     ],
-    version = 3
+    version = 4
 )
 @TypeConverters(Converters::class)
 abstract class CogniLinkDatabase : RoomDatabase() {

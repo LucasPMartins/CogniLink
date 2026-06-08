@@ -38,12 +38,16 @@ fun SignUpContent(
     modifier: Modifier = Modifier,
     name: String = "",
     onNameChange: (String) -> Unit = {},
+    nameError: String? = null,
     email: String = "",
     onEmailChange: (String) -> Unit = {},
+    emailError: String? = null,
     password: String = "",
     onPasswordChange: (String) -> Unit = {},
+    passwordError: String? = null,
     confirmPassword: String = "",
     onConfirmPasswordChange: (String) -> Unit = {},
+    confirmPasswordError: String? = null,
     isTermsAccepted: Boolean = false,
     onTermsAcceptedChange: (Boolean) -> Unit = {},
     onSignUpClick: () -> Unit = {},
@@ -59,7 +63,8 @@ fun SignUpContent(
             },
             placeholder = "Seu nome",
             inputValue = name,
-            onInputValueChange = onNameChange
+            onInputValueChange = onNameChange,
+            errorMessage = nameError
         )
 
         CustomTextField(
@@ -71,19 +76,22 @@ fun SignUpContent(
             },
             placeholder = "seu@email.com",
             inputValue = email,
-            onInputValueChange = onEmailChange
+            onInputValueChange = onEmailChange,
+            errorMessage = emailError
         )
 
         PasswordTextField(
             label = "CRIAR SENHA",
             password = password,
-            onPasswordChange = onPasswordChange
+            onPasswordChange = onPasswordChange,
+            errorMessage = passwordError
         )
 
         PasswordTextField(
             label = "CONFIRMAR SENHA",
             password = confirmPassword,
-            onPasswordChange = onConfirmPasswordChange
+            onPasswordChange = onConfirmPasswordChange,
+            errorMessage = confirmPasswordError
         )
 
         val annotatedString = buildAnnotatedString {

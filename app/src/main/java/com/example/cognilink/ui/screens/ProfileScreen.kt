@@ -462,7 +462,7 @@ fun ProfileContent(
                                     fontWeight = FontWeight.Bold
                                 )
                                 Text(
-                                    text = "Há ${userStats.activeLeechesCount} conceitos travados no limbo. Eles precisam ser reestruturados para evitar a queda na taxa de rentenção",
+                                    text = "Há ${userStats.activeLeechesCount} conceitos travados no limbo. Eles precisam ser reestruturados para evitar a queda na taxa de retenção",
                                     color = DarkGray,
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.Normal
@@ -630,7 +630,18 @@ fun ProfileContent(
 @Composable
 private fun ProfileContentPreview() {
     ProfileContent(
-        userStats = UserStats(),
+        userStats = UserStats(
+            userId = "123",
+            cognitiveEfficiencyIndex = 85f,
+            globalAverageLatencyMs = 450L,
+            overallMastery = 0.75f,
+            retentionRate = 0.92f,
+            totalFlashcardsDone = 1250,
+            totalFlashcardsReviewed = 850,
+            activeLeechesCount = 3,
+            totalFlashcardsHits = 1100,
+            totalFlashcardsMisses = 150
+        ),
         globalAverageLatencyMsText = "450ms",
         cognitiveEfficiencyInsight = "Seu cérebro está absorvendo mais conteúdo em menos tempo.",
         retentionRateInsight = "Considere revisar os cartões com maior frequência.",

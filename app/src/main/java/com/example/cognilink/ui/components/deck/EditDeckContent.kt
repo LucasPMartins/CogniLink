@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,6 +31,7 @@ import com.example.cognilink.ui.theme.MutedBlue
 fun EditDeckContent(
     name: String,
     onNameChange: (String) -> Unit,
+    nameError: String? = null,
     categories: List<String>,
     onCategoryClickRemove: (String) -> Unit,
     onCategoryClickAdd: () -> Unit,
@@ -50,7 +50,8 @@ fun EditDeckContent(
 
                 )
             },
-            placeholder = "Nome do baralho"
+            placeholder = "Nome do baralho",
+            errorMessage = nameError
         )
         CustomTextField(
             inputValue = description,

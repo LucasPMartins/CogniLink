@@ -1,5 +1,7 @@
 package com.example.cognilink.data.repository
 
+import androidx.room.withTransaction
+import com.example.cognilink.data.datebase.CogniLinkDatabase
 import com.example.cognilink.data.datebase.dao.UserDao
 import com.example.cognilink.data.datebase.dao.UserStatsDao
 import com.example.cognilink.data.mappers.toDomain
@@ -16,6 +18,7 @@ interface UserRepository {
 }
 
 class UserRepositoryImpl(
+    private val db: CogniLinkDatabase,
     private val userDao: UserDao,
     private val userStatsDao: UserStatsDao
 ) : UserRepository {
@@ -29,7 +32,9 @@ class UserRepositoryImpl(
     }
 
     override suspend fun updateUser(user: User) {
-        userDao.saveUser(user.toEntity())
-        userStatsDao.insertUserStats(user.stats.toEntity())
+        db.withTransaction {
+            userDao.saveUser(user.toEntity())
+            userStatsDao.insertUserStats(user.stats.toEntity())
+        }
     }
 }

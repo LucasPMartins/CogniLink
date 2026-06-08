@@ -80,8 +80,7 @@ fun StudySessionScreen(
 
     LaunchedEffect(uiState.isSessionFinished) {
         if (uiState.isSessionFinished && !uiState.isSessionInsightDialogOpen) {
-            // If session is finished but dialog isn't forced open,
-            // we might want to auto-open it or handle final navigation.
+            viewModel.toggleSessionInsightDialog()
         }
     }
 
@@ -98,7 +97,6 @@ fun StudySessionScreen(
             isCloseDialogOpen = uiState.isCloseDialogOpen,
             isSessionInsightDialogOpen = uiState.isSessionInsightDialogOpen,
             isLastFlashcard = uiState.isLastFlashcard,
-            isSessionFinished = uiState.isSessionFinished,
             elapsedTime = viewModel.formatSeconds(uiState.secondsElapsed),
             sequenceHits = uiState.sequenceHits,
             onDismissSessionInsight = {
@@ -138,7 +136,6 @@ fun StudySessionContent(
     isCloseDialogOpen: Boolean = false,
     isSessionInsightDialogOpen: Boolean = false,
     isLastFlashcard: Boolean = false,
-    isSessionFinished: Boolean = false,
     elapsedTime: String,
     sequenceHits: Int = 0,
     onDismissSessionInsight: () -> Unit = {},
@@ -235,7 +232,7 @@ fun StudySessionContent(
                         }
                     }
                 }
-            } else if (isSessionInsightDialogOpen || isSessionFinished) {
+            } else if (isSessionInsightDialogOpen) {
                 BasicAlertDialog(
                     onDismissRequest = onDismissSessionInsight,
                 ) {
@@ -387,7 +384,7 @@ fun StudySessionContent(
                                             onToggle = { choice ->
                                                 onSelectAnswer(answer, choice)
                                             },
-                                            enabled = !isQuestionVerified
+                                            enabled = true
                                         )
                                     }
                                 },
@@ -413,7 +410,7 @@ fun StudySessionContent(
                                         RadioButton(
                                             selected = (selectedAnswers.contains(answer)),
                                             onClick = { onSelectAnswer(answer, "") },
-                                            enabled = !isQuestionVerified,
+                                            enabled = true,
                                             colors = RadioButtonDefaults.colors(selectedColor = DarkNavyBlue),
                                         )
                                     }
@@ -453,7 +450,6 @@ private fun StudySessionContentPreview() {
             isQuestionAnswered = false,
             isQuestionVerified = false,
             isCloseDialogOpen = false,
-            isSessionFinished = false,
             elapsedTime = "00:00",
         )
     }

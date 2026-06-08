@@ -46,10 +46,10 @@ class StudySessionViewModel(
         
         viewModelScope.launch {
             val flashcards = when (studyMode) {
-                "DECK" -> repository.getFlashcardsForDeck(contextId).first()
-                "LEECHES" -> repository.getLeeches(contextId) ?: emptyList()
-                "REVIEW" -> repository.getReviewPending(contextId) ?: emptyList()
-                "FLASHCARD" -> repository.getFlashcardById(contextId)?.let { listOf(it) }
+                "DECK" -> repository.getFlashcardsForDeck(contextId).first().map { it.flashcard }
+                "LEECHES" -> repository.getLeeches(contextId)?.map { it.flashcard } ?: emptyList()
+                "REVIEW" -> repository.getReviewPending(contextId)?.map { it.flashcard } ?: emptyList()
+                "FLASHCARD" -> repository.getFlashcardById(contextId)?.flashcard?.let { listOf(it) }
                     ?: emptyList()
 
                 else -> emptyList()
@@ -147,14 +147,6 @@ class StudySessionViewModel(
         _uiState.update { it.copy(isSessionInsightDialogOpen = !it.isSessionInsightDialogOpen) }
     }
 
-
-    fun saveFlashcard() {
-        _uiState.value.currentFlashcard?.let { flashcard ->
-            viewModelScope.launch {
-                repository.saveFlashcard(flashcard)
-            }
-        }
-    }
 
     fun toggleCloseDialog() {
         _uiState.update { it.copy(isCloseDialogOpen = !it.isCloseDialogOpen) }

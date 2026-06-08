@@ -1,5 +1,6 @@
 package com.example.cognilink.data.repository
 
+import com.example.cognilink.data.datebase.CogniLinkDatabase
 import com.example.cognilink.data.datebase.dao.DeckDao
 import com.example.cognilink.data.mappers.toDomain
 import com.example.cognilink.data.mappers.toEntity
@@ -15,7 +16,10 @@ interface DeckRepository {
     suspend fun deleteDeck(deckId: String, userId: String)
 }
 
-class DeckRepositoryImpl(private val deckDao: DeckDao) : DeckRepository {
+class DeckRepositoryImpl(
+    private val db: CogniLinkDatabase,
+    private val deckDao: DeckDao
+) : DeckRepository {
     
     override fun getDecks(userId: String): Flow<List<Deck>> {
         val currentTime = System.currentTimeMillis()

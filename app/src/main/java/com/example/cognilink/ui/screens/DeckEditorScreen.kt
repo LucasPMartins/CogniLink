@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.cognilink.R
-import com.example.cognilink.data.model.Flashcard
+import com.example.cognilink.data.model.FlashcardWithStats
 import com.example.cognilink.data.preview.PreviewDataProvider
 import com.example.cognilink.ui.components.deck.EditDeckContent
 import com.example.cognilink.ui.components.deck.FlashcardItem
@@ -76,6 +76,12 @@ fun DeckEditorScreen(
         viewModel.initialize(deckId, userId)
     }
 
+    LaunchedEffect(uiState.isSaved) {
+        if (uiState.isSaved) {
+            onNavigateBack()
+        }
+    }
+
     BackHandler {
         if (uiState.wasEdited) {
             viewModel.toggleChangeDialog()
@@ -87,6 +93,7 @@ fun DeckEditorScreen(
     DeckEditorContent(
         isEditMode = uiState.isEditMode,
         deckName = uiState.deckName,
+        deckNameError = uiState.deckNameError,
         deckDescription = uiState.deckDescription,
         deckCategories = uiState.deckCategories,
         deckFlashcards = uiState.deckFlashcards,
@@ -111,6 +118,7 @@ fun DeckEditorScreen(
         onEditFlashcard = { fId -> onNavigateToEditFlashcard(uiState.deckId, fId) },
         onDismissAddFlashcardDialog = { viewModel.toggleAddFlashcardDialog() },
         onConfirmDiscard = {
+            viewModel.discardDeck()
             viewModel.toggleChangeDialog()
             scope.launch {
                 delay(100)
@@ -118,22 +126,25 @@ fun DeckEditorScreen(
             }
         },
         onCreateFlashcardManually = {
-            viewModel.toggleAddFlashcardDialog()
             scope.launch {
-                delay(100)
-                onNavigateToCreateFlashcard(uiState.deckId)
+                if (viewModel.saveDeckSuspending()) {
+                    viewModel.toggleAddFlashcardDialog()
+                    delay(100)
+                    onNavigateToCreateFlashcard(uiState.deckId)
+                }
             }
         },
         onCreateFlashcardWithIA = {
-            viewModel.toggleAddFlashcardDialog()
             scope.launch {
-                delay(100)
-                onNavigateToCreateWithIA(uiState.deckId)
+                if (viewModel.saveDeckSuspending()) {
+                    viewModel.toggleAddFlashcardDialog()
+                    delay(100)
+                    onNavigateToCreateWithIA(uiState.deckId)
+                }
             }
         },
         onSave = {
             viewModel.saveDeck()
-            onNavigateBack()
         },
         onNavigateBack = {
             if (uiState.wasEdited) {
@@ -151,6 +162,7 @@ fun DeckEditorContent(
     isEditMode: Boolean,
     deckName: String,
     onDeckNameChange: (String) -> Unit = {},
+    deckNameError: String? = null,
     deckDescription: String,
     onDeckDescriptionChange: (String) -> Unit = {},
     deckCategories: List<String>,
@@ -159,7 +171,7 @@ fun DeckEditorContent(
     onEditCategory: (String) -> Unit = {},
     categoryBeingEdited: String?,
     categoryText: String,
-    deckFlashcards: List<Flashcard>,
+    deckFlashcards: List<FlashcardWithStats>,
     showCategoryDialog: Boolean,
     showAddFlashcardDialog: Boolean,
     showChangeDialog: Boolean,
@@ -332,6 +344,7 @@ fun DeckEditorContent(
                 EditDeckContent(
                     name = deckName,
                     onNameChange = onDeckNameChange,
+                    nameError = deckNameError,
                     categories = deckCategories,
                     onCategoryClickRemove = onRemoveCategory,
                     onCategoryClickAdd = onAddCategory,
@@ -370,7 +383,8 @@ fun DeckEditorContent(
                         }
                     }
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        deckFlashcards.forEach { card ->
+                        deckFlashcards.forEach { cardWithStats ->
+                            val card = cardWithStats.flashcard
                             FlashcardItem(
                                 flashcardType = card.cardType,
                                 flashcardQuestion = card.question,
@@ -415,7 +429,9 @@ fun DeckEditorContent(
 private fun DeckEditorContentPreview() {
     CogniLinkTheme {
         val deck = PreviewDataProvider.deck
-        val flashcards = PreviewDataProvider.flashcardList.filter { it.deckId == deck.id }
+        val flashcards = PreviewDataProvider.flashcardList
+            .filter { it.deckId == deck.id }
+            .map { FlashcardWithStats(it, null) }
 
         DeckEditorContent(
             isEditMode = true,

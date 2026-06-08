@@ -4,13 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cognilink.data.model.UserStats
 import com.example.cognilink.data.repository.UserRepository
-import com.example.cognilink.data.repository.UserRepositoryImpl
 import com.example.cognilink.domain.usecase.CalculateUserRankingUseCase
 import com.example.cognilink.ui.states.ProfileUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.Locale
 import java.util.concurrent.TimeUnit

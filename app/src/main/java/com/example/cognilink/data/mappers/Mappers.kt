@@ -108,6 +108,11 @@ fun Flashcard.toEntity(): FlashcardEntity = FlashcardEntity(
     hints = hints
 )
 
+fun FlashcardWithStatsEntity.toDomain(): FlashcardWithStats = FlashcardWithStats(
+    flashcard = flashcard.toDomain(),
+    stats = stats?.toDomain()
+)
+
 // FlashcardStats Mappers
 fun FlashcardStatsEntity.toDomain(): FlashcardStats = FlashcardStats(
     flashcardId = flashcardId,

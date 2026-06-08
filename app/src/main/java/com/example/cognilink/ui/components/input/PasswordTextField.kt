@@ -1,5 +1,6 @@
 package com.example.cognilink.ui.components.input
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -43,6 +44,7 @@ fun PasswordTextField(modifier: Modifier = Modifier,
                       label: String = "",
                       password: String,
                       onPasswordChange: (String) -> Unit,
+                      errorMessage: String? = null,
 ) {
     var isPasswordVisible by remember { mutableStateOf(false) }
 
@@ -63,7 +65,11 @@ fun PasswordTextField(modifier: Modifier = Modifier,
             shape = RoundedCornerShape(12.dp),
             modifier = modifier.fillMaxWidth(),
             shadowElevation = 2.dp,
-            color = White
+            color = White,
+            border = BorderStroke(
+                width = 1.dp,
+                color = if (errorMessage != null) MaterialTheme.colorScheme.error else Color.Transparent
+            )
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -110,6 +116,13 @@ fun PasswordTextField(modifier: Modifier = Modifier,
             }
         }
 
+        if (errorMessage != null) {
+            Text(
+                text = errorMessage,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
     }
 
 
@@ -120,7 +133,7 @@ fun PasswordTextField(modifier: Modifier = Modifier,
 @Composable
 private fun PasswordTextFieldPreview() {
     CogniLinkTheme {
-        PasswordTextField(password = "", onPasswordChange = {})
+        PasswordTextField(password = "", onPasswordChange = {}, errorMessage = "Senha inválida!")
         //PasswordInput(label="Confirmar senha",password = "", onPasswordChange = {})
     }
 }

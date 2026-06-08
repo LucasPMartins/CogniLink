@@ -1,6 +1,6 @@
 package com.example.cognilink.ui.states
 
-import com.example.cognilink.data.model.Flashcard
+import com.example.cognilink.data.model.FlashcardWithStats
 import java.util.UUID
 
 data class DeckFormUiState(
@@ -9,7 +9,7 @@ data class DeckFormUiState(
     val deckName: String = "",
     val deckDescription: String = "",
     val deckCategories: List<String> = emptyList(),
-    val deckFlashcards: List<Flashcard> = emptyList(),
+    val deckFlashcards: List<FlashcardWithStats> = emptyList(),
     val showCategoryDialog: Boolean = false,
     val categoryBeingEdited: String? = null,
     val categoryText: String = "",
@@ -21,4 +21,5 @@ data class DeckFormUiState(
     val isEditMode: Boolean = false,
     val wasEdited: Boolean = false,
     val showChangeDialog: Boolean = false,
+    val deckNameError: String? = null,
 )

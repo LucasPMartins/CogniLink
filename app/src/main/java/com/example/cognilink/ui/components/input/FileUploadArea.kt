@@ -25,8 +25,8 @@ import com.example.cognilink.ui.theme.dashedBorder
 
 @Composable
 fun FileUploadArea(modifier: Modifier = Modifier,
-                   onUploadClick: () -> Unit = {},
-                   hasFile: Boolean = false) {
+                   onUploadClick: () -> Unit = {}
+) {
     Column(horizontalAlignment = CenterHorizontally,
 
         modifier = Modifier

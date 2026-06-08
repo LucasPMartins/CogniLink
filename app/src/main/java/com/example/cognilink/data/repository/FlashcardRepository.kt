@@ -7,23 +7,24 @@ import com.example.cognilink.data.mappers.toDomain
 import com.example.cognilink.data.mappers.toEntity
 import com.example.cognilink.data.model.Flashcard
 import com.example.cognilink.data.model.FlashcardStats
+import com.example.cognilink.data.model.FlashcardWithStats
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 interface FlashcardRepository {
-    fun getFlashcardsForDeck(deckId: String): Flow<List<Flashcard>>
+    fun getFlashcardsForDeck(deckId: String): Flow<List<FlashcardWithStats>>
     suspend fun saveFlashcard(flashcard: Flashcard)
     suspend fun deleteFlashcard(flashcardId: String)
-    suspend fun getFlashcardById(flashcardId: String): Flashcard?
+    suspend fun getFlashcardById(flashcardId: String): FlashcardWithStats?
     suspend fun saveAllFlashcards(flashcards: List<Flashcard>)
     fun getFlashcardStatistics(flashcardId: String): Flow<FlashcardStats?>
-    suspend fun getLeeches(userId: String): List<Flashcard>?
-    suspend fun getReviewPending(userId: String): List<Flashcard>?
+    suspend fun getLeeches(userId: String): List<FlashcardWithStats>?
+    suspend fun getReviewPending(userId: String): List<FlashcardWithStats>?
     suspend fun getDeckName(deckId: String): String?
-    suspend fun getReviewCountForDeck(deckId: String, todayTimestamp: Long): Flow<Int>
+    fun getReviewCountForDeck(deckId: String, todayTimestamp: Long): Flow<Int>
     suspend fun updateFlashcardStatistics(statistics: FlashcardStats)
-    suspend fun getFlashcardsToReview(deckId: String, currentTimestamp: Long): List<Flashcard>
+    suspend fun getFlashcardsToReview(deckId: String, currentTimestamp: Long): List<FlashcardWithStats>
     suspend fun resetStatistics(flashcardId: String)
 }
 
@@ -32,7 +33,7 @@ class FlashcardRepositoryImpl(
     private val flashcardStatsDao: FlashcardStatsDao,
     private val deckDao: DeckDao
 ) : FlashcardRepository {
-    override fun getFlashcardsForDeck(deckId: String): Flow<List<Flashcard>> {
+    override fun getFlashcardsForDeck(deckId: String): Flow<List<FlashcardWithStats>> {
         return flashcardDao.getFlashcardForDeckById(deckId).map { list ->
             list.map { it.toDomain() }
         }
@@ -46,7 +47,7 @@ class FlashcardRepositoryImpl(
         flashcardDao.deleteFlashcardById(flashcardId)
     }
 
-    override suspend fun getFlashcardById(flashcardId: String): Flashcard? {
+    override suspend fun getFlashcardById(flashcardId: String): FlashcardWithStats? {
         return flashcardDao.getFlashcardById(flashcardId)?.toDomain()
     }
 
@@ -58,13 +59,15 @@ class FlashcardRepositoryImpl(
         return flashcardStatsDao.getFlashcardStatsById(flashcardId).map { it?.toDomain() }
     }
 
-    override suspend fun getLeeches(userId: String): List<Flashcard>? {
+    override suspend fun getLeeches(userId: String): List<FlashcardWithStats>? {
+        // TODO:
         // Implementar lógica de busca de leeches baseada nas estatísticas
         // Por agora retornamos vazio ou implementamos se houver query no DAO
         return null
     }
 
-    override suspend fun getReviewPending(userId: String): List<Flashcard>? {
+    override suspend fun getReviewPending(userId: String): List<FlashcardWithStats>? {
+        // TODO:
         // Implementar lógica de cards pendentes
         return null
     }
@@ -73,21 +76,18 @@ class FlashcardRepositoryImpl(
         return deckDao.getDeckById(deckId).first()?.name
     }
 
-    override suspend fun getReviewCountForDeck(deckId: String, todayTimestamp: Long): Flow<Int> {
-        // Exemplo de como calcular a contagem de revisão via estatísticas
-        // Isso requer uma query mais complexa ou processamento do Flow
-        return flashcardDao.getFlashcardForDeckById(deckId).map { cards ->
-            cards.size // Simulação: todos os cards precisam de revisão
-        }
+    override fun getReviewCountForDeck(deckId: String, todayTimestamp: Long): Flow<Int> {
+        return deckDao.getDeckWithStatsById(deckId, todayTimestamp).map { it?.cardsToReview ?: 0 }
     }
 
     override suspend fun updateFlashcardStatistics(statistics: FlashcardStats) {
         flashcardStatsDao.insertFlashcardStats(statistics.toEntity())
     }
 
-    override suspend fun getFlashcardsToReview(deckId: String, currentTimestamp: Long): List<Flashcard> {
-        // Filtrar cards que possuem nextReview <= currentTimestamp
-        return emptyList()
+    override suspend fun getFlashcardsToReview(deckId: String, currentTimestamp: Long): List<FlashcardWithStats> {
+        return flashcardDao.getFlashcardForDeckById(deckId).first().filter { 
+            it.stats?.nextReview == null || it.stats.nextReview <= currentTimestamp
+        }.map { it.toDomain() }
     }
 
     override suspend fun resetStatistics(flashcardId: String) {

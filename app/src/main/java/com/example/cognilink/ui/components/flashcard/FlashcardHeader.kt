@@ -25,8 +25,6 @@ import com.example.cognilink.R
 import com.example.cognilink.ui.components.utils.GradientSurface
 import com.example.cognilink.ui.components.utils.ProgressBar
 import com.example.cognilink.ui.theme.CogniLinkTheme
-import com.example.cognilink.ui.theme.LavenderBlue
-import com.example.cognilink.ui.theme.MutedBlue
 import com.example.cognilink.ui.theme.VividCyan
 import com.example.cognilink.ui.theme.White
 

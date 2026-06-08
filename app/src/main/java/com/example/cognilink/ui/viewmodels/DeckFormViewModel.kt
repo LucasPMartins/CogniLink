@@ -22,14 +22,24 @@ class DeckFormViewModel(
 
     fun initialize(deckId: String?, userId: String) {
         if (_uiState.value.deckId == deckId && _uiState.value.userId == userId) return
+        
+        val targetDeckId = deckId ?: _uiState.value.deckId
+
         _uiState.update { currentState ->
             currentState.copy(
                 userId = userId,
-                deckId = deckId ?: currentState.deckId,
+                deckId = targetDeckId,
                 isEditMode = deckId != null
             )
         }
-        loadDeckData()
+        
+        if (deckId != null) {
+            loadDeckData()
+        } else {
+            // Se for um novo deck, ainda assim precisamos observar os flashcards 
+            // que forem criados para este deckId gerado.
+            loadFlashcards(targetDeckId)
+        }
     }
 
     fun toggleRemoveMode() {
@@ -37,16 +47,17 @@ class DeckFormViewModel(
     }
 
     fun removeFlashcard(flashcardId: String) {
-        _uiState.update { currentState ->
-            currentState.copy(
-                deckFlashcards = currentState.deckFlashcards.filter { it.id != flashcardId },
-                wasEdited = true
-            )
+        viewModelScope.launch {
+            try {
+                flashcardRepository.deleteFlashcard(flashcardId)
+            } catch (e: Exception) {
+                _uiState.update { it.copy(errorMessage = "Erro ao remover flashcard") }
+            }
         }
     }
 
     fun onDeckNameChange(newValue: String) {
-        _uiState.update { it.copy(deckName = newValue, wasEdited = true) }
+        _uiState.update { it.copy(deckName = newValue, wasEdited = true, deckNameError = null) }
     }
 
     fun onDeckDescriptionChange(newValue: String) {
@@ -106,43 +117,71 @@ class DeckFormViewModel(
         _uiState.update { it.copy(deckCategories = it.deckCategories - category, wasEdited = true) }
     }
 
-    fun saveDeck() {
-        val currentState = _uiState.value
-        val userId = currentState.userId ?: return
+    private fun validate(): Boolean {
+        val name = _uiState.value.deckName
+        if (name.isBlank()) {
+            _uiState.update { it.copy(deckNameError = "O nome do baralho é obrigatório") }
+            return false
+        }
+        return true
+    }
 
+    fun saveDeck(): Boolean {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
-            try {
-                // Ao salvar, não precisamos calcular dificuldade e mastery manualmente,
-                // pois o banco de dados fará isso dinamicamente via DeckWithStatsEntity.
-                val deckToSave = Deck(
-                    id = currentState.deckId,
-                    userId = userId,
-                    name = currentState.deckName,
-                    description = currentState.deckDescription,
-                    categories = currentState.deckCategories,
-                    difficulty = DifficultyLevel.EASY, // Placeholder, não será persistido
-                    mastery = 0f, // Placeholder, não será persistido
-                    totalCards = 0,
-                    cardsToReview = 0
-                )
-                deckRepository.saveDeck(deckToSave, userId)
-                if (currentState.deckFlashcards.isNotEmpty()) {
-                    flashcardRepository.saveAllFlashcards(currentState.deckFlashcards.map {
-                        it.copy(
-                            deckId = currentState.deckId
-                        )
-                    })
+            if (saveDeckSuspending()) {
+                _uiState.update { it.copy(isSaved = true) }
+            }
+        }
+        return uiState.value.isSaved
+    }
+
+    suspend fun saveDeckSuspending(): Boolean {
+        if (!validate()) return false
+
+        val currentState = _uiState.value
+        val userId = currentState.userId ?: return false
+
+        _uiState.update { it.copy(isLoading = true) }
+        return try {
+            val deckToSave = Deck(
+                id = currentState.deckId,
+                userId = userId,
+                name = currentState.deckName,
+                description = currentState.deckDescription,
+                categories = currentState.deckCategories,
+                difficulty = DifficultyLevel.EASY,
+                mastery = 0f,
+                totalCards = 0,
+                cardsToReview = 0
+            )
+            
+            deckRepository.saveDeck(deckToSave, userId)
+
+            _uiState.update {
+                it.copy(
+                    isLoading = false, 
+                    errorMessage = null,
+                ) 
+            }
+            true
+        } catch (e: Exception) {
+            _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
+            false
+        }
+    }
+
+    fun discardDeck() {
+        val currentState = _uiState.value
+        // Se o deck foi criado "na surdina" apenas para suportar a FK dos flashcards
+        // e o usuário desistir sem salvar o deck oficialmente, nós o removemos.
+        if (!currentState.isEditMode) {
+            val userId = currentState.userId ?: return
+            viewModelScope.launch {
+                try {
+                    deckRepository.deleteDeck(currentState.deckId, userId)
+                } catch (e: Exception) {
+                    _uiState.update { it.copy(errorMessage = "Erro ao descartar alterações") }
                 }
-                _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        isSaved = true,
-                        errorMessage = null
-                    )
-                }
-            } catch (e: Exception) {
-                _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
             }
         }
     }
@@ -173,7 +212,7 @@ class DeckFormViewModel(
                             deckName = deck?.name ?: "",
                             deckDescription = deck?.description ?: "",
                             deckCategories = deck?.categories ?: emptyList(),
-                            isLoading = false
+                            isLoading = false,
                         )
                     }
                 }
@@ -188,10 +227,15 @@ class DeckFormViewModel(
         viewModelScope.launch {
             try {
                 flashcardRepository.getFlashcardsForDeck(deckId).collect { flashcards ->
-                    _uiState.update { it.copy(deckFlashcards = flashcards) }
+                    _uiState.update { currentState ->
+                        currentState.copy(
+                            deckFlashcards = flashcards,
+                            isLoading = false,
+                        )
+                    }
                 }
             } catch (_: Exception) {
-                _uiState.update { it.copy(errorMessage = "Erro ao carregar flashcards") }
+                _uiState.update { it.copy(isLoading = false, errorMessage = "Erro ao carregar flashcards") }
             }
         }
     }

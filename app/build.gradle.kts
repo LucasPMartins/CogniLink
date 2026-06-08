@@ -1,6 +1,3 @@
-import org.gradle.accessors.dm.LibrariesForLibs
-
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
@@ -9,11 +6,7 @@ plugins {
 
 android {
     namespace = "com.example.cognilink"
-    compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
-    }
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.example.cognilink"

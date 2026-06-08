@@ -32,9 +32,9 @@ import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 val repositoryModule = module {
-    singleOf(::AuthRepositoryImpl) { bind<AuthRepository>() }
-    singleOf(::UserRepositoryImpl) { bind<UserRepository>() }
-    singleOf(::DeckRepositoryImpl) { bind<DeckRepository>() }
+    single<AuthRepository> { AuthRepositoryImpl(get(), get(), get()) }
+    single<UserRepository> { UserRepositoryImpl(get(), get(), get()) }
+    single<DeckRepository> { DeckRepositoryImpl(get(), get()) }
     singleOf(::FlashcardRepositoryImpl) { bind<FlashcardRepository>() }
     singleOf(::TermsRepositoryImpl) { bind<TermsRepository>() }
 }
