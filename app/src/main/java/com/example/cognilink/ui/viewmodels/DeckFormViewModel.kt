@@ -7,6 +7,7 @@ import com.example.cognilink.data.repository.DeckRepository
 import com.example.cognilink.data.repository.FlashcardRepository
 import com.example.cognilink.domain.model.DifficultyLevel
 import com.example.cognilink.ui.states.DeckFormUiState
+import java.util.UUID
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,222 +22,131 @@ class DeckFormViewModel(
     val uiState: StateFlow<DeckFormUiState> = _uiState.asStateFlow()
 
     fun initialize(deckId: String?, userId: String) {
-        if (_uiState.value.deckId == deckId && _uiState.value.userId == userId) return
-        
-        val targetDeckId = deckId ?: _uiState.value.deckId
+        // Se já inicializamos este ViewModel (seja rascunho ou edição), não fazemos nada.
+        if (_uiState.value.deckId.isNotEmpty()) return
 
-        _uiState.update { currentState ->
-            currentState.copy(
+        val targetId = deckId ?: UUID.randomUUID().toString()
+        
+        _uiState.update { 
+            it.copy(
                 userId = userId,
-                deckId = targetDeckId,
+                deckId = targetId,
                 isEditMode = deckId != null
             )
         }
-        
+
         if (deckId != null) {
             loadDeckData()
         } else {
-            // Se for um novo deck, ainda assim precisamos observar os flashcards 
-            // que forem criados para este deckId gerado.
-            loadFlashcards(targetDeckId)
+            // Cria o rascunho imediatamente para permitir adicionar flashcards
+            saveDraftDeck(targetId, userId)
         }
+        
+        // Começa a observar os flashcards deste ID para sempre
+        observeFlashcards(targetId)
     }
 
-    fun toggleRemoveMode() {
-        _uiState.update { it.copy(isRemoveMode = !it.isRemoveMode) }
-    }
-
-    fun removeFlashcard(flashcardId: String) {
+    private fun saveDraftDeck(id: String, userId: String) {
         viewModelScope.launch {
             try {
-                flashcardRepository.deleteFlashcard(flashcardId)
-            } catch (e: Exception) {
-                _uiState.update { it.copy(errorMessage = "Erro ao remover flashcard") }
-            }
-        }
-    }
-
-    fun onDeckNameChange(newValue: String) {
-        _uiState.update { it.copy(deckName = newValue, wasEdited = true, deckNameError = null) }
-    }
-
-    fun onDeckDescriptionChange(newValue: String) {
-        _uiState.update { it.copy(deckDescription = newValue, wasEdited = true) }
-    }
-
-    fun onCategoryTextChange(newText: String) {
-        _uiState.update { it.copy(categoryText = newText, wasEdited = true) }
-    }
-
-    fun openCategoryDialog(category: String? = null) {
-        _uiState.update {
-            it.copy(
-                categoryBeingEdited = category,
-                categoryText = category ?: "",
-                showCategoryDialog = true
-            )
-        }
-    }
-
-    fun closeCategoryDialog() {
-        _uiState.update {
-            it.copy(
-                showCategoryDialog = false,
-                categoryText = "",
-                categoryBeingEdited = null
-            )
-        }
-    }
-
-    fun handleCategoryConfirmation() {
-        val currentState = _uiState.value
-        if (currentState.categoryText.isNotBlank()) {
-            val oldName = currentState.categoryBeingEdited
-            val newCategories = if (oldName == null) {
-                if (!currentState.deckCategories.contains(currentState.categoryText)) {
-                    currentState.deckCategories + currentState.categoryText
-                } else {
-                    currentState.deckCategories
-                }
-            } else {
-                currentState.deckCategories.map { if (it == oldName) currentState.categoryText else it }
-            }
-            _uiState.update {
-                it.copy(
-                    deckCategories = newCategories,
-                    showCategoryDialog = false,
-                    categoryText = "",
-                    categoryBeingEdited = null,
-                    wasEdited = true
+                val draft = Deck(
+                    id = id, userId = userId, name = "", description = "",
+                    categories = emptyList(), difficulty = DifficultyLevel.EASY,
+                    mastery = 0f, totalCards = 0, cardsToReview = 0
                 )
+                deckRepository.saveDeck(draft, userId)
+            } catch (e: Exception) {
+                _uiState.update { it.copy(errorMessage = "Erro ao preparar rascunho") }
             }
         }
     }
 
-    fun removeCategory(category: String) {
-        _uiState.update { it.copy(deckCategories = it.deckCategories - category, wasEdited = true) }
-    }
-
-    private fun validate(): Boolean {
-        val name = _uiState.value.deckName
-        if (name.isBlank()) {
-            _uiState.update { it.copy(deckNameError = "O nome do baralho é obrigatório") }
-            return false
-        }
-        return true
-    }
-
-    fun saveDeck(): Boolean {
+    private fun loadDeckData() {
+        val state = _uiState.value
         viewModelScope.launch {
-            if (saveDeckSuspending()) {
-                _uiState.update { it.copy(isSaved = true) }
+            deckRepository.getDeckById(state.deckId, state.userId!!).collect { deck ->
+                deck?.let { d ->
+                    _uiState.update { 
+                        it.copy(
+                            deckName = it.deckName.ifEmpty { d.name },
+                            deckDescription = it.deckDescription.ifEmpty { d.description },
+                            deckCategories = it.deckCategories.ifEmpty { d.categories }
+                        )
+                    }
+                }
             }
         }
-        return uiState.value.isSaved
     }
 
-    suspend fun saveDeckSuspending(): Boolean {
-        if (!validate()) return false
-
-        val currentState = _uiState.value
-        val userId = currentState.userId ?: return false
-
-        _uiState.update { it.copy(isLoading = true) }
-        return try {
-            val deckToSave = Deck(
-                id = currentState.deckId,
-                userId = userId,
-                name = currentState.deckName,
-                description = currentState.deckDescription,
-                categories = currentState.deckCategories,
-                difficulty = DifficultyLevel.EASY,
-                mastery = 0f,
-                totalCards = 0,
-                cardsToReview = 0
-            )
-            
-            deckRepository.saveDeck(deckToSave, userId)
-
-            _uiState.update {
-                it.copy(
-                    isLoading = false, 
-                    errorMessage = null,
-                ) 
+    private fun observeFlashcards(deckId: String) {
+        viewModelScope.launch {
+            flashcardRepository.getFlashcardsForDeck(deckId).collect { list ->
+                _uiState.update { it.copy(deckFlashcards = list) }
             }
-            true
-        } catch (e: Exception) {
-            _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
-            false
+        }
+    }
+
+    fun saveDeck() {
+        if (!validate()) return
+        val state = _uiState.value
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
+            try {
+                val deck = Deck(
+                    id = state.deckId,
+                    userId = state.userId!!,
+                    name = state.deckName,
+                    description = state.deckDescription,
+                    categories = state.deckCategories,
+                    difficulty = DifficultyLevel.EASY,
+                    mastery = 0f,
+                    totalCards = state.deckFlashcards.size,
+                    cardsToReview = state.deckFlashcards.size // Simplificado
+                )
+                deckRepository.saveDeck(deck, state.userId)
+                _uiState.update { it.copy(isSaved = true, isLoading = false, isEditMode = true) }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(isLoading = false, errorMessage = "Erro ao salvar") }
+            }
         }
     }
 
     fun discardDeck() {
-        val currentState = _uiState.value
-        // Se o deck foi criado "na surdina" apenas para suportar a FK dos flashcards
-        // e o usuário desistir sem salvar o deck oficialmente, nós o removemos.
-        if (!currentState.isEditMode) {
-            val userId = currentState.userId ?: return
+        val state = _uiState.value
+        // Só deleta se for um novo baralho que nunca foi salvo oficialmente
+        if (!state.isEditMode && !state.isSaved) {
             viewModelScope.launch {
-                try {
-                    deckRepository.deleteDeck(currentState.deckId, userId)
-                } catch (e: Exception) {
-                    _uiState.update { it.copy(errorMessage = "Erro ao descartar alterações") }
-                }
+                deckRepository.deleteDeck(state.deckId, state.userId!!)
             }
         }
     }
 
-    fun clearEvents() {
-        _uiState.update { it.copy(isSaved = false, errorMessage = null) }
+    // Funções de UI simples
+    fun onDeckNameChange(n: String) = _uiState.update { it.copy(deckName = n, wasEdited = true, deckNameError = null) }
+    fun onDeckDescriptionChange(d: String) = _uiState.update { it.copy(deckDescription = d, wasEdited = true) }
+    fun toggleRemoveMode() = _uiState.update { it.copy(isRemoveMode = !it.isRemoveMode) }
+    fun toggleChangeDialog() = _uiState.update { it.copy(showChangeDialog = !it.showChangeDialog) }
+    fun toggleAddFlashcardDialog() = _uiState.update { it.copy(showAddFlashcardDialog = !it.showAddFlashcardDialog) }
+    fun removeFlashcard(id: String) = viewModelScope.launch { flashcardRepository.deleteFlashcard(id) }
+    
+    // Categorias
+    fun openCategoryDialog(c: String? = null) = _uiState.update { it.copy(categoryBeingEdited = c, categoryText = c ?: "", showCategoryDialog = true) }
+    fun closeCategoryDialog() = _uiState.update { it.copy(showCategoryDialog = false, categoryText = "") }
+    fun onCategoryTextChange(t: String) = _uiState.update { it.copy(categoryText = t) }
+    fun handleCategoryConfirmation() {
+        val state = _uiState.value
+        if (state.categoryText.isBlank()) return
+        val newCats = if (state.categoryBeingEdited == null) state.deckCategories + state.categoryText
+                      else state.deckCategories.map { if (it == state.categoryBeingEdited) state.categoryText else it }
+        _uiState.update { it.copy(deckCategories = newCats.distinct(), showCategoryDialog = false, wasEdited = true) }
     }
+    fun removeCategory(c: String) = _uiState.update { it.copy(deckCategories = it.deckCategories - c, wasEdited = true) }
 
-    fun toggleChangeDialog() {
-        _uiState.update { it.copy(showChangeDialog = !it.showChangeDialog) }
-    }
-
-    fun toggleAddFlashcardDialog() {
-        _uiState.update { it.copy(showAddFlashcardDialog = !it.showAddFlashcardDialog) }
-    }
-
-    fun loadDeckData() {
-        val currentState = _uiState.value
-        val deckId = currentState.deckId
-        val userId = currentState.userId ?: return
-
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
-            try {
-                deckRepository.getDeckById(deckId, userId).collect { deck ->
-                    _uiState.update {
-                        it.copy(
-                            deckName = deck?.name ?: "",
-                            deckDescription = deck?.description ?: "",
-                            deckCategories = deck?.categories ?: emptyList(),
-                            isLoading = false,
-                        )
-                    }
-                }
-            } catch (e: Exception) {
-                _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
-            }
+    private fun validate(): Boolean {
+        if (_uiState.value.deckName.isBlank()) {
+            _uiState.update { it.copy(deckNameError = "O nome é obrigatório") }
+            return false
         }
-        loadFlashcards(deckId)
-    }
-
-    private fun loadFlashcards(deckId: String) {
-        viewModelScope.launch {
-            try {
-                flashcardRepository.getFlashcardsForDeck(deckId).collect { flashcards ->
-                    _uiState.update { currentState ->
-                        currentState.copy(
-                            deckFlashcards = flashcards,
-                            isLoading = false,
-                        )
-                    }
-                }
-            } catch (_: Exception) {
-                _uiState.update { it.copy(isLoading = false, errorMessage = "Erro ao carregar flashcards") }
-            }
-        }
+        return true
     }
 }

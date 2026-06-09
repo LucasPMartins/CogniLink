@@ -38,7 +38,7 @@ class DeckRepositoryImpl(
 
     override suspend fun saveDeck(deck: Deck, userId: String) {
         // Garante que o userId está correto antes de salvar/atualizar
-        deckDao.insertDeck(deck.toEntity().copy(userId = userId))
+        deckDao.upsertDeck(deck.toEntity().copy(userId = userId))
     }
 
     override suspend fun deleteDeck(deckId: String, userId: String) {

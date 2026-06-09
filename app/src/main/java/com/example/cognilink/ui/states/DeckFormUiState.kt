@@ -5,7 +5,7 @@ import java.util.UUID
 
 data class DeckFormUiState(
     val userId: String? = null,
-    val deckId: String = UUID.randomUUID().toString(),
+    val deckId: String = "",
     val deckName: String = "",
     val deckDescription: String = "",
     val deckCategories: List<String> = emptyList(),

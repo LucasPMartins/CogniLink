@@ -55,8 +55,19 @@ interface DeckDao {
     @Query("SELECT * FROM decks WHERE id = :id")
     fun getDeckById(id: String): Flow<DeckEntity?>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertDeck(deck: DeckEntity)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertDeck(deck: DeckEntity): Long
+
+    @androidx.room.Update
+    suspend fun updateDeck(deck: DeckEntity)
+
+    @androidx.room.Transaction
+    suspend fun upsertDeck(deck: DeckEntity) {
+        val id = insertDeck(deck)
+        if (id == -1L) {
+            updateDeck(deck)
+        }
+    }
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveAllDecks(decks: List<DeckEntity>)

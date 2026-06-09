@@ -8,6 +8,7 @@ import com.example.cognilink.data.repository.FlashcardRepository
 import com.example.cognilink.domain.model.DifficultyLevel
 import com.example.cognilink.domain.model.FlashcardType
 import com.example.cognilink.ui.states.FlashcardFormUiState
+import java.util.UUID
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,16 +23,30 @@ class FlashcardFormViewModel(
     val uiState: StateFlow<FlashcardFormUiState> = _uiState.asStateFlow()
 
     fun initialize(deckId: String, flashcardId: String? = null) {
-        println("DeckId: $deckId")
-        if (_uiState.value.deckId == deckId && _uiState.value.flashcardId == flashcardId) return
+        if (_uiState.value.deckId == deckId && _uiState.value.flashcardId == flashcardId && _uiState.value.isInitialized) return
+        
         _uiState.update { currentState ->
-            currentState.copy(
-                deckId = deckId,
-                flashcardId = flashcardId ?: currentState.flashcardId,
-                isEditMode = flashcardId != null
-            )
+            if (flashcardId == null) {
+                // Ao criar um novo, garantimos um novo ID e estado limpo
+                FlashcardFormUiState(
+                    deckId = deckId,
+                    flashcardId = UUID.randomUUID().toString(),
+                    isEditMode = false,
+                    isInitialized = true
+                )
+            } else {
+                currentState.copy(
+                    deckId = deckId,
+                    flashcardId = flashcardId,
+                    isEditMode = true,
+                    isInitialized = false
+                )
+            }
         }
-        loadFlashcard()
+        
+        if (flashcardId != null) {
+            loadFlashcard()
+        }
     }
 
     private fun loadFlashcard() {

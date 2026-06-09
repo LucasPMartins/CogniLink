@@ -40,7 +40,7 @@ class FlashcardRepositoryImpl(
     }
 
     override suspend fun saveFlashcard(flashcard: Flashcard) {
-        flashcardDao.insertFlashcard(flashcard.toEntity())
+        flashcardDao.upsertFlashcard(flashcard.toEntity())
     }
 
     override suspend fun deleteFlashcard(flashcardId: String) {

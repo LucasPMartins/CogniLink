@@ -22,8 +22,19 @@ interface FlashcardDao {
     @Query("SELECT * FROM flashcards WHERE deckId = :id")
     fun getFlashcardForDeckById(id: String): Flow<List<FlashcardWithStatsEntity>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertFlashcard(flashcard: FlashcardEntity)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertFlashcard(flashcard: FlashcardEntity): Long
+
+    @androidx.room.Update
+    suspend fun updateFlashcard(flashcard: FlashcardEntity)
+
+    @androidx.room.Transaction
+    suspend fun upsertFlashcard(flashcard: FlashcardEntity) {
+        val id = insertFlashcard(flashcard)
+        if (id == -1L) {
+            updateFlashcard(flashcard)
+        }
+    }
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveAllFlashcards(flashcards: List<FlashcardEntity>)

@@ -126,21 +126,18 @@ fun DeckEditorScreen(
             }
         },
         onCreateFlashcardManually = {
+            viewModel.toggleAddFlashcardDialog()
             scope.launch {
-                if (viewModel.saveDeckSuspending()) {
-                    viewModel.toggleAddFlashcardDialog()
-                    delay(100)
-                    onNavigateToCreateFlashcard(uiState.deckId)
-                }
+                delay(100)
+                onNavigateToCreateFlashcard(uiState.deckId)
             }
+
         },
         onCreateFlashcardWithIA = {
+            viewModel.toggleAddFlashcardDialog()
             scope.launch {
-                if (viewModel.saveDeckSuspending()) {
-                    viewModel.toggleAddFlashcardDialog()
-                    delay(100)
-                    onNavigateToCreateWithIA(uiState.deckId)
-                }
+                delay(100)
+                onNavigateToCreateWithIA(uiState.deckId)
             }
         },
         onSave = {
