@@ -97,7 +97,7 @@ class DeckFormViewModel(
                     userId = state.userId!!,
                     name = state.deckName,
                     description = state.deckDescription,
-                    categories = state.deckCategories,
+                    categories = state.deckCategories.filter { it.isNotBlank() },
                     difficulty = DifficultyLevel.EASY,
                     mastery = 0f,
                     totalCards = state.deckFlashcards.size,
@@ -126,6 +126,8 @@ class DeckFormViewModel(
     fun onDeckDescriptionChange(d: String) = _uiState.update { it.copy(deckDescription = d, wasEdited = true) }
     fun toggleRemoveMode() = _uiState.update { it.copy(isRemoveMode = !it.isRemoveMode) }
     fun toggleChangeDialog() = _uiState.update { it.copy(showChangeDialog = !it.showChangeDialog) }
+
+    fun clearError() = _uiState.update { it.copy(errorMessage = null) }
     fun toggleAddFlashcardDialog() = _uiState.update { it.copy(showAddFlashcardDialog = !it.showAddFlashcardDialog) }
     fun removeFlashcard(id: String) = viewModelScope.launch { flashcardRepository.deleteFlashcard(id) }
     

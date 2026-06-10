@@ -12,16 +12,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -32,10 +29,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.cognilink.R
 import com.example.cognilink.data.model.Answer
@@ -47,6 +42,7 @@ import com.example.cognilink.ui.components.flashcard.HintEditor
 import com.example.cognilink.ui.components.flashcard.TrueFalseToggle
 import com.example.cognilink.ui.components.flashcard.TypeSelector
 import com.example.cognilink.ui.components.input.CustomTextField
+import com.example.cognilink.ui.components.utils.dialogs.BasicCustomAlertDialog
 import com.example.cognilink.ui.components.utils.NavigationHeader
 import com.example.cognilink.ui.components.utils.buttons.DeleteButton
 import com.example.cognilink.ui.components.utils.buttons.SimpleGradientButton
@@ -185,90 +181,24 @@ fun FlashcardEditorContent(
     val scrollState = rememberScrollState()
 
     if (showDeleteDialog) {
-        BasicAlertDialog(
+        BasicCustomAlertDialog(
+            dialogTitle = "Tem certeza disso?",
+            dialogText = "Essa ação não poderá ser desfeita!",
+            confirmationButtonText = "Sim",
+            dismissButtonText = "Cancelar",
+            onConfirmation = onConfirmDelete,
             onDismissRequest = onDismissDeleteDialog,
-        ) {
-            Surface(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                shape = RoundedCornerShape(28.dp),
-                color = Color.White
-            ) {
-                Column(
-                    modifier = Modifier.padding(24.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    Text(
-                        text = "Tem certeza disso?",
-                        fontWeight = FontWeight.Bold,
-                        color = DarkNavyBlue,
-                        fontSize = 20.sp,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    Text(
-                        text = "Essa ação não poderá ser desfeita!",
-                        color = DarkGray,
-                        textAlign = TextAlign.Center
-                    )
-                    SimpleGradientButton(
-                        text = "Sim",
-                        height = 56.dp,
-                        onClickButton = onConfirmDelete
-                    )
-                    SimpleGradientButton(
-                        text = "Cancelar",
-                        height = 56.dp,
-                        onClickButton = onDismissDeleteDialog
-                    )
-                }
-            }
-        }
+        )
     }
     if (showChangeDialog) {
-        BasicAlertDialog(
+        BasicCustomAlertDialog(
             onDismissRequest = onDismissChangeDialog,
-        ) {
-            Surface(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                shape = RoundedCornerShape(28.dp),
-                color = Color.White
-            ) {
-                Column(
-                    modifier = Modifier.padding(24.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    Text(
-                        text = "Alterações não salvas",
-                        fontWeight = FontWeight.Bold,
-                        color = DarkNavyBlue,
-                        fontSize = 20.sp,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    Text(
-                        text = "Você possui alterações não salvas. Deseja realmente sair e descartá-las?",
-                        color = DarkGray,
-                        textAlign = TextAlign.Center
-                    )
-                    SimpleGradientButton(
-                        text = "Sair e descartar",
-                        height = 56.dp,
-                        onClickButton = onConfirmDiscard
-                    )
-                    SimpleGradientButton(
-                        text = "Continuar editando",
-                        height = 56.dp,
-                        onClickButton = {
-                            onDismissChangeDialog()
-                        }
-                    )
-                }
-            }
-        }
+            onConfirmation = onConfirmDiscard,
+            dialogTitle = "Alterações não salvas",
+            dialogText = "Você possui alterações não salvas. Deseja realmente sair e descartá-las?",
+            confirmationButtonText = "Sair e descartar",
+            dismissButtonText = "Continuar editando",
+        )
     }
 
     Scaffold(

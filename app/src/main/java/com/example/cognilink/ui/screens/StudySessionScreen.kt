@@ -46,16 +46,20 @@ import com.example.cognilink.data.model.Answer
 import com.example.cognilink.data.model.Flashcard
 import com.example.cognilink.data.preview.PreviewDataProvider
 import com.example.cognilink.domain.model.FlashcardType
+import com.example.cognilink.domain.model.ValidationType
 import com.example.cognilink.ui.components.flashcard.AnswerSelector
 import com.example.cognilink.ui.components.flashcard.FlashcardHeader
 import com.example.cognilink.ui.components.flashcard.HintReveal
 import com.example.cognilink.ui.components.flashcard.TrueFalseToggle
 import com.example.cognilink.ui.components.input.CustomTextField
 import com.example.cognilink.ui.components.utils.buttons.SimpleGradientButton
+import com.example.cognilink.ui.components.utils.dialogs.BasicCustomAlertDialog
 import com.example.cognilink.ui.states.AnswerVisualState
 import com.example.cognilink.ui.theme.CogniLinkTheme
 import com.example.cognilink.ui.theme.DarkGray
 import com.example.cognilink.ui.theme.DarkNavyBlue
+import com.example.cognilink.ui.theme.DarkYellow
+import com.example.cognilink.ui.theme.MutedBlue
 import com.example.cognilink.ui.theme.OffWhite
 import com.example.cognilink.ui.theme.VeryLightGray
 import com.example.cognilink.ui.theme.White
@@ -98,6 +102,8 @@ fun StudySessionScreen(
             isSessionInsightDialogOpen = uiState.isSessionInsightDialogOpen,
             isLastFlashcard = uiState.isLastFlashcard,
             elapsedTime = viewModel.formatSeconds(uiState.secondsElapsed),
+            validationType = uiState.validationType,
+            basicFeedback = uiState.basicFeedback,
             sequenceHits = uiState.sequenceHits,
             onDismissSessionInsight = {
                 viewModel.toggleSessionInsightDialog()
@@ -137,6 +143,8 @@ fun StudySessionContent(
     isSessionInsightDialogOpen: Boolean = false,
     isLastFlashcard: Boolean = false,
     elapsedTime: String,
+    validationType: ValidationType? = null,
+    basicFeedback: String? = null,
     sequenceHits: Int = 0,
     onDismissSessionInsight: () -> Unit = {},
     onCloseClick: () -> Unit = {},
@@ -147,6 +155,54 @@ fun StudySessionContent(
 ) {
 
     val scrollState = rememberScrollState()
+
+    if (isCloseDialogOpen) {
+        BasicCustomAlertDialog(
+            onDismissRequest = onDismissCloseDialog,
+            onConfirmation = onAcceptCloseDialog,
+            dialogTitle = "Tem certeza disso?",
+            dialogText = "O progresso não será salvo! Deseja realmente sair?",
+            confirmationButtonText = "Sair",
+            dismissButtonText = "Cancelar",
+        )
+    }
+
+    if (isSessionInsightDialogOpen) {
+        BasicAlertDialog(
+            onDismissRequest = onDismissSessionInsight,
+        ) {
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                shape = RoundedCornerShape(28.dp),
+                color = Color.White
+            ) {
+                Column(
+                    modifier = Modifier.padding(24.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "Sessão Finalizada!",
+                        fontWeight = FontWeight.Bold,
+                        color = DarkNavyBlue,
+                        fontSize = 24.sp,
+                        textAlign = TextAlign.Center
+                    )
+                    Text(
+                        text = "Você completou todos os flashcards desta sessão.",
+                        color = DarkGray,
+                        textAlign = TextAlign.Center
+                    )
+                    SimpleGradientButton(
+                        text = "Voltar ao Início",
+                        onClickButton = onDismissSessionInsight
+                    )
+                }
+            }
+        }
+    }
 
     Scaffold(
         modifier = modifier
@@ -190,84 +246,6 @@ fun StudySessionContent(
                 .padding(24.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            if (isCloseDialogOpen) {
-                BasicAlertDialog(
-                    onDismissRequest = onDismissCloseDialog,
-                ) {
-                    Surface(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        shape = RoundedCornerShape(28.dp),
-                        color = Color.White
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(24.dp),
-                            verticalArrangement = Arrangement.spacedBy(16.dp)
-                        ) {
-                            Text(
-                                text = "Tem certeza disso?",
-                                fontWeight = FontWeight.Bold,
-                                color = DarkNavyBlue,
-                                fontSize = 20.sp,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                            Text(
-                                text = "O progresso não será salvo!",
-                                color = DarkGray,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                            SimpleGradientButton(
-                                text = "Sim",
-                                height = 56.dp,
-                                onClickButton = onAcceptCloseDialog
-                            )
-                            SimpleGradientButton(
-                                text = "Cancelar",
-                                height = 56.dp,
-                                onClickButton = onDismissCloseDialog
-                            )
-                        }
-                    }
-                }
-            } else if (isSessionInsightDialogOpen) {
-                BasicAlertDialog(
-                    onDismissRequest = onDismissSessionInsight,
-                ) {
-                    Surface(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        shape = RoundedCornerShape(28.dp),
-                        color = Color.White
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(24.dp),
-                            verticalArrangement = Arrangement.spacedBy(16.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(
-                                text = "Sessão Finalizada!",
-                                fontWeight = FontWeight.Bold,
-                                color = DarkNavyBlue,
-                                fontSize = 24.sp,
-                                textAlign = TextAlign.Center
-                            )
-                            Text(
-                                text = "Você completou todos os flashcards desta sessão.",
-                                color = DarkGray,
-                                textAlign = TextAlign.Center
-                            )
-                            SimpleGradientButton(
-                                text = "Voltar ao Início",
-                                onClickButton = onDismissSessionInsight
-                            )
-                        }
-                    }
-                }
-            }
             Row(
                 verticalAlignment = CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -347,14 +325,71 @@ fun StudySessionContent(
 
                     when (targetFlashcard.cardType) {
                         FlashcardType.BASIC -> {
+
                             CustomTextField(
                                 inputValue = selectedAnswers.values.firstOrNull() ?: "",
                                 onInputValueChange = { newAnswer ->
                                     onSelectAnswer(Answer("", false), newAnswer)
                                 },
                                 placeholder = "Sua resposta",
-                                minLines = 3
+                                minLines = 3,
+                                enabled = !isQuestionVerified
                             )
+
+                            if (isQuestionVerified) {
+
+                                Surface(
+                                    color = White,
+                                    shape = RoundedCornerShape(32.dp),
+                                    shadowElevation = 2.dp,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Column(
+                                        modifier = Modifier.padding(16.dp),
+                                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                                    ) {
+                                        Text(
+                                            text = "GABARITO",
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 12.sp,
+                                            color = DarkGray,
+                                            lineHeight = 8.sp
+                                        )
+                                        Text(
+                                            text = flashcard.answerOptions.firstOrNull()?.answer
+                                                ?: "",
+                                            color = DarkNavyBlue,
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 14.sp,
+                                            lineHeight = 16.sp
+                                        )
+                                        Surface(
+                                            color = MutedBlue,
+                                            shape = RoundedCornerShape(12.dp),
+                                            modifier = Modifier.fillMaxWidth()
+                                        ) {
+                                            // Exibe o Feedback Inteligente (LLM ou Fallback)
+                                            if (validationType == ValidationType.FEEDBACK) {
+                                                Text(
+                                                    text = basicFeedback ?: "",
+                                                    modifier = Modifier.padding(12.dp),
+                                                    color = DarkGray,
+                                                    fontSize = 14.sp,
+                                                )
+                                            } else if (validationType == ValidationType.FALLBACK) {
+                                                Text(
+                                                    text = "Parece que sua resposta está incompleta. Compare com o gabarito acima.",
+                                                    color = DarkGray,
+                                                    fontSize = 14.sp,
+                                                    modifier = Modifier.padding(12.dp),
+                                                    fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
+                                                )
+                                            }
+                                        }
+                                    }
+
+                                }
+                            }
                         }
 
                         FlashcardType.TRUE_OR_FALSE -> {
@@ -448,8 +483,10 @@ private fun StudySessionContentPreview() {
             totalFlashcards = 0,
             selectedAnswers = emptyMap(),
             isQuestionAnswered = false,
-            isQuestionVerified = false,
+            isQuestionVerified = true,
             isCloseDialogOpen = false,
+            validationType = ValidationType.FEEDBACK,
+            basicFeedback = "Basic feedback",
             elapsedTime = "00:00",
         )
     }

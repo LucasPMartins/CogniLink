@@ -3,6 +3,7 @@ package com.example.cognilink.ui.states
 import com.example.cognilink.data.model.Answer
 import com.example.cognilink.domain.model.DifficultyLevel
 import com.example.cognilink.domain.model.FlashcardType
+import com.example.cognilink.domain.model.ValidationType
 import java.util.UUID
 
 data class FlashcardFormUiState(
@@ -25,5 +26,5 @@ data class FlashcardFormUiState(
     val wasEdited: Boolean = false,
     val isMenuExpanded: Boolean = false,
     val questionTextError: String? = null,
-    val answersError: String? = null
+    val answersError: String? = null,
 )

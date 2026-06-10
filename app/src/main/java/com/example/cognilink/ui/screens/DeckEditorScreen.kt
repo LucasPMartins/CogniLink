@@ -14,12 +14,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -32,10 +30,8 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.cognilink.R
 import com.example.cognilink.data.model.FlashcardWithStats
@@ -43,11 +39,13 @@ import com.example.cognilink.data.preview.PreviewDataProvider
 import com.example.cognilink.ui.components.deck.EditDeckContent
 import com.example.cognilink.ui.components.deck.FlashcardItem
 import com.example.cognilink.ui.components.input.CustomTextField
+import com.example.cognilink.ui.components.utils.dialogs.BasicCustomAlertDialog
 import com.example.cognilink.ui.components.utils.EmptyContent
 import com.example.cognilink.ui.components.utils.NavigationHeader
 import com.example.cognilink.ui.components.utils.buttons.DeleteButton
 import com.example.cognilink.ui.components.utils.buttons.NeonActionButton
 import com.example.cognilink.ui.components.utils.buttons.SimpleGradientButton
+import com.example.cognilink.ui.components.utils.dialogs.BasicCustomDialog
 import com.example.cognilink.ui.theme.CogniLinkTheme
 import com.example.cognilink.ui.theme.DarkGray
 import com.example.cognilink.ui.theme.DarkNavyBlue
@@ -223,90 +221,37 @@ fun DeckEditorContent(
     }
 
     if (showAddFlashcardDialog) {
-        BasicAlertDialog(
+        BasicCustomDialog(
             onDismissRequest = onDismissAddFlashcardDialog,
-        ) {
-            Surface(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                shape = RoundedCornerShape(28.dp),
-                color = Color.White
-            ) {
-                Column(
-                    modifier = Modifier.padding(24.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    Text(
-                        text = "Como deseja criar?",
-                        fontWeight = FontWeight.Bold,
-                        color = DarkNavyBlue,
-                        fontSize = 20.sp,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    SimpleGradientButton(
-                        text = "Criar manualmente",
-                        height = 56.dp,
-                        onClickButton = {
-                            onCreateFlashcardManually()
-                        }
-                    )
-                    SimpleGradientButton(
-                        text = "Criar com IA",
-                        height = 56.dp,
-                        onClickButton = {
-                            onCreateFlashcardWithIA()
-                        }
-                    )
-                }
+            dialogTitle = "Como deseja criar?",
+            buttons = {
+                SimpleGradientButton(
+                    text = "Criar manualmente",
+                    height = 56.dp,
+                    onClickButton = {
+                        onCreateFlashcardManually()
+                    }
+                )
+                SimpleGradientButton(
+                    text = "Criar com IA",
+                    height = 56.dp,
+                    onClickButton = {
+                        onCreateFlashcardWithIA()
+                    }
+                )
             }
-        }
+        )
     }
 
     if (showChangeDialog) {
-        BasicAlertDialog(
+        BasicCustomAlertDialog(
             onDismissRequest = onDismissChangeDialog,
-        ) {
-            Surface(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                shape = RoundedCornerShape(28.dp),
-                color = Color.White
-            ) {
-                Column(
-                    modifier = Modifier.padding(24.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    Text(
-                        text = "Alterações não salvas",
-                        fontWeight = FontWeight.Bold,
-                        color = DarkNavyBlue,
-                        fontSize = 20.sp,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    Text(
-                        text = "Você possui alterações não salvas. Deseja realmente sair e descartá-las?",
-                        color = DarkGray,
-                        textAlign = TextAlign.Center
-                    )
-                    SimpleGradientButton(
-                        text = "Sair e descartar",
-                        height = 56.dp,
-                        onClickButton = onConfirmDiscard
-                    )
-                    SimpleGradientButton(
-                        text = "Continuar editando",
-                        height = 56.dp,
-                        onClickButton = {
-                            onDismissChangeDialog()
-                        }
-                    )
-                }
-            }
-        }
+            onConfirmation = onConfirmDiscard,
+            dialogTitle = "Alterações não salvas",
+            dialogText = "Você possui alterações não salvas. Deseja realmente sair e descartá-las?",
+            confirmationButtonText = "Sair e descartar",
+            dismissButtonText = "Continuar editando",
+        )
     }
 
     Scaffold(

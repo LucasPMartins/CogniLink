@@ -2,8 +2,9 @@ package com.example.cognilink.ui.states
 
 import com.example.cognilink.data.model.Answer
 import com.example.cognilink.data.model.Flashcard
+import com.example.cognilink.domain.model.ValidationType
 
-data class FlashcardPlayerUiState(
+data class StudySessionUiState(
     val studyMode: String? = null,
     val contextId: String? = null,
     val sessionFlashcards: List<Flashcard> = emptyList(),
@@ -16,6 +17,9 @@ data class FlashcardPlayerUiState(
     val sessionTitle: String = "",
     val secondsElapsed: Long = 0L,
     val sequenceHits: Int = 0,
+    val basicFeedback: String? = null,
+    val isValidating: Boolean = false,
+    val validationType: ValidationType = ValidationType.NONE, // NONE, FEEDBACK, FALLBACK
 ) {
     val isQuestionAnswered: Boolean = selectedAnswers.isNotEmpty()
     val currentFlashcard: Flashcard? = sessionFlashcards.getOrNull(currentFlashcardIndex)
