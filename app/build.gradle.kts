@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.cognilink"
+    namespace = "com.lucasdpm.cognilink"
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "com.example.cognilink"
+        applicationId = "com.lucasdpm.cognilink"
         minSdk = 26
         targetSdk = 37
         versionCode = 1
@@ -38,9 +38,6 @@ android {
         compose = true
     }
 
-    androidResources {
-        noCompress += listOf("tflite")
-    }
     packaging {
         jniLibs {
             pickFirsts += listOf()
