@@ -11,11 +11,14 @@ android {
     defaultConfig {
         applicationId = "com.example.cognilink"
         minSdk = 26
-        targetSdk = 36
+        targetSdk = 37
         versionCode = 1
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        ndk {
+            abiFilters += listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
+        }
     }
 
     buildTypes {
@@ -33,6 +36,17 @@ android {
     }
     buildFeatures {
         compose = true
+    }
+
+    androidResources {
+        noCompress += listOf("tflite")
+    }
+    packaging {
+        jniLibs {
+            pickFirsts += listOf(
+                "**/libmediapipe_tasks_text_jni.so"
+            )
+        }
     }
 }
 
@@ -59,6 +73,16 @@ dependencies {
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.material3)
     implementation(libs.gson)
+
+    // AI / Machine Learning
+    implementation(libs.mediapipe.tasks.text)
+    implementation(libs.mediapipe.tasks.core)
+
+    // Ktor
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.android)
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.serialization.kotlinx.json)
 
     testImplementation(libs.junit)
 

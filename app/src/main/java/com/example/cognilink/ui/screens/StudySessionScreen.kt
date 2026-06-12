@@ -52,15 +52,16 @@ import com.example.cognilink.ui.components.flashcard.FlashcardHeader
 import com.example.cognilink.ui.components.flashcard.HintReveal
 import com.example.cognilink.ui.components.flashcard.TrueFalseToggle
 import com.example.cognilink.ui.components.input.CustomTextField
+import com.example.cognilink.ui.components.utils.GradientSurface
 import com.example.cognilink.ui.components.utils.buttons.SimpleGradientButton
 import com.example.cognilink.ui.components.utils.dialogs.BasicCustomAlertDialog
 import com.example.cognilink.ui.states.AnswerVisualState
 import com.example.cognilink.ui.theme.CogniLinkTheme
 import com.example.cognilink.ui.theme.DarkGray
 import com.example.cognilink.ui.theme.DarkNavyBlue
-import com.example.cognilink.ui.theme.DarkYellow
-import com.example.cognilink.ui.theme.MutedBlue
+import com.example.cognilink.ui.theme.Green
 import com.example.cognilink.ui.theme.OffWhite
+import com.example.cognilink.ui.theme.Red
 import com.example.cognilink.ui.theme.VeryLightGray
 import com.example.cognilink.ui.theme.White
 import com.example.cognilink.ui.viewmodels.StudySessionViewModel
@@ -104,7 +105,9 @@ fun StudySessionScreen(
             elapsedTime = viewModel.formatSeconds(uiState.secondsElapsed),
             validationType = uiState.validationType,
             basicFeedback = uiState.basicFeedback,
+            isAnswerCorrect = uiState.isAnswerCorrect,
             sequenceHits = uiState.sequenceHits,
+            isValidating = uiState.isValidating,
             onDismissSessionInsight = {
                 viewModel.toggleSessionInsightDialog()
                 scope.launch {
@@ -145,7 +148,9 @@ fun StudySessionContent(
     elapsedTime: String,
     validationType: ValidationType? = null,
     basicFeedback: String? = null,
+    isAnswerCorrect: Boolean = false,
     sequenceHits: Int = 0,
+    isValidating: Boolean = false,
     onDismissSessionInsight: () -> Unit = {},
     onCloseClick: () -> Unit = {},
     onAcceptCloseDialog: () -> Unit = {},
@@ -221,13 +226,14 @@ fun StudySessionContent(
             Column(modifier = Modifier.padding(24.dp)) {
                 SimpleGradientButton(
                     text = when {
+                        isValidating -> "VALIDANDO..."
                         isQuestionVerified && isLastFlashcard -> "FINALIZAR SESSÃO"
                         isQuestionVerified -> "PROXÍMO FLASHCARD"
                         else -> "VERIFICAR RESPOSTA"
                     },
-                    icon = if (isQuestionVerified) R.drawable.ic_arrow_forward else R.drawable.ic_check,
+                    icon = if (isValidating) null else if (isQuestionVerified) R.drawable.ic_arrow_forward else R.drawable.ic_check,
                     iconRightSide = true,
-                    isEnabled = isQuestionAnswered,
+                    isEnabled = isQuestionAnswered && !isValidating,
                     onClickButton = {
                         if (isQuestionVerified) {
                             onClickToNextFlashcard()
@@ -340,51 +346,98 @@ fun StudySessionContent(
 
                                 Surface(
                                     color = White,
-                                    shape = RoundedCornerShape(32.dp),
+                                    shape = RoundedCornerShape(24.dp),
                                     shadowElevation = 2.dp,
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
                                     Column(
                                         modifier = Modifier.padding(16.dp),
-                                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                                        verticalArrangement = Arrangement.spacedBy(12.dp)
                                     ) {
-                                        Text(
-                                            text = "GABARITO",
-                                            fontWeight = FontWeight.Bold,
-                                            fontSize = 12.sp,
-                                            color = DarkGray,
-                                            lineHeight = 8.sp
-                                        )
+                                        Row(
+                                            verticalAlignment = CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                                        ) {
+                                            Icon(
+                                                painterResource(
+                                                    id = if (isAnswerCorrect) {
+                                                        R.drawable.ic_check_circle
+                                                    } else {
+                                                        R.drawable.ic_cancel
+                                                    }
+                                                ), contentDescription = null,
+                                                tint = if (isAnswerCorrect) {
+                                                    Green
+                                                } else {
+                                                    Red
+                                                },
+                                                modifier = Modifier.size(18.dp)
+                                            )
+                                            Text(
+                                                text = "Resposta " + if (isAnswerCorrect) {
+                                                    "Correta"
+                                                } else {
+                                                    "Incorreta"
+                                                },
+                                                fontWeight = FontWeight.Bold,
+                                                fontSize = 16.sp,
+                                                color = DarkNavyBlue,
+                                                lineHeight = 8.sp
+                                            )
+                                        }
+
                                         Text(
                                             text = flashcard.answerOptions.firstOrNull()?.answer
                                                 ?: "",
-                                            color = DarkNavyBlue,
-                                            fontWeight = FontWeight.Bold,
+                                            color = DarkGray,
+                                            fontWeight = FontWeight.Medium,
                                             fontSize = 14.sp,
                                             lineHeight = 16.sp
                                         )
-                                        Surface(
-                                            color = MutedBlue,
+                                        GradientSurface(
                                             shape = RoundedCornerShape(12.dp),
                                             modifier = Modifier.fillMaxWidth()
                                         ) {
-                                            // Exibe o Feedback Inteligente (LLM ou Fallback)
-                                            if (validationType == ValidationType.FEEDBACK) {
-                                                Text(
-                                                    text = basicFeedback ?: "",
-                                                    modifier = Modifier.padding(12.dp),
-                                                    color = DarkGray,
-                                                    fontSize = 14.sp,
-                                                )
-                                            } else if (validationType == ValidationType.FALLBACK) {
-                                                Text(
-                                                    text = "Parece que sua resposta está incompleta. Compare com o gabarito acima.",
-                                                    color = DarkGray,
-                                                    fontSize = 14.sp,
-                                                    modifier = Modifier.padding(12.dp),
-                                                    fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
-                                                )
+                                            Column(
+                                                modifier = Modifier.padding(10.dp),
+                                                verticalArrangement = Arrangement.spacedBy(4.dp),
+                                            ){
+                                                Row(
+                                                    verticalAlignment = CenterVertically,
+                                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                                ) {
+                                                    Icon(
+                                                        painterResource(
+                                                            id = R.drawable.ic_lightbulb
+                                                        ), contentDescription = null,
+                                                        tint = White,
+                                                        modifier = Modifier.size(16.dp)
+                                                    )
+                                                    Text(
+                                                        text = "DICA DE MEMORIZAÇÃO",
+                                                        fontWeight = FontWeight.Bold,
+                                                        fontSize = 14.sp,
+                                                        lineHeight = 8.sp,
+                                                        color = White
+                                                    )
+                                                }
+                                                // Exibe o Feedback Inteligente (LLM ou Fallback)
+                                                if (validationType == ValidationType.FEEDBACK) {
+                                                    Text(
+                                                        text = basicFeedback ?: "",
+                                                        color = White,
+                                                        fontSize = 14.sp,
+                                                    )
+                                                } else if (validationType == ValidationType.FALLBACK) {
+                                                    Text(
+                                                        text = "Compare sua resposta com o gabarito acima para identificar pontos de melhoria e reforçar seu aprendizado.",
+                                                        color = White,
+                                                        fontSize = 14.sp,
+                                                        lineHeight = 18.sp
+                                                    )
+                                                }
                                             }
+
                                         }
                                     }
 
@@ -485,8 +538,9 @@ private fun StudySessionContentPreview() {
             isQuestionAnswered = false,
             isQuestionVerified = true,
             isCloseDialogOpen = false,
+            isAnswerCorrect = true,
             validationType = ValidationType.FEEDBACK,
-            basicFeedback = "Basic feedback",
+            basicFeedback = "Uma suspend fun é uma função que pode pausar sua execução sem bloquear a thread, permitindo que o programa continue rodando outras tarefas enquanto aguarda um resultado.",
             elapsedTime = "00:00",
         )
     }

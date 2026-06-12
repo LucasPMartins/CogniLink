@@ -19,7 +19,8 @@ data class StudySessionUiState(
     val sequenceHits: Int = 0,
     val basicFeedback: String? = null,
     val isValidating: Boolean = false,
-    val validationType: ValidationType = ValidationType.NONE, // NONE, FEEDBACK, FALLBACK
+    val validationType: ValidationType = ValidationType.NONE,
+    val isAnswerCorrect: Boolean = false,
 ) {
     val isQuestionAnswered: Boolean = selectedAnswers.isNotEmpty()
     val currentFlashcard: Flashcard? = sessionFlashcards.getOrNull(currentFlashcardIndex)

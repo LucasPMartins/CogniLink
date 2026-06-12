@@ -16,8 +16,13 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+import com.example.cognilink.domain.model.ValidationResult
+import com.example.cognilink.domain.model.ValidationType
+import com.example.cognilink.domain.usecase.ValidateBasicAnswerUseCase
+
 class StudySessionViewModel(
-    private val repository: FlashcardRepository
+    private val repository: FlashcardRepository,
+    private val validateBasicAnswerUseCase: ValidateBasicAnswerUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(StudySessionUiState())
@@ -115,31 +120,62 @@ class StudySessionViewModel(
         val currentState = _uiState.value
         val currentFlashcard = currentState.currentFlashcard ?: return
 
-        val isCorrect = when (currentFlashcard.cardType) {
-            FlashcardType.BASIC -> {
-                val userAnswer = currentState.selectedAnswers.values.firstOrNull()?.trim()
-                val correctAnswer = currentFlashcard.answerOptions.firstOrNull()?.answer?.trim()
-                userAnswer.equals(correctAnswer, ignoreCase = true)
-            }
+        viewModelScope.launch {
+            _uiState.update { it.copy(isValidating = true) }
 
-            FlashcardType.MULTIPLE_CHOICE -> {
-                currentState.selectedAnswers.keys.any { it.isCorrect }
-            }
+            var isCorrect = false
+            var validationType = ValidationType.NONE
+            var feedback: String? = null
 
-            FlashcardType.TRUE_OR_FALSE -> {
-                currentState.selectedAnswers.all { (answer, choice) ->
-                    (choice == "T" && answer.isCorrect) || (choice == "F" && !answer.isCorrect)
+            when (currentFlashcard.cardType) {
+                FlashcardType.BASIC -> {
+                    val userAnswer = currentState.selectedAnswers.values.firstOrNull() ?: ""
+                    val correctAnswer = currentFlashcard.answerOptions.firstOrNull()?.answer ?: ""
+                    
+                    val result = validateBasicAnswerUseCase(userAnswer, correctAnswer)
+                    
+                    when (result) {
+                        is ValidationResult.Correct -> {
+                            isCorrect = true
+                            validationType = ValidationType.CORRECT
+                        }
+                        is ValidationResult.Feedback -> {
+                            isCorrect = false
+                            validationType = ValidationType.FEEDBACK
+                            feedback = result.message
+                        }
+                        is ValidationResult.Fallback -> {
+                            isCorrect = false
+                            validationType = ValidationType.FALLBACK
+                        }
+                    }
+                }
+
+                FlashcardType.MULTIPLE_CHOICE -> {
+                    isCorrect = currentState.selectedAnswers.keys.any { it.isCorrect }
+                }
+
+                FlashcardType.TRUE_OR_FALSE -> {
+                    isCorrect = currentState.selectedAnswers.all { (answer, choice) ->
+                        (choice == "T" && answer.isCorrect) || (choice == "F" && !answer.isCorrect)
+                    }
+                }
+
+                else -> {
+                    isCorrect = true
                 }
             }
 
-            else -> true
-        }
-
-        _uiState.update {
-            it.copy(
-                isQuestionVerified = true,
-                sequenceHits = if (isCorrect) it.sequenceHits + 1 else 0
-            )
+            _uiState.update {
+                it.copy(
+                    isQuestionVerified = true,
+                    sequenceHits = if (isCorrect) it.sequenceHits + 1 else 0,
+                    isAnswerCorrect = isCorrect,
+                    validationType = validationType,
+                    basicFeedback = feedback,
+                    isValidating = false
+                )
+            }
         }
     }
 
